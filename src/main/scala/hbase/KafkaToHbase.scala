@@ -1,8 +1,10 @@
 package hbase
 
-import org.apache.hadoop.hbase.HBaseConfiguration
-import org.apache.hadoop.hbase.client.{HBaseAdmin,HTable,Put,Get}
-import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hbase.HBaseConfiguration
+import org.apache.hbase.client.{HBaseAdmin,HTable,Put,Get}
+import org.apache.hbase.util.Bytes
+
+
 
 
 case class KafkaToHbase() {
