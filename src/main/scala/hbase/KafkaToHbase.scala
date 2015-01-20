@@ -7,7 +7,7 @@ import org.apache.hadoop.hbase.util.Bytes
 
 case class KafkaToHbase() {
 	
-	val conf = new HBaseConfiguration()
+	val conf = HBaseConfiguration.create()
 	val admin = new HBaseAdmin(conf)
 	
 	// list the tables
