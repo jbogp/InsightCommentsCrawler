@@ -19,13 +19,11 @@ object InsightCommentsCrawler {
 
 	/*Defining the main function*/
 	def main(args : Array[String]):Unit = {
-			println("aahah")
 			/*we need at least an argument otherwise, throw an exception*/
 			try {
 				args(0) match {
 					/*Fetching the article URLs from RSS and send them to Kafka*/
 					case "RssCrawler" => {
-						println("test")
 						
 						/*Creating the RSS reader object*/
 						val subreader = new RssReader
@@ -35,9 +33,8 @@ object InsightCommentsCrawler {
 							feedInfo <- Utils.getUrls("subscriptions.xml")
 						} subreader.read(feedInfo)
 						
-						println("test")
 						/*Sending messages to Kafka article_links queue*/
-						val kafkaProducer = new KafkaProducer("article_links","localhost:9092")
+						val kafkaProducer = new KafkaProducer("article_links",args(1))
 						subreader.itemArray.foreach( item => {
 							println(item.link)
 							kafkaProducer.send(item.link, "1")
@@ -49,8 +46,7 @@ object InsightCommentsCrawler {
 					 * TODO? Also input them in a queue to batch process on them as well
 					 */
 					case "CommentsFetcher" => {
-						val consumer = new KafkaConsumer("article_links","CommentsFetcher","localhost:2181",true)
-						println("test")
+						val consumer = new KafkaConsumer("article_links","CommentsFetcher",args(1),true)
 						consumer.read(msg => println(new String(msg)))
 					}
 					

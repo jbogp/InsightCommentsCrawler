@@ -9,7 +9,6 @@ object Utils {
 	}
 	
 	def getUrls(fileName:String) = getFileLines(fileName).map(info => {
-	  println("test");
 	  new FeedInfo(info)
 	})
 	def getFileLines(fileName : String): Array[String] = scala.io.Source.fromFile(fileName).mkString.split("\n").filter( !_.startsWith("#") )
