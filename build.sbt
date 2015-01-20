@@ -5,5 +5,6 @@ version := "1.0"
 scalaVersion := "2.10.4"
 
 libraryDependencies ++= Seq(
-	  "ly.stealth" % "scala-kafka" % "0.1.0.0",
+	 "mysql" % "mysql-connector-java" % "5.1.18",
+	  "org.apache.kafka" % "kafka_2.10" % "0.8.2-beta"
 )
