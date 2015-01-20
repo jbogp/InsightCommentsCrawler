@@ -10,6 +10,8 @@ import scala.concurrent._
 import scala.util.{Try, Success, Failure}
 import kafka.consumer.KafkaConsumer
 import kafka.producer.KafkaProducer
+import hbase.KafkaToHbase
+
 
 /*
  * Main function, start the program, the input argument 
@@ -48,6 +50,9 @@ object InsightCommentsCrawler {
 					case "CommentsFetcher" => {
 						val consumer = new KafkaConsumer("article_links","CommentsFetcher",args(1),true)
 						consumer.read(msg => println(new String(msg)))
+						val hbaseconnect = new KafkaToHbase
+						
+						
 					}
 					
 					case _ => {
