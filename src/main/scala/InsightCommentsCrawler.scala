@@ -8,21 +8,67 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{Try, Success, Failure}
+import kafka.consumer.KafkaConsumer
+import kafka.producer.KafkaProducer
 
-/*Main function, starts the crawler*/
+/*
+ * Main function, start the program, the input argument 
+ * will tell us what part of the pipeline to start
+ */
 object InsightCommentsCrawler {
-  def getUrls(fileName:String) = getFileLines(fileName).map(info => new FeedInfo(info))
-  def getFileLines(fileName : String): Array[String] =
-    scala.io.Source.fromFile(fileName).mkString.split("\n").filter( !_.startsWith("#") )
 
-  def main(args : Array[String]):Unit = {
+	/*Defining the main function*/
+	def main(args : Array[String]):Unit = {
+			println("aahah")
+			/*we need at least an argument otherwise, throw an exception*/
+			try {
+				args(0) match {
+					/*Fetching the article URLs from RSS and send them to Kafka*/
+					case "RssCrawler" => {
+						println("test")
+						
+						/*Creating the RSS reader object*/
+						val subreader = new RssReader
+	
+						/*Reading the subscription file and iterating on feeds*/
+						for {
+							feedInfo <- Utils.getUrls("subscriptions.xml")
+						} subreader.read(feedInfo)
+						
+						println("test")
+						/*Sending messages to Kafka article_links queue*/
+						val kafkaProducer = new KafkaProducer("article_links","localhost:9092")
+						subreader.itemArray.foreach( item => {
+							println(item.link)
+							kafkaProducer.send(item.link, "1")
+						})
+					}
+					
+					/*
+					 * Reading the article_links from Kafka and fetching the comments
+					 * TODO? Also input them in a queue to batch process on them as well
+					 */
+					case "CommentsFetcher" => {
+						val consumer = new KafkaConsumer("article_links","CommentsFetcher","localhost:2181",true)
+						println("test")
+						consumer.read(msg => println(new String(msg)))
+					}
+					
+					case _ => {
+					  println("Sorry, did not understand this command")
+					  exit(0)
+					}
+				}
+			}
+			catch {
+				case e: Exception => {
+					e.printStackTrace
+					System.exit(1)
+				}
+			}
 
-	val subreader = new RssReader
 
-    for {
-      feedInfo <- getUrls("subscriptions.xml")
-    } subreader.read(feedInfo)
 
-    //system.shutdown()
-  }
+			//system.shutdown()
+	}
 }

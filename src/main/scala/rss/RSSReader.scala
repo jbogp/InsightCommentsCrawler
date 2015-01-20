@@ -9,6 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{Try, Success, Failure}
 import java.io._
+import scala.collection.mutable.ArrayBuffer
 
 
 /*Abstract class defining a general RSS reader*/
@@ -130,8 +131,11 @@ class XmlReader(tag:String) extends Reader {
 
 class RssReader{
 
+	val itemArray = new ArrayBuffer[RssItem]
+	
 	def read(feedInfo : FeedInfo) = {
-		println(feedInfo.url.toString())
+	  
+	  
 		Try(feedInfo.url.openConnection.getInputStream) match {
 		case Success(u) => {
 			val xml = XML.load(u)
@@ -144,7 +148,10 @@ class RssReader{
 				}
 			}
 			val res = actor.extract(xml)
-			for{feed <- res; item <- feed.items} println(item.link) 
+			for{feed <- res; item <- feed.items} {
+			  println(item.link)
+			  itemArray.append(item)
+			}
 		}
 		case Failure(_) =>
 
