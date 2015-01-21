@@ -28,18 +28,7 @@ case class KafkaToHbase() {
 		val theput= new Put(Bytes.toBytes(rowkey))
 		
 		theput.add(Bytes.toBytes(familly),Bytes.toBytes(column),convertToBytes(value))
-		httable.put(theput)		
-	}
-	
-	/*Is the keyrow/column already defined?*/
-	def exists(table:String, rowkey:String, familly:String, column:String): Boolean =  {
-		/*Fetch the table*/
-		val httable = new HTable(conf, table)	
-		val theget= new Get(Bytes.toBytes(rowkey))
-		
-		val result=httable.get(theget)
-		/*return boolean*/
-		!result.containsEmptyColumn(Bytes.toBytes(familly), Bytes.toBytes(column))		
+		httable.checkAndPut(Bytes.toBytes(familly),Bytes.toBytes(column),convertToBytes(value),null,theput)		
 	}
 	
 	/* 
@@ -47,9 +36,7 @@ case class KafkaToHbase() {
 	 * Parameters are the column the value
 	 */
 	def insertURL(hashURL:String,URL:String) {
-		//if(!exists("article_links",hashURL,"infos","URL")) {
 			insert[String]("article_links",hashURL,"infos","URL",URL,s => Bytes.toBytes(s))
-		//}
 	}
 	
 	/*Kafka queue to HBase writer*/
