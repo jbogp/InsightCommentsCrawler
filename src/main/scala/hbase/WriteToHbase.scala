@@ -53,7 +53,7 @@ case class WriteToHbase() {
 			rowExists("article_links", row) match {
 				  case false => {
 					  insert[String]("article_links",row,"infos",columns.take(3),values.take(3),s => Bytes.toBytes(s))
-					  insert[String]("article_links",row,"content",columns.takeRight(2),values.takeRight(2),s => Bytes.toBytes(s))
+					  insert[String]("article_links",row,"contents",columns.takeRight(2),values.takeRight(2),s => Bytes.toBytes(s))
 					  true
 				  }
 				  case true => false
