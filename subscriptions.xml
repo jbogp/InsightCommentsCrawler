@@ -1,8 +1,16 @@
-#http://feeds.bizjournals.com/bizj_sanfrancisco,fb,origLink,na
+http://feeds.bizjournals.com/bizj_sanfrancisco,fb,origLink,na
 http://www.charlotteobserver.com/topstories/index.rss,fb,link,na
 http://www.wlwt.com/9838842?format=rss_2.0&view=feed,disqus,link,wlwt-disqus
 http://www.latimes.com/rss2.0.xml,fb,link,na
 http://feeds.abcnews.com/abcnews/internationalheadlines,disqus,link,abcnewsdotcom
+http://feeds.abcnews.com/abcnews/topstories,disqus,link,abcnewsdotcom
+http://feeds.abcnews.com/abcnews/usheadlines,disqus,link,abcnewsdotcom
+http://feeds.abcnews.com/abcnews/politicsheadlines,disqus,link,abcnewsdotcom
+http://feeds.abcnews.com/abcnews/mostreadstories,disqus,link,abcnewsdotcom
 http://www.telegraph.co.uk/news/rss,disqus,guid,telegraphuk
 http://feeds.feedburner.com/np_top_stories.rss,disqus,origLink,npdigital
 http://feeds.feedburner.com/newsok/home?format=xml,fb,origLink,na
+http://www.ynet.co.il/Integration/StoryRss3082.xml,fb,link,na
+http://www.japantimes.co.jp/feed/,disqus,link,japantimes
+http://www.torontosun.com/home/rss.xml,disqus,link,torontosun
+http://o.canada.com/feed/,fb,link,na
