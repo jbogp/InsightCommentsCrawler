@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{Try, Success, Failure}
-import hbase.KafkaToHbase
+import hbase.WriteToHbase
 import rss.RssReader
 import kafka.KafkaProducer
 import kafka.KafkaConsumer
@@ -31,6 +31,12 @@ object InsightCommentsCrawler {
 						
 						/*Creating the RSS reader object*/
 						val subreader = new RssReader
+						
+						/*Kafka and Hbase connectors*/
+						val kafkaProducer = new KafkaProducer("article_links",args(1))
+						val hbaseconnect = new WriteToHbase
+						
+						
 						while(true) {
 							/*Reading the subscription file and iterating on feeds*/
 							for {
@@ -38,9 +44,11 @@ object InsightCommentsCrawler {
 							} subreader.read(feedInfo)
 							
 							/*Sending messages to Kafka article_links queue*/
-							val kafkaProducer = new KafkaProducer("article_links",args(1))
+
 							subreader.itemArray.foreach( item => {
 								println(item.link)
+								var values = Array(item.link,item.engine,item.engineId)
+								hbaseconnect.insertURL(values)
 								kafkaProducer.send(item.link, "1")
 							})
 							Thread.sleep(300000);
@@ -53,8 +61,8 @@ object InsightCommentsCrawler {
 					 */
 					case "CommentsFetcher" => {
 						val consumer = new KafkaConsumer("article_links","CommentsFetcher",args(1),true)
-						val hbaseconnect = new KafkaToHbase
-						consumer.read(write => hbaseconnect.HbaseWriter(write))
+						
+						consumer.read(println)
 					}
 					
 					case _ => {

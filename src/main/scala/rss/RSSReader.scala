@@ -71,7 +71,7 @@ class AtomReader extends Reader {
 					(feed \ "title").text,
 					getHtmlLink((feed \ "link")),
 					(feed \ "subtitle ").text,
-					items.take(20))
+					items.take(100))
 		}
 	}
 
@@ -116,7 +116,7 @@ class XmlReader(tag:String) extends Reader {
 						(channel \ "link").text,
 						(channel \ "description").text,
 						(channel \ "language").text,
-						items.take(20))
+						items.take(100))
 			}
 	}
 
@@ -150,6 +150,8 @@ class RssReader{
 			val res = actor.extract(xml)
 			for{feed <- res; item <- feed.items} {
 			  println(item.link)
+			  item.engine = feedInfo.commentType
+			  item.engineId = feedInfo.tag
 			  itemArray.append(item)
 			}
 		}
