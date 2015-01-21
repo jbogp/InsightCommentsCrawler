@@ -51,11 +51,11 @@ case class WriteToHbase() {
 			val columns = Array("timestamp","URL","engine","engineId")
 			val row = MessageDigest.getInstance("MD5").digest(columns(1).getBytes()).map("%02X".format(_)).mkString
 			rowExists("article_links", row) match {
-				  case true => {
+				  case false => {
 					  insert[String]("article_links",row,"infos",columns,values,s => Bytes.toBytes(s))
 					  true
 				  }
-				  case false => false
+				  case true => false
 			}
 	}
 	
