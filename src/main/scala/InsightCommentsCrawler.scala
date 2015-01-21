@@ -31,18 +31,20 @@ object InsightCommentsCrawler {
 						
 						/*Creating the RSS reader object*/
 						val subreader = new RssReader
-	
-						/*Reading the subscription file and iterating on feeds*/
-						for {
-							feedInfo <- Utils.getUrls("subscriptions.xml")
-						} subreader.read(feedInfo)
-						
-						/*Sending messages to Kafka article_links queue*/
-						val kafkaProducer = new KafkaProducer("article_links",args(1))
-						subreader.itemArray.foreach( item => {
-							println(item.link)
-							kafkaProducer.send(item.link, "1")
-						})
+						while(true) {
+							/*Reading the subscription file and iterating on feeds*/
+							for {
+								feedInfo <- Utils.getUrls("subscriptions.xml")
+							} subreader.read(feedInfo)
+							
+							/*Sending messages to Kafka article_links queue*/
+							val kafkaProducer = new KafkaProducer("article_links",args(1))
+							subreader.itemArray.foreach( item => {
+								println(item.link)
+								kafkaProducer.send(item.link, "1")
+							})
+							Thread.sleep(300000);
+						}
 					}
 					
 					/*
