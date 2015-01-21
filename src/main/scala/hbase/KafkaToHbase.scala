@@ -47,9 +47,9 @@ case class KafkaToHbase() {
 	 * Parameters are the column the value
 	 */
 	def insertURL(hashURL:String,URL:String) {
-		if(!exists("article_links",hashURL,"infos","URL")) {
+		//if(!exists("article_links",hashURL,"infos","URL")) {
 			insert[String]("article_links",hashURL,"infos","URL",URL,s => Bytes.toBytes(s))
-		}
+		//}
 	}
 	
 	/*Kafka queue to HBase writer*/
