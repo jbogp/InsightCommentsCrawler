@@ -35,15 +35,28 @@ case class WriteToHbase() {
 	
 	}
 	
+	def rowExists(table:String, rowkey:String):Boolean = {
+		/*Fetch the table*/
+		val httable = new HTable(conf, table)
+		val theGet = new Get(Bytes.toBytes(rowkey))
+		httable.exists(theGet)
+	}
+	
 	/* 
 	 * Insert URL link in the article_links table
 	 * Parameters are the columns values
+	 * returns true if the row was inserted (didn't exist before)
 	 */
-	def insertURL(values:Array[String]) {
-			val columns = Array("URL","engine","engineId")
-			val timestamp = Calendar.getInstance().getTime()
-			val row = timestamp.toString()+MessageDigest.getInstance("MD5").digest(columns(1).getBytes()).map("%02X".format(_)).mkString
-			insert[String]("article_links",row,"infos",columns,values,s => Bytes.toBytes(s))
+	def insertURL(values:Array[String]):Boolean = {
+			val columns = Array("timestamp","URL","engine","engineId")
+			val row = MessageDigest.getInstance("MD5").digest(columns(1).getBytes()).map("%02X".format(_)).mkString
+			rowExists("article_links", row) match {
+				  case true => {
+					  insert[String]("article_links",row,"infos",columns,values,s => Bytes.toBytes(s))
+					  true
+				  }
+				  case false => false
+			}
 	}
 	
 	
