@@ -8,9 +8,11 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{Try, Success, Failure}
-import kafka.consumer.KafkaConsumer
-import kafka.producer.KafkaProducer
 import hbase.KafkaToHbase
+import rss.RssReader
+import kafka.KafkaProducer
+import kafka.KafkaConsumer
+import rss.RssReader
 
 
 /*

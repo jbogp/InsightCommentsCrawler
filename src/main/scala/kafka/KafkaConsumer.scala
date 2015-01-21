@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package kafka.consumer
+package main.scala.kafka
 
 import kafka.message._
 import kafka.serializer._
@@ -23,6 +23,9 @@ import kafka.utils._
 import java.util.Properties
 import kafka.utils.Logging
 import scala.collection.JavaConversions._
+import kafka.consumer.Whitelist
+import kafka.consumer.Consumer
+import kafka.consumer.ConsumerConfig
 
 class KafkaConsumer(
   topic: String, 

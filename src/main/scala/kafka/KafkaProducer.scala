@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package kafka.producer
+package main.scala.kafka
 
 import scala.collection.JavaConversions._
 import joptsimple._
@@ -25,6 +25,9 @@ import kafka.common._
 import kafka.message._
 import kafka.serializer._
 import java.util.Properties
+import kafka.producer.KeyedMessage
+import kafka.producer.Producer
+import kafka.producer.ProducerConfig
 
 case class KafkaProducer(
   topic: String, 

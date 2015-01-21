@@ -1,4 +1,4 @@
-package hbase
+package main.scala.hbase
 
 
 import org.apache.hadoop.hbase.client.HTable
@@ -8,10 +8,12 @@ import org.apache.hadoop.hbase.client.HBaseAdmin
 import org.apache.hadoop.hbase.client.HConnectionManager
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.util.Bytes
+import java.security.MessageDigest
 
 /*Stores and reads values in the Hbase*/
 case class KafkaToHbase() {
 	
+  
   
 	/*Creating configuration and connecting*/
 	val conf = new Configuration()
@@ -49,5 +51,11 @@ case class KafkaToHbase() {
 			insert[String]("article_links",hashURL,"infos","URL",URL,s => Bytes.toBytes(s))
 		}
 	}
+	
+	/*Kafka queue to HBase writer*/
+	def HbaseWriter(write:Array[Byte]): Unit = {
+		insertURL(new String(MessageDigest.getInstance("MD5").digest(write)), new String(write))
+	}
+	
 }
 	
