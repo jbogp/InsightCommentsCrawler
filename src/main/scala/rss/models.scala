@@ -23,6 +23,7 @@ case class FeedInfo(info:String){
   val url = new URL(arrayInfo(0))
   val commentType = arrayInfo(1)
   val tag = arrayInfo(2)
+  val engineId = arrayInfo(3) 
 }
 
 /*Case class of Atom Rss feed*/

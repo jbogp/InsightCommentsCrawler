@@ -151,7 +151,7 @@ class RssReader{
 			for{feed <- res; item <- feed.items} {
 			  println(item.link)
 			  item.engine = feedInfo.commentType
-			  item.engineId = feedInfo.tag
+			  item.engineId = feedInfo.engineId
 			  itemArray.append(item)
 			}
 		}
