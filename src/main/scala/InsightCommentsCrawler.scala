@@ -9,10 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.util.{Try, Success, Failure}
 import hbase.WriteToHbase
-import rss.RssReader
 import kafka.KafkaProducer
 import kafka.KafkaConsumer
-import rss.RssReader
 import java.util.Calendar
 
 
@@ -48,7 +46,7 @@ object InsightCommentsCrawler {
 
 							subreader.itemArray.foreach( item => {
 								println(item.link)
-								var values = Array(item.link,item.engine,item.engineId)
+								var values = Array(item.link,item.engine,item.engineId,item.desc,item.title)
 								/*If successfully inserted in Hbase (new Item) send to Kafka*/ 
 								hbaseconnect.insertURL(values) match {
 									case true => kafkaProducer.send(item.link, "1")

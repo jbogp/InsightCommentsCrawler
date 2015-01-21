@@ -17,6 +17,10 @@ trait RssFeed {
   def latest = items sortWith ((a, b) => a.date.compareTo(b.date) > 0) head
 }
 
+/*Case class for a single comment*/
+case class Comment(msg:String)
+
+
 /*Case class for feed info*/
 case class FeedInfo(info:String){
   val arrayInfo = info.split(",")
