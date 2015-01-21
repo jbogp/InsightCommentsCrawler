@@ -1,15 +1,22 @@
 package hbase
 
-import org.apache.hbase.HBaseConfiguration
-import org.apache.hbase.client.{HBaseAdmin,HTable,Put,Get}
-import org.apache.hbase.util.Bytes
+
+import org.apache.hadoop.hbase.client.HTable
+import org.apache.hadoop.hbase.client.Get
+import org.apache.hadoop.hbase.client.Put
+import org.apache.hadoop.hbase.client.HBaseAdmin
+import org.apache.hadoop.hbase.client.HConnectionManager
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.hbase.util.Bytes
+
+
 
 
 
 
 case class KafkaToHbase() {
 	
-	val conf = HBaseConfiguration.create()
+	val conf = new Configuration()
 	val admin = new HBaseAdmin(conf)
 	
 	// list the tables
