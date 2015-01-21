@@ -52,7 +52,7 @@ object InsightCommentsCrawler {
 					case "CommentsFetcher" => {
 						val consumer = new KafkaConsumer("links","CommentsFetcher",args(1),true)
 						val hbaseconnect = new KafkaToHbase
-						consumer.read(msg => println(new String(msg)))
+						consumer.read(write => hbaseconnect.HbaseWriter(write))
 					}
 					
 					case _ => {
