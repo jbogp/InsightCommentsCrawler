@@ -34,7 +34,7 @@ case class XmlRssFeed(title:String, link:String, desc:String, language:String, i
 case class RssItem(title:String, link:String, desc:String, date:Date, guid:String) {
   /*Create a hash value unique to this item*/
   val hash = Utils.md5(this.toString)
-  var engine:String
-  var engineId:String
+  var engine:String = null
+  var engineId:String = null
   override def toString = date + " " + title
 }
