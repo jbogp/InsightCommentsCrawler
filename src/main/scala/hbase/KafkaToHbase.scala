@@ -29,7 +29,7 @@ case class KafkaToHbase() {
 	
 	val theput= new Put(Bytes.toBytes("rowkey1"))
 	
-	theput.add(Bytes.toBytes("ids"),Bytes.toBytes("id1"),Bytes.toBytes("one"))
+	theput.add(Bytes.toBytes("infos"),Bytes.toBytes("id1"),Bytes.toBytes("one"))
 	table.put(theput)
 	
 	val theget= new Get(Bytes.toBytes("rowkey1"))
