@@ -42,7 +42,7 @@ case class KafkaToHbase() {
 	/*Kafka queue to HBase writer*/
 	def HbaseWriter(write:Array[Byte]): Unit = {
 		println("Writing URL to Hbase"+new String(write))
-		insertURL(new String(MessageDigest.getInstance("MD5").digest(write)), new String(write))
+		insertURL(MessageDigest.getInstance("MD5").digest(write).map("%02X".format(_)).mkString, new String(write))
 	}
 	
 }
