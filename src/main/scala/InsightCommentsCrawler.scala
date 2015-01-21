@@ -38,7 +38,7 @@ object InsightCommentsCrawler {
 						} subreader.read(feedInfo)
 						
 						/*Sending messages to Kafka article_links queue*/
-						val kafkaProducer = new KafkaProducer("links",args(1))
+						val kafkaProducer = new KafkaProducer("article_links",args(1))
 						subreader.itemArray.foreach( item => {
 							println(item.link)
 							kafkaProducer.send(item.link, "1")
@@ -50,7 +50,7 @@ object InsightCommentsCrawler {
 					 * TODO? Also input them in a queue to batch process on them as well
 					 */
 					case "CommentsFetcher" => {
-						val consumer = new KafkaConsumer("links","CommentsFetcher",args(1),true)
+						val consumer = new KafkaConsumer("article_links","CommentsFetcher",args(1),true)
 						val hbaseconnect = new KafkaToHbase
 						consumer.read(write => hbaseconnect.HbaseWriter(write))
 					}
