@@ -48,7 +48,7 @@ case class WriteToHbase() {
 	 * returns true if the row was inserted (didn't exist before)
 	 */
 	def insertURL(values:Array[String]):Boolean = {
-			val columns = Array("timestamp","URL","engine","engineId")
+			val columns = Array("URL","engine","engineId")
 			val row = MessageDigest.getInstance("MD5").digest(columns(1).getBytes()).map("%02X".format(_)).mkString
 			rowExists("article_links", row) match {
 				  case false => {

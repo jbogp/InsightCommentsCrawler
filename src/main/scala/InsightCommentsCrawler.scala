@@ -48,8 +48,7 @@ object InsightCommentsCrawler {
 
 							subreader.itemArray.foreach( item => {
 								println(item.link)
-								val timestamp = Calendar.getInstance().getTime().toString()
-								var values = Array(timestamp,item.link,item.engine,item.engineId)
+								var values = Array(item.link,item.engine,item.engineId)
 								/*If successfully inserted in Hbase (new Item) send to Kafka*/ 
 								hbaseconnect.insertURL(values) match {
 									case true => kafkaProducer.send(item.link, "1")
