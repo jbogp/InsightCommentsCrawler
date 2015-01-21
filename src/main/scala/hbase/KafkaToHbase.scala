@@ -28,7 +28,7 @@ case class KafkaToHbase() {
 		val theput= new Put(Bytes.toBytes(rowkey))
 		
 		theput.add(Bytes.toBytes(familly),Bytes.toBytes(column),convertToBytes(value))
-		httable.checkAndPut(Bytes.toBytes(familly),Bytes.toBytes(column),convertToBytes(value),null,theput)		
+		httable.checkAndPut(Bytes.toBytes(rowkey),Bytes.toBytes(familly),Bytes.toBytes(column),null,theput)		
 	}
 	
 	/* 
