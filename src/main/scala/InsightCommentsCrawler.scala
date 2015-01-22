@@ -82,8 +82,8 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					  		val dReader = new DisqusAPI
 					  		val fbReader = new FBAPI
 					  		while(true){
-						  		try {
-							  		items.foreach(item => {
+						  		items.foreach(item => {
+						  			try{
 							  			item.engine match {
 							  			  	case "disqus" => {
 							  			  		/*remove abcnews*/
@@ -113,16 +113,16 @@ implicit val formats = Serialization.formats(NoTypeHints)
 							  			  	}
 							  			  	case _ => println("error")
 							  			}
-							  			/*waiting to avoid scaring off the APIS*/
-							  			Thread.sleep(5000);
-							  		})
-						  		}
-						  		catch {
-									case e: Exception => {
-										println("Error fetching comments, probably busted API limits...waiting some more")
-										e.printStackTrace
-									}
-								}
+						  			}
+						  			catch {
+										case e: Exception => {
+											println("Error fetching comments, probably busted API limits...waiting some more")
+											e.printStackTrace
+										}
+						  			}
+						  			/*waiting to avoid scaring off the APIS*/
+						  			Thread.sleep(500);
+						  		})
 						  		/*waiting 20 minutes*/
 						  		Thread.sleep(600000);
 					  		}

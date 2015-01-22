@@ -47,6 +47,37 @@ case class DisqusUser(
   avatar:JObject
 )
 
+case class DisqusAnonComment(
+  parent: JValue,
+  likes: Int, 
+  forum: JValue, 
+  thread:JValue,
+  isApproved:JValue,
+  author:DisqusAnonUser,
+  media:List[JArray],
+  isFlagged:JValue,
+  dislikes:JValue,
+  raw_message:String,
+  createdAt:String,
+  id:JValue,
+  numReports:JValue,
+  isDeleted:JValue,
+  isEdited:JValue,
+  message:JValue,
+  isSpam:JValue,
+  isHighlighted:JValue,
+  points:JValue
+)
+
+case class DisqusAnonUser(
+  name:String,
+  url:String,
+  profileUrl: String,
+  emailHash: String,
+  isAnonymous:Boolean,
+  avatar:JObject
+)
+
 /*Get FB Comments*/
 class DisqusAPI extends ExternalAPI {
   
@@ -64,8 +95,16 @@ class DisqusAPI extends ExternalAPI {
 			val ret = new ArrayBuffer[Comment]
 			/*Extracting the comments*/
 			for ( comment <- comments) {
-				val m = comment.extract[DisqusComment]
-				ret.append(new Comment(m.createdAt,m.author.name,m.likes,m.raw_message))
+				try{
+					val m = comment.extract[DisqusComment]
+					ret.append(new Comment(m.createdAt,m.author.name,m.likes,m.raw_message))
+				}
+				catch {
+				  	case e:Exception => {
+				  		val m = comment.extract[DisqusAnonComment]
+				  		ret.append(new Comment(m.createdAt,m.author.name,m.likes,m.raw_message))
+				  	}
+				}
 			}
 			ret
 	}
