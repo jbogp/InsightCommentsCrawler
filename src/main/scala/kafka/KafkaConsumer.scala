@@ -27,6 +27,7 @@ import kafka.consumer.Whitelist
 import kafka.consumer.Consumer
 import kafka.consumer.ConsumerConfig
 
+
 class KafkaConsumer(
   topic: String, 
   /** topic 

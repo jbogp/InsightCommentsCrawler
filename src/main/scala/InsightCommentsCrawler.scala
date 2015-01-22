@@ -12,6 +12,11 @@ import hbase.WriteToHbase
 import kafka.KafkaProducer
 import kafka.KafkaConsumer
 import java.util.Calendar
+import externalAPIs.FBAPI
+import externalAPIs.DisqusAPI
+import net.liftweb.json._
+import net.liftweb.json.Serialization.{read, write}
+
 
 
 /*
@@ -19,6 +24,8 @@ import java.util.Calendar
  * will tell us what part of the pipeline to start
  */
 object InsightCommentsCrawler {
+  
+implicit val formats = Serialization.formats(NoTypeHints)
 
 	/*Defining the main function*/
 	def main(args : Array[String]):Unit = {
@@ -49,7 +56,9 @@ object InsightCommentsCrawler {
 								var values = Array(item.link,item.engine,item.engineId,item.desc,item.title)
 								/*If successfully inserted in Hbase (new Item) send to Kafka*/ 
 								hbaseconnect.insertURL(values) match {
-									case true => kafkaProducer.send(item.link, "1")
+									case true => {
+										kafkaProducer.send(write(Extraction.decompose(KafkaMessageURL(item.link,item.engine,item.engineId))), "1")
+									}
 									case false => println("Skipping link, already registered")
 								}
 							})
@@ -63,8 +72,17 @@ object InsightCommentsCrawler {
 					 */
 					case "CommentsFetcher" => {
 						val consumer = new KafkaConsumer("article_links","CommentsFetcher",args(1),true)
+						/*Reading the stream of messages*/
+						//consumer.read()
+					}
+					
+					/*test*/
+					case "TestJSON" => {
+						val fbReader = new DisqusAPI
+						val json = fbReader.fetchJSONFromURL(Array("link:http://www.telegraph.co.uk/news/science/science-news/11348010/Close-your-eyes-if-you-want-to-find-your-car-keys.html","telegraphuk"))
+						val comments = fbReader.readJSON(json)
+						println(fbReader.getJSON(comments))
 						
-						consumer.read(println)
 					}
 					
 					case _ => {

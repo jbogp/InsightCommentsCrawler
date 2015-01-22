@@ -35,6 +35,8 @@ case class WriteToHbase() {
 	
 	}
 	
+	
+	val test:Int = 1
 	def rowExists(table:String, rowkey:String):Boolean = {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
@@ -60,13 +62,31 @@ case class WriteToHbase() {
 			}
 	}
 	
+	/* 
+	 * Insert comments the general comments table
+	 * Parameters are the columns values
+	 * returns true if the row was inserted (didn't exist before)
+	 */
+	def insertComments(values:Array[String]):Boolean = {
+			val columns = Array("URL","Json","author")
+			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
+			rowExists("comments_all", row) match {
+				  case false => {
+					  insert[String]("comments_all",row,"infos",columns,values,s => Bytes.toBytes(s))
+					  true
+				  }
+				  case true => false
+			}
+	}
+	
 	
 	
 	/*Kafka queue to HBase writer*/
 	def HbaseByteWriter(write:Array[Byte]): Unit = {
-		println("Writing URL to Hbase"+new String(write))
-		//insertURL(MessageDigest.getInstance("MD5").digest(write).map("%02X".format(_)).mkString, new String(write))
+		println("Writing comments JSON to Hbase"+new String(write))
+		val infos =  new String(write)
+		val arrayInfo = infos.split("||UNIQSEP||")
+		insertComments(arrayInfo)
 	}
 	
 }
-	

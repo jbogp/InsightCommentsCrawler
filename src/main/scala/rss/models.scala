@@ -17,9 +17,20 @@ trait RssFeed {
   def latest = items sortWith ((a, b) => a.date.compareTo(b.date) > 0) head
 }
 
-/*Case class for a single comment*/
-case class Comment(msg:String)
+/*defining case classe for comments*/
+case class Comment(
+  created_time: String, 
+  from: String,
+  like_count: Int,
+  message:String
+)
 
+case class CommentsList(
+  comments: List[Comment]
+)
+
+/*Case class for the JSON message that will be sent to kafka for URLS*/
+case class KafkaMessageURL(link:String,engine:String,engineId:String)
 
 /*Case class for feed info*/
 case class FeedInfo(info:String){

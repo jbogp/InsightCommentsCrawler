@@ -8,7 +8,8 @@ scalaVersion := "2.10.4"
 resolvers ++= Seq(
   "Hadoop Releases" at "https://repository.cloudera.com/content/repositories/releases/",
   "Cloudera" at "https://repository.cloudera.com/artifactory/public/",
-  "Cloudera2" at "http://repository.cloudera.com/cloudera/cloudera-repos/"
+  "Cloudera2" at "http://repository.cloudera.com/cloudera/cloudera-repos/",
+  "releases" at "http://oss.sonatype.org/content/repositories/releases"
 )
  
 libraryDependencies ++= Seq(
@@ -20,5 +21,6 @@ libraryDependencies ++= Seq(
     "org.apache.hbase" % "hbase-client" % "0.98.6-cdh5.3.0",
     "org.apache.hbase" % "hbase-protocol" % "0.98.6-cdh5.3.0",
     "org.apache.hbase" % "hbase-common" % "0.98.6-cdh5.3.0",
-    "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0"
+    "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0",
+    "net.liftweb" %% "lift-json" % "2.5"
 )
