@@ -36,7 +36,7 @@ case class WriteToHbase() {
 	}
 	
 	
-	val test:Int = 1
+
 	def rowExists(table:String, rowkey:String):Boolean = {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
@@ -80,13 +80,6 @@ case class WriteToHbase() {
 	}
 	
 	
-	
-	/*Kafka queue to HBase writer*/
-	def HbaseByteWriter(write:Array[Byte]): Unit = {
-		println("Writing comments JSON to Hbase"+new String(write))
-		val infos =  new String(write)
-		val arrayInfo = infos.split("||UNIQSEP||")
-		insertComments(arrayInfo)
-	}
+
 	
 }

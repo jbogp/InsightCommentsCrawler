@@ -16,6 +16,11 @@ import externalAPIs.FBAPI
 import externalAPIs.DisqusAPI
 import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.spark._
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.StreamingContext._
+import main.scala.hbase.ReadFromHbase
 
 
 
@@ -68,20 +73,33 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					
 					/*
 					 * Reading the article_links from Kafka and fetching the comments
-					 * TODO? Also input them in a queue to batch process on them as well
 					 */
 					case "CommentsFetcher" => {
 						val consumer = new KafkaConsumer("article_links","CommentsFetcher",args(1),true)
 						/*Reading the stream of messages*/
-						//consumer.read()
+						consumer.read(mess => {
+							/*Getting the object from the Json*/
+							try {
+								val jsonObject = parse(new String(Bytes.toString(mess)))
+								val kafkaMessage = jsonObject.extract[KafkaMessageURL]
+							}
+							/*old messages*/
+							
+
+							
+							val fbReader = new DisqusAPI
+							val json = fbReader.fetchJSONFromURL(Array("link:http://www.telegraph.co.uk/news/science/science-news/11348010/Close-your-eyes-if-you-want-to-find-your-car-keys.html","telegraphuk"))
+							val comments = fbReader.readJSON(json)
+							println(fbReader.getJSON(comments))
+							
+							
+						})
 					}
 					
 					/*test*/
 					case "TestJSON" => {
-						val fbReader = new DisqusAPI
-						val json = fbReader.fetchJSONFromURL(Array("link:http://www.telegraph.co.uk/news/science/science-news/11348010/Close-your-eyes-if-you-want-to-find-your-car-keys.html","telegraphuk"))
-						val comments = fbReader.readJSON(json)
-						println(fbReader.getJSON(comments))
+						val hbr = new ReadFromHbase
+						hbr.readTimeFilter("article_links")
 						
 					}
 					
