@@ -46,6 +46,8 @@ case class AtomRssFeed(title:String, link:String, desc:String, items:Seq[RssItem
 /*Case class of xml Rss feed*/
 case class XmlRssFeed(title:String, link:String, desc:String, language:String, items:Seq[RssItem]) extends RssFeed
 
+case class SimpleRssItem(url:String,engine:String,engineId:String)
+
 /*Case class of an rss item within a rss feed*/
 case class RssItem(title:String, link:String, desc:String, date:Date, guid:String) {
   /*Create a hash value unique to this item*/

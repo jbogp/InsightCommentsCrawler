@@ -7,6 +7,10 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.util.Bytes
 import java.util.Calendar
 import org.apache.hadoop.hbase.client.Scan
+import main.scala.rss.SimpleRssItem
+import scala.collection.mutable.ArrayBuffer
+import main.scala.rss.SimpleRssItem
+import main.scala.rss.SimpleRssItem
 
 class ReadFromHbase {
   
@@ -14,21 +18,28 @@ class ReadFromHbase {
 	val conf = new Configuration()
 	val admin = new HBaseAdmin(conf)
  
-	def readTimeFilter(table:String) {
+	def readTimeFilterLinks(table:String,daysBack:Int):ArrayBuffer[SimpleRssItem] =  {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
-		val test:Long = 1421878066639L
-		val theScan = new Scan().setTimeRange(test, Calendar.getInstance().getTimeInMillis()+10);
+		val offset:Long = daysBack*86400000L
+		val theScan = new Scan().setTimeRange(offset, Calendar.getInstance().getTimeInMillis());
 		
-		/*Adding timestamp fileter*/
+		/*Adding timestamp filter*/
 		
 		val res = httable.getScanner(theScan)
 		
 		val iterator = res.iterator()
+		val ret = new ArrayBuffer[SimpleRssItem]
 		
 		while(iterator.hasNext()) {
-			println(new String(iterator.next().toString()))
+			val next = iterator.next()
+			ret.append(new SimpleRssItem(
+			    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
+			    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
+			    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue())
+			))		
 		}
+		ret
 	}
 
 }
