@@ -98,7 +98,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 								  			  		hbw.insertComments(Array(item.url,jsonString))
 							  			  		}
 							  			  		else if(item.url.contains("japantimes")){
-							  			  			val newUrl = item.url.split("?").apply(0)
+							  			  			val newUrl = item.url.split("\\?").apply(0)
 							  			  			println("getting from disqus (japannews)")
 							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 								  			  		val comments = dReader.readJSON(json)
