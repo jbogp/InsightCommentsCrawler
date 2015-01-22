@@ -18,10 +18,10 @@ class ReadFromHbase {
 	val conf = new Configuration()
 	val admin = new HBaseAdmin(conf)
  
-	def readTimeFilterLinks(table:String,daysBack:Int):ArrayBuffer[SimpleRssItem] =  {
+	def readTimeFilterLinks(table:String,minutesBack:Int):ArrayBuffer[SimpleRssItem] =  {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
-		val offset:Long = daysBack*86400000L
+		val offset:Long = minutesBack*60000L
 		val theScan = new Scan().setTimeRange(offset, Calendar.getInstance().getTimeInMillis());
 		
 		/*Adding timestamp filter*/
@@ -30,7 +30,6 @@ class ReadFromHbase {
 		
 		val iterator = res.iterator()
 		val ret = new ArrayBuffer[SimpleRssItem]
-		
 		while(iterator.hasNext()) {
 			val next = iterator.next()
 			ret.append(new SimpleRssItem(

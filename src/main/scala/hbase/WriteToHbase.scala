@@ -70,7 +70,6 @@ case class WriteToHbase() {
 	def insertComments(values:Array[String]) {
 			val columns = Array("URL","json")
 			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
-			println(values(1))
 			insert[String]("comments_all",row,"infos",columns,values,s => Bytes.toBytes(s))
 
 	}

@@ -79,6 +79,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					  		val hbr = new ReadFromHbase
 					  		val hbw = new WriteToHbase
 					  		val items = hbr.readTimeFilterLinks("article_links",1)
+					  		println("Starting fetching comments for"+ items.length +" articles")
 					  		val dReader = new DisqusAPI
 					  		val fbReader = new FBAPI
 					  		while(true){
@@ -86,7 +87,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 						  			try{
 							  			item.engine match {
 							  			  	case "disqus" => {
-							  			  		/*borgin particular cases*/
+							  			  		/*boring particular cases*/
 							  			  		if(item.url.contains("abcnews") && item.url.contains("story?id=")) {
 							  			  			val urlParts = item.url.split("/")
 							  			  			println("getting from disqus (abc news)")
