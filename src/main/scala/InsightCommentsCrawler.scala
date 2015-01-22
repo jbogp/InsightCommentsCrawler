@@ -21,6 +21,7 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext._
 import main.scala.hbase.ReadFromHbase
+import main.scala.hbase.WriteToHbase
 
 
 
@@ -76,14 +77,45 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					 */
 					case "CommentsFetcher" => {
 					  		val hbr = new ReadFromHbase
+					  		val hbw = new WriteToHbase
 					  		val items = hbr.readTimeFilterLinks("article_links",1)
-					  		items.foreach(item => {
-					  		  println(item.url)
-					  		})
-					  		/*
-							val fbReader = new DisqusAPI
-							val json = fbReader.fetchJSONFromURL(Array("link:http://www.telegraph.co.uk/news/science/science-news/11348010/Close-your-eyes-if-you-want-to-find-your-car-keys.html","telegraphuk"))
-							val comments = fbReader.readJSON(json)*/
+					  		val dReader = new DisqusAPI
+					  		val fbReader = new FBAPI
+					  		while(true){
+						  		try {
+							  		items.foreach(item => {
+							  			item.engine match {
+							  			  	case "disqus" => {
+							  			  		println("getting from disqus")
+							  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
+							  			  		val comments = dReader.readJSON(json)
+							  			  		val jsonString = write(comments)
+							  			  		hbw.insertComments(Array(item.url,jsonString))
+							  			  	}
+							  			  	case "fb" => {
+							  			  		println("getting from fb")
+							  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
+							  			  		val comments = fbReader.readJSON(json)
+							  			  		val jsonString = write(comments)
+							  			  		hbw.insertComments(Array(item.url,jsonString))
+							  			  	}
+							  			  	case _ => println("error")
+							  			}
+							  			/*waiting to avoid scaring off the APIS*/
+							  			Thread.sleep(5000);
+							  		})
+						  		}
+						  		catch {
+									case e: Exception => {
+										println("Error fetching comments, probably busted API limits...waiting some more")
+									}
+								}
+						  		/*waiting 20 minutes*/
+						  		Thread.sleep(600000);
+					  		}
+
+							
+
 					}
 					
 					/*test*/

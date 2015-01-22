@@ -67,16 +67,12 @@ case class WriteToHbase() {
 	 * Parameters are the columns values
 	 * returns true if the row was inserted (didn't exist before)
 	 */
-	def insertComments(values:Array[String]):Boolean = {
-			val columns = Array("URL","Json","author")
+	def insertComments(values:Array[String]) {
+			val columns = Array("URL","json")
 			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
-			rowExists("comments_all", row) match {
-				  case false => {
-					  insert[String]("comments_all",row,"infos",columns,values,s => Bytes.toBytes(s))
-					  true
-				  }
-				  case true => false
-			}
+			println(values(1))
+			insert[String]("comments_all",row,"infos",columns,values,s => Bytes.toBytes(s))
+
 	}
 	
 	
