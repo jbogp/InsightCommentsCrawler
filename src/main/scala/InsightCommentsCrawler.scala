@@ -45,8 +45,8 @@ implicit val formats = Serialization.formats(NoTypeHints)
 						val subreader = new RssReader
 						
 						/*Kafka and Hbase connectors*/
-						val kafkaProducer = new KafkaProducer("article_links",args(1))
-						val hbaseconnect = new WriteToHbase
+						//val kafkaProducer = new KafkaProducer("article_links",args(1))
+						//val hbaseconnect = new WriteToHbase
 						
 						
 						while(true) {
@@ -57,19 +57,19 @@ implicit val formats = Serialization.formats(NoTypeHints)
 							
 							/*Sending messages to Kafka article_links queue*/
 
-							subreader.itemArray.foreach( item => {
+							/*subreader.itemArray.foreach( item => {
 								println(item.link)
 								var values = Array(item.link,item.engine,item.engineId,item.desc,item.title)
 								/*If successfully inserted in Hbase (new Item) send to Kafka*/ 
 								hbaseconnect.insertURL(values) match {
 									case true => {
-										kafkaProducer.send(write(Extraction.decompose(KafkaMessageURL(item.link,item.engine,item.engineId))), "1")
+										//kafkaProducer.send(write(Extraction.decompose(KafkaMessageURL(item.link,item.engine,item.engineId))), "1")
 									}
 									case false => println("Skipping link, already registered")
 								}
 							})
 							Thread.sleep(300000);
-						}
+						*/}
 					}
 					
 					/*

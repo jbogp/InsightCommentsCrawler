@@ -12,9 +12,6 @@ trait RssFeed {
   val desc:String
   val items:Seq[RssItem]
   override def toString = title + "\n" + desc + "\n**"
-
-  /*Function returning latest item from the feed based on date*/
-  def latest = items sortWith ((a, b) => a.date.compareTo(b.date) > 0) head
 }
 
 /*defining case classe for comments*/
@@ -49,10 +46,10 @@ case class XmlRssFeed(title:String, link:String, desc:String, language:String, i
 case class SimpleRssItem(url:String,engine:String,engineId:String)
 
 /*Case class of an rss item within a rss feed*/
-case class RssItem(title:String, link:String, desc:String, date:Date, guid:String) {
+case class RssItem(title:String, link:String, desc:String, guid:String) {
   /*Create a hash value unique to this item*/
   val hash = Utils.md5(this.toString)
   var engine:String = null
   var engineId:String = null
-  override def toString = date + " " + title
+  override def toString = title
 }

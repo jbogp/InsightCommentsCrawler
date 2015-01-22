@@ -13,12 +13,7 @@ import scala.collection.mutable.ArrayBuffer
 
 
 /*Abstract class defining a general RSS reader*/
-abstract class Reader{
-	/*Prints the latest item from the feed*/
-	def print(feed:RssFeed) {
-		println(feed.latest)
-	}
-	
+abstract class Reader{	
 	/*Extract the items from a well formed XML*/
 	def extract(xml:Elem) : Seq[RssFeed]
 }
@@ -55,14 +50,13 @@ class AtomReader extends Reader {
 							(item \\ "title").text,
 							getHtmlLink((item \\ "link")),
 							(item \\ "summary").text,
-							parseAtomDate((item \\ "published").text, dateFormatter),
 							(item \\ "id").text
 							)
 				}
 				catch {
 				  case e: Exception => {
 					  println("error reading item")
-					  RssItem("fake","fake","fake",parseAtomDate("2015-01-01",dateFormatter),"fake")
+					  RssItem("fake","fake","fake","fake")
 				  }
 				}
 			}
@@ -99,14 +93,14 @@ class XmlReader(tag:String) extends Reader {
 								(item \\ "title").text,
 								(item \\ tag).text,
 								(item \\ "description").text,
-								dateFormatter.parse((item \\ "pubDate").text),
 								(item \\ "guid").text
 								)
 					}
 					catch{
 						case e: Exception => {
+							e.printStackTrace()
 							println("error while parsing item")
-							RssItem("fake","fake","fake",dateFormatter.parse("Thu, 15 Jan 2015 12:49:28 GMT"),"fake")
+							RssItem("fake","fake","fake","fake")
 						}
 					}
 				}
