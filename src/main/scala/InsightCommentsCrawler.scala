@@ -86,11 +86,23 @@ implicit val formats = Serialization.formats(NoTypeHints)
 							  		items.foreach(item => {
 							  			item.engine match {
 							  			  	case "disqus" => {
-							  			  		println("getting from disqus")
-							  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
-							  			  		val comments = dReader.readJSON(json)
-							  			  		val jsonString = write(comments)
-							  			  		hbw.insertComments(Array(item.url,jsonString))
+							  			  		/*remove abcnews*/
+							  			  		if((!item.url.contains("abcnews"))) {
+								  			  		println("getting from disqus")
+								  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
+								  			  		val comments = dReader.readJSON(json)
+								  			  		val jsonString = write(comments)
+								  			  		hbw.insertComments(Array(item.url,jsonString))
+							  			  		}
+							  			  		else if(item.url.contains("story?id=")) {
+							  			  			val urlParts = item.url.split("/")
+							  			  			println("getting from disqus (abc news)")
+							  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
+							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
+								  			  		val comments = dReader.readJSON(json)
+								  			  		val jsonString = write(comments)
+								  			  		hbw.insertComments(Array(item.url,jsonString))
+							  			  		}
 							  			  	}
 							  			  	case "fb" => {
 							  			  		println("getting from fb")
