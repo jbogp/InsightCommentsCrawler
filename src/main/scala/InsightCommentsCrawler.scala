@@ -87,10 +87,12 @@ implicit val formats = Serialization.formats(NoTypeHints)
 						  			try{
 							  			item.engine match {
 							  			  	case "disqus" => {
-							  			  		/*remove abcnews*/
-							  			  		if((!item.url.contains("abcnews"))) {
-								  			  		println("getting from disqus")
-								  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
+							  			  		/*borgin particular cases*/
+							  			  		if(item.url.contains("abcnews") || item.url.contains("story?id=")) {
+							  			  			val urlParts = item.url.split("/")
+							  			  			println("getting from disqus (abc news)")
+							  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
+							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 								  			  		val comments = dReader.readJSON(json)
 								  			  		val jsonString = write(comments)
 								  			  		hbw.insertComments(Array(item.url,jsonString))
@@ -104,10 +106,8 @@ implicit val formats = Serialization.formats(NoTypeHints)
 								  			  		hbw.insertComments(Array(item.url,jsonString))
 							  			  		}
 							  			  		else if(item.url.contains("story?id=")) {
-							  			  			val urlParts = item.url.split("/")
-							  			  			println("getting from disqus (abc news)")
-							  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
-							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
+								  			  		println("getting from disqus")
+								  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
 								  			  		val comments = dReader.readJSON(json)
 								  			  		val jsonString = write(comments)
 								  			  		hbw.insertComments(Array(item.url,jsonString))
