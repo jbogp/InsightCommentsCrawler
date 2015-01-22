@@ -83,7 +83,6 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					  		val fbReader = new FBAPI
 					  		while(true){
 						  		items.foreach(item => {
-						  		  if(item.url.contains("japantimes")){
 						  			try{
 							  			item.engine match {
 							  			  	case "disqus" => {
@@ -131,7 +130,6 @@ implicit val formats = Serialization.formats(NoTypeHints)
 						  			}
 						  			/*waiting to avoid scaring off the APIS*/
 						  			Thread.sleep(500);
-						  		  }
 						  		})
 						  		/*waiting 20 minutes*/
 						  		Thread.sleep(600000);
