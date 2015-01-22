@@ -87,7 +87,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 							  			item.engine match {
 							  			  	case "disqus" => {
 							  			  		/*borgin particular cases*/
-							  			  		if(item.url.contains("abcnews") || item.url.contains("story?id=")) {
+							  			  		if(item.url.contains("abcnews") && item.url.contains("story?id=")) {
 							  			  			val urlParts = item.url.split("/")
 							  			  			println("getting from disqus (abc news)")
 							  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
@@ -104,7 +104,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 								  			  		val jsonString = write(comments)
 								  			  		hbw.insertComments(Array(item.url,jsonString))
 							  			  		}
-							  			  		else if(item.url.contains("story?id=")) {
+							  			  		else if(!item.url.contains("abcnews")) {
 								  			  		println("getting from disqus")
 								  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
 								  			  		val comments = dReader.readJSON(json)
