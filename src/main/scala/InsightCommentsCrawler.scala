@@ -80,10 +80,10 @@ object InsightCommentsCrawler {
 					  			CommentsFetcher.readItems(120, 60)
 					  			
 					  			/*Read items published between 2 and 4 hours ago*/
-					  			CommentsFetcher.readItems(120, 240)
+					  			CommentsFetcher.readItems(240, 60)
 					  			
 					  			/*Read items published between 4 and 8 hours ago*/
-					  			CommentsFetcher.readItems(240, 480)
+					  			CommentsFetcher.readItems(480, 240)
 					  			
 						  		/*waiting 20 minutes*/
 						  		Thread.sleep(1200000);
