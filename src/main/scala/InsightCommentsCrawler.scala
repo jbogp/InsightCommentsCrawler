@@ -108,6 +108,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 						  		catch {
 									case e: Exception => {
 										println("Error fetching comments, probably busted API limits...waiting some more")
+										e.printStackTrace
 									}
 								}
 						  		/*waiting 20 minutes*/
