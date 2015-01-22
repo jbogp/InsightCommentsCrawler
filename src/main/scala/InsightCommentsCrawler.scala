@@ -84,6 +84,9 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					  		while(true){
 						  		items.foreach(item => {
 						  			try{
+						  				if(item.url.contains("japantimes")){
+						  				val urlWithoutArgs = item.url.split("&").apply(0)
+						  				
 							  			item.engine match {
 							  			  	case "disqus" => {
 							  			  		/*remove abcnews*/
@@ -113,6 +116,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 							  			  	}
 							  			  	case _ => println("error")
 							  			}
+						  				}
 						  			}
 						  			catch {
 										case e: Exception => {
