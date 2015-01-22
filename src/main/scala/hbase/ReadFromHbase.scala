@@ -22,7 +22,7 @@ class ReadFromHbase {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
 		val offset:Long = minutesBack*60000L
-		val theScan = new Scan().setTimeRange(offset, Calendar.getInstance().getTimeInMillis());
+		val theScan = new Scan().setTimeRange(Calendar.getInstance().getTimeInMillis()-offset, Calendar.getInstance().getTimeInMillis());
 		
 		/*Adding timestamp filter*/
 		

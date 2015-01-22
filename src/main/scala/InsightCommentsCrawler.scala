@@ -78,7 +78,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					case "CommentsFetcher" => {
 					  		val hbr = new ReadFromHbase
 					  		val hbw = new WriteToHbase
-					  		val items = hbr.readTimeFilterLinks("article_links",1)
+					  		val items = hbr.readTimeFilterLinks("article_links",100)
 					  		println("Starting fetching comments for"+ items.length +" articles")
 					  		val dReader = new DisqusAPI
 					  		val fbReader = new FBAPI
