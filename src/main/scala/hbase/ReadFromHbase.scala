@@ -18,11 +18,12 @@ class ReadFromHbase {
 	val conf = new Configuration()
 	val admin = new HBaseAdmin(conf)
  
-	def readTimeFilterLinks(table:String,minutesBack:Int):ArrayBuffer[SimpleRssItem] =  {
+	def readTimeFilterLinks(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[SimpleRssItem] =  {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
-		val offset:Long = minutesBack*60000L
-		val theScan = new Scan().setTimeRange(Calendar.getInstance().getTimeInMillis()-offset, Calendar.getInstance().getTimeInMillis());
+		val offsetMax:Long = minutesBackMax*60000L
+		val offsetMin:Long = minutesBackMin*60000L
+		val theScan = new Scan().setTimeRange(Calendar.getInstance().getTimeInMillis()-offsetMax, Calendar.getInstance().getTimeInMillis()-offsetMin);
 		
 		/*Adding timestamp filter*/
 		

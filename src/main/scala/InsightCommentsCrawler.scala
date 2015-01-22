@@ -30,9 +30,8 @@ import main.scala.hbase.WriteToHbase
  * will tell us what part of the pipeline to start
  */
 object InsightCommentsCrawler {
-  
-implicit val formats = Serialization.formats(NoTypeHints)
-
+ 
+	implicit val formats = Serialization.formats(NoTypeHints)
 	/*Defining the main function*/
 	def main(args : Array[String]):Unit = {
 			/*we need at least an argument otherwise, throw an exception*/
@@ -76,61 +75,16 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					 * Reading the article_links from Hbase and fetching the comments
 					 */
 					case "CommentsFetcher" => {
-					  		val hbr = new ReadFromHbase
-					  		val hbw = new WriteToHbase
-					  		val items = hbr.readTimeFilterLinks("article_links",1440)
-					  		println("Starting fetching comments for"+ items.length +" articles")
-					  		val dReader = new DisqusAPI
-					  		val fbReader = new FBAPI
 					  		while(true){
-						  		items.foreach(item => {
-						  			try{
-							  			item.engine match {
-							  			  	case "disqus" => {
-							  			  		/*boring particular cases*/
-							  			  		if(item.url.contains("abcnews") && item.url.contains("story?id=")) {
-							  			  			val urlParts = item.url.split("/")
-							  			  			println("getting from disqus (abc news)")
-							  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
-							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-								  			  		val comments = dReader.readJSON(json)
-								  			  		val jsonString = write(comments)
-								  			  		hbw.insertComments(Array(item.url,jsonString))
-							  			  		}
-							  			  		else if(item.url.contains("japantimes")){
-							  			  			val newUrl = item.url.split("\\?").apply(0)
-							  			  			println("getting from disqus (japannews)")
-							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-								  			  		val comments = dReader.readJSON(json)
-								  			  		val jsonString = write(comments)
-								  			  		hbw.insertComments(Array(item.url,jsonString))
-							  			  		}
-							  			  		else if(!item.url.contains("abcnews")) {
-								  			  		println("getting from disqus")
-								  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
-								  			  		val comments = dReader.readJSON(json)
-								  			  		val jsonString = write(comments)
-								  			  		hbw.insertComments(Array(item.url,jsonString))
-							  			  		}
-							  			  	}
-							  			  	case "fb" => {
-							  			  		println("getting from fb")
-							  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
-							  			  		val comments = fbReader.readJSON(json)
-							  			  		val jsonString = write(comments)
-							  			  		hbw.insertComments(Array(item.url,jsonString))
-							  			  	}
-							  			  	case _ => println("error")
-							  			}
-						  			}
-						  			catch {
-										case e: Exception => {
-											println("Error fetching this comment")
-										}
-						  			}
-						  			/*waiting to avoid scaring off the APIS*/
-						  			Thread.sleep(500);
-						  		})
+					  			/*read items published between 1 and 2 hours ago*/
+					  			CommentsFetcher.readItems(120, 60)
+					  			
+					  			/*Read items published between 2 and 4 hours ago*/
+					  			CommentsFetcher.readItems(120, 240)
+					  			
+					  			/*Read items published between 4 and 8 hours ago*/
+					  			CommentsFetcher.readItems(240, 480)
+					  			
 						  		/*waiting 20 minutes*/
 						  		Thread.sleep(1200000);
 					  		}
