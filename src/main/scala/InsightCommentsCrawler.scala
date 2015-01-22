@@ -78,7 +78,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					case "CommentsFetcher" => {
 					  		val hbr = new ReadFromHbase
 					  		val hbw = new WriteToHbase
-					  		val items = hbr.readTimeFilterLinks("article_links",100)
+					  		val items = hbr.readTimeFilterLinks("article_links",1440)
 					  		println("Starting fetching comments for"+ items.length +" articles")
 					  		val dReader = new DisqusAPI
 					  		val fbReader = new FBAPI
@@ -125,15 +125,14 @@ implicit val formats = Serialization.formats(NoTypeHints)
 						  			}
 						  			catch {
 										case e: Exception => {
-											println("Error fetching comments, probably busted API limits...waiting some more")
-											e.printStackTrace
+											println("Error fetching this comment")
 										}
 						  			}
 						  			/*waiting to avoid scaring off the APIS*/
 						  			Thread.sleep(500);
 						  		})
 						  		/*waiting 20 minutes*/
-						  		Thread.sleep(600000);
+						  		Thread.sleep(1200000);
 					  		}
 
 							
