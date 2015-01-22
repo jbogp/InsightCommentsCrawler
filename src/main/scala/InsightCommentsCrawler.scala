@@ -75,7 +75,12 @@ object InsightCommentsCrawler {
 					 * Reading the article_links from Hbase and fetching the comments
 					 */
 					case "CommentsFetcher" => {
+					  		/*waiting before fetching if necessary minutes*/
+					  		Thread.sleep(args(1).toInt);
 					  		while(true){
+					  			/*read items published between 20 min and 1 hours ago*/
+					  			CommentsFetcher.readItems(60, 20)
+					  		  
 					  			/*read items published between 1 and 2 hours ago*/
 					  			CommentsFetcher.readItems(120, 60)
 					  			
