@@ -83,22 +83,28 @@ implicit val formats = Serialization.formats(NoTypeHints)
 					  		val fbReader = new FBAPI
 					  		while(true){
 						  		items.foreach(item => {
+						  		  if(item.url.contains("japantimes")){
 						  			try{
-						  				if(item.url.contains("japantimes")){
-						  				val urlWithoutArgs = item.url.split("&").apply(0)
-						  				
 							  			item.engine match {
 							  			  	case "disqus" => {
 							  			  		/*remove abcnews*/
 							  			  		if((!item.url.contains("abcnews"))) {
 								  			  		println("getting from disqus")
-								  			  		val json = dReader.fetchJSONFromURL(Array(urlWithoutArgs,item.engineId))
+								  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
+								  			  		val comments = dReader.readJSON(json)
+								  			  		val jsonString = write(comments)
+								  			  		hbw.insertComments(Array(item.url,jsonString))
+							  			  		}
+							  			  		else if(item.url.contains("japantimes")){
+							  			  			val newUrl = item.url.split("?").apply(0)
+							  			  			println("getting from disqus (japannews)")
+							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 								  			  		val comments = dReader.readJSON(json)
 								  			  		val jsonString = write(comments)
 								  			  		hbw.insertComments(Array(item.url,jsonString))
 							  			  		}
 							  			  		else if(item.url.contains("story?id=")) {
-							  			  			val urlParts = urlWithoutArgs.split("/")
+							  			  			val urlParts = item.url.split("/")
 							  			  			println("getting from disqus (abc news)")
 							  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
 							  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
@@ -109,14 +115,13 @@ implicit val formats = Serialization.formats(NoTypeHints)
 							  			  	}
 							  			  	case "fb" => {
 							  			  		println("getting from fb")
-							  			  		val json = fbReader.fetchJSONFromURL(Array(urlWithoutArgs,null))
+							  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
 							  			  		val comments = fbReader.readJSON(json)
 							  			  		val jsonString = write(comments)
 							  			  		hbw.insertComments(Array(item.url,jsonString))
 							  			  	}
 							  			  	case _ => println("error")
 							  			}
-						  				}
 						  			}
 						  			catch {
 										case e: Exception => {
@@ -126,6 +131,7 @@ implicit val formats = Serialization.formats(NoTypeHints)
 						  			}
 						  			/*waiting to avoid scaring off the APIS*/
 						  			Thread.sleep(500);
+						  		  }
 						  		})
 						  		/*waiting 20 minutes*/
 						  		Thread.sleep(600000);
