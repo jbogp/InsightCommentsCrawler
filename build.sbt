@@ -12,13 +12,23 @@ resolvers ++= Seq(
   "releases" at "http://oss.sonatype.org/content/repositories/releases"
 )
  
-val excludeJBossNetty = ExclusionRule(organization = "org.jboss.netty")
-val excludeIONetty = ExclusionRule(organization = "io.netty")
-val excludeEclipseJetty = ExclusionRule(organization = "org.eclipse.jetty")
-val excludeMortbayJetty = ExclusionRule(organization = "org.mortbay.jetty")
-val excludeAsm = ExclusionRule(organization = "org.ow2.asm")
-val excludeOldAsm = ExclusionRule(organization = "asm")
-val excludeCommonsLogging = ExclusionRule(organization = "commons-logging")
+  val excludeJBossNetty = ExclusionRule(organization = "org.jboss.netty")
+  val excludeIONetty = ExclusionRule(organization = "io.netty")
+  val excludeEclipseJetty = ExclusionRule(organization = "org.eclipse.jetty")
+  val excludeMortbayJetty = ExclusionRule(organization = "org.mortbay.jetty")
+  val excludeAsm = ExclusionRule(organization = "org.ow2.asm")
+  val excludeOldAsm = ExclusionRule(organization = "asm")
+  val excludeCommonsLogging = ExclusionRule(organization = "commons-logging")
+  val excludeSLF4J = ExclusionRule(organization = "org.slf4j")
+  val excludeScalap = ExclusionRule(organization = "org.scala-lang", artifact = "scalap")
+  val excludeHadoop = ExclusionRule(organization = "org.apache.hadoop")
+  val excludeCurator = ExclusionRule(organization = "org.apache.curator")
+  val excludePowermock = ExclusionRule(organization = "org.powermock")
+  val excludeFastutil = ExclusionRule(organization = "it.unimi.dsi")
+  val excludeJruby = ExclusionRule(organization = "org.jruby")
+  val excludeThrift = ExclusionRule(organization = "org.apache.thrift")
+  val excludeServletApi = ExclusionRule(organization = "javax.servlet", artifact = "servlet-api")
+  val excludeJUnit = ExclusionRule(organization = "junit")
 
 
 libraryDependencies ++= Seq(
