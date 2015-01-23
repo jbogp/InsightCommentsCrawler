@@ -17,6 +17,7 @@ import org.apache.spark.rdd.NewHadoopRDD
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.client.Result
 import scala.collection.JavaConverters._
+import org.apache.spark.rdd.RDD
 
 
 object TopicsFinder {
@@ -27,49 +28,55 @@ object TopicsFinder {
 	val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
     val spark = new SparkContext(conf)
   	
-  	/*Creating HBase configuration*/
-	val hbaseConfiguration = (hbaseConfigFileName: String, tableName: String) => {
-	  val hbaseConfiguration = HBaseConfiguration.create()
-	  hbaseConfiguration.addResource(hbaseConfigFileName)
-	  hbaseConfiguration.set(TableInputFormat.INPUT_TABLE, tableName)
-	  hbaseConfiguration
-	 }
-	
-	val rdd = new NewHadoopRDD(
-	  spark,
-	  classOf[TableInputFormat],
-	  classOf[ImmutableBytesWritable],
-	  classOf[Result],
-	  hbaseConfiguration("/opt/cloudera/parcels/CDH/lib/hbase/conf/", "article_links")
-	)
+
 	
 	val dictionnary = Source.fromFile("common_words") mkString
-	
 							
   		
-	def getKeywords(corpus:ArrayBuffer[ArticleMeta])= {
-  		/*Getting all infos together*/
-  		
-  		val all = corpus.map(article => article.title).reduceLeft(_ + " " +_)
-		/*Cleaning*/
-		val corpusStriped = all.replaceAll("[^a-zA-Z ]", "").toLowerCase()
-		
-		//val tokenized = spark.parallelize(corpusStriped :: Nil).flatMap(_.split(" "))
-		
-		
-		val tokenized = rdd
-		  .map(tuple => tuple._2)
+	def getKeywords(corpus:ArrayBuffer[ArticleMeta]=null):Array[String]= {
+  	  
+  		/*Getting all infos together either from Hbase or corpus*/
+		val titles = {
+			 if(corpus.nonEmpty){
+		  		val all = corpus.map(article => article.title).reduceLeft(_ + " " +_)
+				/*Cleaning*/
+				val corpusStriped = all.replaceAll("[^a-zA-Z ]", "").toLowerCase()
+				
+				spark.parallelize(corpusStriped :: Nil).flatMap(_.split(" "))
+			}
+			else{
+			  
+				/*Creating HBase configuration*/
+				val hbaseConfiguration = (hbaseConfigFileName: String, tableName: String) => {
+				  val hbaseConfiguration = HBaseConfiguration.create()
+				  hbaseConfiguration.addResource(hbaseConfigFileName)
+				  hbaseConfiguration.set(TableInputFormat.INPUT_TABLE, tableName)
+				  hbaseConfiguration
+				 }
+				
+				val rdd = new NewHadoopRDD(
+				  spark,
+				  classOf[TableInputFormat],
+				  classOf[ImmutableBytesWritable],
+				  classOf[Result],
+				  hbaseConfiguration("/opt/cloudera/parcels/CDH/lib/hbase/conf/", "article_links")
+				)
+			
+				val tokenized = rdd.map(tuple => tuple._2)
+				tokenized.map[String](r => {
+					  		if(r.containsColumn("contents".getBytes(), "description".getBytes())){
+					  			new String(r.getColumnLatest("contents".getBytes(), "description".getBytes()).getValue())
+					  		}
+					  		else {
+					  			""
+					  		}
+				  })
+			}
+		}
 		  
-		val test =  tokenized.map[String](r => {
-			  		if(r.containsColumn("contents".getBytes(), "description".getBytes())){
-			  			new String(r.getColumnLatest("contents".getBytes(), "description".getBytes()).getValue())
-			  		}
-			  		else {
-			  			""
-			  		}
-		  })
+
 		  
-		val wordCounts = test
+		val wordCounts = titles
 		  .flatMap(_.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" "))  
 		  .map((_,1)).reduceByKey(_ + _)
 		
@@ -79,17 +86,18 @@ object TopicsFinder {
 		  (!dictionnary.contains(" "+tuple._1+" ")) && tuple._1.length()<15
 		})
 		
-		println(filtered
+		val ret = filtered
 		    .collect
 		    .sortBy(r=>r._2)
 		    .takeRight(100)
 		    .reverse
 		    //Removing empty string
 		    .drop(1)
-		    .reduceLeft((s,i) => ("("+s._1+","+s._2+"),("+ i._1+","+i._2+")",1)))
-		//tokenized.collect.foreach(res => println(new String(res)))
+		    .map(_._1)
 		
 		spark.stop
+		
+		ret
 		
   	}
 
