@@ -35,7 +35,7 @@ class ReadFromHbase {
 		
 		/*Adding timestamp filter*/
 		val res = httable.getScanner(theScan)
-		
+
 		val iterator = res.iterator()
 		val ret = new ArrayBuffer[T]
 		while(iterator.hasNext()) {

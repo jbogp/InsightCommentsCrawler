@@ -70,7 +70,11 @@ object InsightCommentsCrawler {
 						}
 					}
 					
-					
+					case "test" => {
+					  val hbr = new ReadFromHbase
+					  val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 1)
+					  meta1h.foreach(f=>println(f.title))
+					}
 					/*
 					 * Refreshing the topics by spark map reduce from hbase
 					 * This happens at different time scales
@@ -109,11 +113,11 @@ object InsightCommentsCrawler {
 						}
 						
 						/* Getting 1h top 10 topics */
-						val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
+						val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 1)
 						val topics1h = TopicsFinder.getKeywords(10,meta1h)
 						
 						/* Getting 12h top 10 topics */
-						val meta12h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
+						val meta12h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 1)
 						val topics12h = TopicsFinder.getKeywords(10,meta12h)
 						
 						/* Getting all time topics */
