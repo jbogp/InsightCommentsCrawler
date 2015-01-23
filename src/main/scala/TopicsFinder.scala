@@ -79,7 +79,7 @@ object TopicsFinder {
 		  (!dictionnary.contains(" "+tuple._1+" ")) && tuple._2 >3 && tuple._1.length()<15
 		})
 		
-		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))
+		println(filtered.collect.reduceLeft((s,i) => ("("+s._1+","+s._2+"),("+ i._1+","+i._2+")",1)))
 		//tokenized.collect.foreach(res => println(new String(res)))
 		
 		spark.stop
