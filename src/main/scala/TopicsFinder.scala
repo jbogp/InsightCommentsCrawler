@@ -16,6 +16,7 @@ import org.apache.hadoop.hbase.mapreduce.TableInputFormat
 import org.apache.spark.rdd.NewHadoopRDD
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.client.Result
+import scala.collection.JavaConverters._
 
 
 object TopicsFinder {
@@ -39,7 +40,7 @@ object TopicsFinder {
 	  classOf[TableInputFormat],
 	  classOf[ImmutableBytesWritable],
 	  classOf[Result],
-	  hbaseConfiguration("/opt/cloudera/parcels/CDH-5.3.0-1.cdh5.3.0.p0.30/etc/hbase/conf.dist/", "article_links")
+	  hbaseConfiguration("/opt/cloudera/parcels/CDH/lib/hbase/conf", "article_links")
 	)
 	
 	val dictionnary = Source.fromFile("common_words") mkString
@@ -57,16 +58,22 @@ object TopicsFinder {
 		
 		val tokenized = rdd
 		  .map(tuple => tuple._2)
-		  .map(result => result.getColumnCells("contents".getBytes(), "description".getBytes()))
+		  .map(result => result.getColumn("contents".getBytes(), "description".getBytes()))
+		  .map(keyValues => {
+			  keyValues.asScala.reduceLeft {
+			    (a, b) => if (a.getTimestamp > b.getTimestamp) a else b
+			  }.getValue
+		  })
 		
-		val wordCounts = tokenized.map(cell => (new String(cell.get(0).getValue()), 1)).reduceByKey(_ + _)
+		/*val wordCounts = tokenized.map(cell => (new String(cell.get(0).getValue()), 1)).reduceByKey(_ + _)
 		
 		// filter out words with less than threshold occurrences
 		val filtered = wordCounts.filter((tuple) =>{
 		  (!dictionnary.contains(" "+tuple._1+" ")) && tuple._2 >1
 		})
 		
-		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))
+		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))*/
+		tokenized.collect.foreach(res => println(new String(res)))
 		
 		spark.stop
 		
