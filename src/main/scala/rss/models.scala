@@ -45,6 +45,8 @@ case class XmlRssFeed(title:String, link:String, desc:String, language:String, i
 
 case class SimpleRssItem(url:String,engine:String,engineId:String)
 
+case class ArticleMeta(url:String,title:String,desc:String)
+
 /*Case class of an rss item within a rss feed*/
 case class RssItem(title:String, link:String, desc:String, guid:String) {
   /*Create a hash value unique to this item*/
