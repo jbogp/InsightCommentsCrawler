@@ -59,7 +59,7 @@ object TopicsFinder {
 		
 		val tokenized = rdd
 		  .map(tuple => tuple._2).collect
-		  
+		spark.stop
 		  println(tokenized.length+"ahaha")
 		  tokenized.foreach(r =>{
 		    println(new String(r.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()))
@@ -83,7 +83,7 @@ object TopicsFinder {
 		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))*/
 		//tokenized.collect.foreach(res => println(new String(res)))
 		
-		spark.stop
+
 		
   	}
 
