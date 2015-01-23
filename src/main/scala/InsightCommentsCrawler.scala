@@ -18,8 +18,6 @@ import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
 import org.apache.hadoop.hbase.util.Bytes
 import org.apache.spark._
-import org.apache.spark.streaming._
-import org.apache.spark.streaming.StreamingContext._
 import main.scala.hbase.ReadFromHbase
 import main.scala.hbase.WriteToHbase
 
