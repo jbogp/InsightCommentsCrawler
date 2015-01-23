@@ -40,7 +40,8 @@ libraryDependencies ++= Seq(
     "org.apache.hbase" % "hbase-protocol" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
     "org.apache.hbase" % "hbase-common" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
     "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
-    "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0" excludeAll(excludeServletApi),
-    "net.liftweb" %% "lift-json" % "2.5" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty)
+    "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0" excludeAll(excludeServletApi,excludeEclipseJetty),
+    "net.liftweb" %% "lift-json" % "2.5" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
+    "org.eclipse.jetty.aggregate" % "jetty-all-server" % "8.1.14.v20131031"
 )
 
