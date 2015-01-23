@@ -70,7 +70,7 @@ object TopicsFinder {
 		  })
 		  
 		val wordCounts = test
-		  .flatMap(_.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" "))  
+		  .flatMap(_.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").drop(0))  
 		  .map((_,1)).reduceByKey(_ + _)
 		
 		
@@ -79,7 +79,12 @@ object TopicsFinder {
 		  (!dictionnary.contains(" "+tuple._1+" ")) && tuple._2 >3 && tuple._1.length()<15
 		})
 		
-		println(filtered.collect.sortBy(r=>r._2).takeRight(10).reduceLeft((s,i) => ("("+s._1+","+s._2+"),("+ i._1+","+i._2+")",1)))
+		println(filtered
+		    .collect
+		    .sortBy(r=>r._2)
+		    .takeRight(10)
+		    .reverse
+		    .reduceLeft((s,i) => ("("+s._1+","+s._2+"),("+ i._1+","+i._2+")",1)))
 		//tokenized.collect.foreach(res => println(new String(res)))
 		
 		spark.stop
