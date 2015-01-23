@@ -33,4 +33,5 @@ ivyXML :=
     <exclude org="log4j" name="log4j" />
     <exclude org="commons-logging" name="commons-logging" />
     <exclude org="org.slf4j" name="slf4j-log4j12" />
+    <exclude org="org.slf4j" name="slf4j-api" />
   </dependencies>
