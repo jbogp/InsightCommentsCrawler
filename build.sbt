@@ -24,7 +24,6 @@ libraryDependencies ++= Seq(
     "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0",
     "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0" % "provided",
     "org.apache.spark" % "spark-streaming_2.10" % "1.2.0-cdh5.3.0" % "provided",
-    "org.slf4j" % "slf4j-api" % slf4j,
     "org.apache.spark" % "spark-streaming-kafka_2.10" % "1.2.0-cdh5.3.0" % "provided",
     "net.liftweb" %% "lift-json" % "2.5"
 )
