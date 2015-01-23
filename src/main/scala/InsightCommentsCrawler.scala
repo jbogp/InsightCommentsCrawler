@@ -100,7 +100,7 @@ object InsightCommentsCrawler {
 					case "TestTopic" => {
 						val hbr = new ReadFromHbase
 						val meta = hbr.readTimeFilterArticlesMeta("article_links", 120, 0)
-						TopicsFinder.getKeywords(meta)
+						TopicsFinder.getKeywords(meta) foreach println
 					}
 					
 					case _ => {
