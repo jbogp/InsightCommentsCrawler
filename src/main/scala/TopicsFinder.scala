@@ -32,7 +32,7 @@ object TopicsFinder {
 		/*Cleaning*/
 		val corpusStriped = all.replaceAll("[^a-zA-Z ]", "")
 		
-		val tokenized = spark.textFile(corpusStriped).flatMap(_.split(" "))
+		val tokenized = spark.parallelize(corpusStriped :: Nil).flatMap(_.split(" "))
 		
 		val wordCounts = tokenized.map((_, 1)).reduceByKey(_ + _)
 		
