@@ -109,7 +109,7 @@ object InsightCommentsCrawler {
 						}
 						
 						/* Getting 1h top 10 topics */
-						val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
+						val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
 						val topics1h = TopicsFinder.getKeywords(10,meta1h)
 						
 						/* Getting 12h top 10 topics */
