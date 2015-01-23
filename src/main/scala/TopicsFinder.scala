@@ -60,8 +60,9 @@ object TopicsFinder {
 		val tokenized = rdd
 		  .map(tuple => tuple._2).collect
 		  
+		  println(tokenized.length+"ahaha")
 		  tokenized.foreach(r =>{
-		    r.getColumn("infos".getBytes(), "url".getBytes()).get(0).getValue()
+		    println(new String(r.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()))
 		  })
 		  
 		/*val int = tokenized  
