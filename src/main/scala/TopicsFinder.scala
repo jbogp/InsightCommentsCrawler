@@ -76,13 +76,13 @@ object TopicsFinder {
 		
 		// filter out words with less than threshold occurrences
 		val filtered = wordCounts.filter((tuple) =>{
-		  (!dictionnary.contains(" "+tuple._1+" ")) && tuple._2 >3 && tuple._1.length()<15
+		  (!dictionnary.contains(" "+tuple._1+" ")) && tuple._1.length()<15
 		})
 		
 		println(filtered
 		    .collect
 		    .sortBy(r=>r._2)
-		    .takeRight(11)
+		    .takeRight(100)
 		    .reverse
 		    //Removing empty string
 		    .drop(1)
