@@ -33,7 +33,7 @@ object TopicsFinder {
 	val dictionnary = Source.fromFile("common_words") mkString
 							
   		
-	def getKeywords(corpus:ArrayBuffer[ArticleMeta]=null):Array[String]= {
+	def getKeywords(num:Int,corpus:ArrayBuffer[ArticleMeta]=null):Array[String]= {
   	  
   		/*Getting all infos together either from Hbase or corpus*/
 		val titles = {
@@ -89,7 +89,7 @@ object TopicsFinder {
 		val ret = filtered
 		    .collect
 		    .sortBy(r=>r._2)
-		    .takeRight(100)
+		    .takeRight(num+1)
 		    .reverse
 		    //Removing empty string
 		    .drop(1)

@@ -67,10 +67,30 @@ case class WriteToHbase() {
 	 * Parameters are the columns values
 	 * returns true if the row was inserted (didn't exist before)
 	 */
-	def insertComments(values:Array[String]) {
+	def insertComments(values:Array[String],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
 			val columns = Array("URL","json")
 			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
-			insert[String]("comments_all",row,"infos",columns,values,s => Bytes.toBytes(s))
+			/*Writing on the All comments*/
+			insert[String]("comments_all",row,"infos",columns,values.take(2),s => Bytes.toBytes(s))
+			
+			/*Writing on topics tables*/
+			val title = values(2).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").drop(1)
+			
+			val in = title.foreach(word =>{
+				if(topics1h.contains(word)) {
+					insert[String]("topics1h",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))
+				}
+				else if(topics12h.contains(word)) {
+					insert[String]("topics12h",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))				  
+				}
+				else if(topicsAllTime.contains(word)) {
+					insert[String]("topicsalltime",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))				  
+				}
+			})
+			
+			
+			
+			
 
 	}
 	

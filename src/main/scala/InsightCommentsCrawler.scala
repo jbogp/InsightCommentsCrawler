@@ -20,6 +20,7 @@ import org.apache.hadoop.hbase.util.Bytes
 import org.apache.spark._
 import main.scala.hbase.ReadFromHbase
 import main.scala.hbase.WriteToHbase
+import java.security.MessageDigest
 
 
 
@@ -69,38 +70,80 @@ object InsightCommentsCrawler {
 						}
 					}
 					
-					/*
-					 * Reading the article_links from Hbase and fetching the comments
-					 */
-					case "CommentsFetcher" => {
-					  		/*waiting before fetching if necessary millisec*/
-					  		Thread.sleep(args(1).toLong);
-					  		while(true){
-					  			/*read items published between 20 min and 1 hours ago*/
-					  			CommentsFetcher.readItems(60, 20)
-					  		  
-					  			/*read items published between 1 and 2 hours ago*/
-					  			CommentsFetcher.readItems(120, 60)
-					  			
-					  			/*Read items published between 2 and 4 hours ago*/
-					  			CommentsFetcher.readItems(240, 60)
-					  			
-					  			/*Read items published between 4 and 10 hours ago*/
-					  			CommentsFetcher.readItems(600, 240)
-					  			
-						  		/*waiting 20 minutes*/
-						  		Thread.sleep(1200000);
-					  		}
-
-							
-
-					}
 					
-					/*test*/
-					case "TestTopic" => {
+					/*
+					 * Refreshing the topics by spark map reduce from hbase
+					 * This happens at different time scales
+					 * For 1h to 24h links are loaded in memory
+					 * For the all time, spark goes to fetch the Hbase table out of this system
+					 */
+					 
+					case "InferTopics" => {
+					  
+					  	/*Hbase reader*/
 						val hbr = new ReadFromHbase
-						val meta = hbr.readTimeFilterArticlesMeta("article_links", 120, 0)
-						TopicsFinder.getKeywords(meta) foreach println
+						/*Hbase writer*/
+						val hbw = new WriteToHbase
+					  
+						def writeTopicsKafka(kafkaTop:String,topics:Array[String]) {
+							/*kafka connector*/
+							val kafkaProducer = new KafkaProducer(kafkaTop,args(1))
+							
+							topics.foreach(topic=>{
+								kafkaProducer.send(topic, "1")
+							})	
+						}
+						
+						def writeTopicsHbase(table:String,topics:Array[String]) {
+							topics.foreach(topic=>{
+								hbw.insert[String](
+								    table,
+								    new String(MessageDigest.getInstance("MD5").digest((topic+Calendar.getInstance().getTimeInMillis().toString).getBytes())),
+								    "infos",
+								    Array("val"),
+								    Array(topic),
+								    s => Bytes.toBytes(s))
+							})	
+
+						}
+						
+						/* Getting 1h top 10 topics */
+						val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
+						val topics1h = TopicsFinder.getKeywords(10,meta1h)
+						
+						/* Getting 12h top 10 topics */
+						val meta12h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
+						val topics12h = TopicsFinder.getKeywords(10,meta12h)
+						
+						/* Getting all time topics */
+						val topicsAllTime = TopicsFinder.getKeywords(100)
+						
+						/*Sending to the kafka queues*/
+						writeTopicsKafka("topics1h", topics1h)
+						writeTopicsKafka("topics12h", topics12h)
+						writeTopicsKafka("topicsalltime", topicsAllTime)
+						
+						/*writing in Hbase*/
+						writeTopicsHbase("topics1h", topics1h)
+						writeTopicsHbase("topics12h", topics12h)
+						writeTopicsHbase("topicsalltime", topicsAllTime)
+						
+						
+						/*fetching comments*/			  			
+			  		  
+			  			/*read items published between 20 min and 1 hours ago*/
+			  			CommentsFetcher.readItems(60, 20, topics1h,topics12h,topicsAllTime)
+			  		  
+			  			/*read items published between 1 and 2 hours ago*/
+			  			CommentsFetcher.readItems(120, 60,topics1h,topics12h,topicsAllTime)
+			  			
+			  			/*Read items published between 2 and 4 hours ago*/
+			  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)
+			  			
+			  			/*Read items published between 4 and 10 hours ago*/
+			  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
+				
+						
 					}
 					
 					case _ => {

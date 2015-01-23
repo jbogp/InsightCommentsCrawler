@@ -51,11 +51,21 @@ class ReadFromHbase {
 				new SimpleRssItem(
 			    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
 			    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
-			    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue())
+			    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue()),
+			    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue())
 				)		
 			}
 			/*Calling the database*/
 			readTimeFilterGeneric[SimpleRssItem](table, minutesBackMax, minutesBackMin, handleRow)
+	}
+	
+	def readTimeFilterTopics(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[String] =  {
+			/*function to handle links results*/
+			def handleRow(next:Result):String = {
+			    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue())		
+			}
+			/*Calling the database*/
+			readTimeFilterGeneric[String](table, minutesBackMax, minutesBackMin, handleRow)
 	}
 	
 	def readTimeFilterArticlesMeta(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[ArticleMeta] =  {
