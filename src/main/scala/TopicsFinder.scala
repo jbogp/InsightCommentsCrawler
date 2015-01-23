@@ -25,15 +25,17 @@ object TopicsFinder {
   	val hbr = new ReadFromHbase
 	val hbw = new WriteToHbase
 	
-	val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
-    val spark = new SparkContext(conf)
-  	
+
 
 	
 	val dictionnary = Source.fromFile("common_words") mkString
 							
   		
 	def getKeywords(num:Int,corpus:ArrayBuffer[ArticleMeta]=null):Array[String]= {
+  	  
+  	  	val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
+		val spark = new SparkContext(conf)
+  	
   	  
   		/*Getting all infos together either from Hbase or corpus*/
 		val titles = {
