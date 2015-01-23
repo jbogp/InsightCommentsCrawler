@@ -12,16 +12,25 @@ resolvers ++= Seq(
   "releases" at "http://oss.sonatype.org/content/repositories/releases"
 )
  
+val excludeJBossNetty = ExclusionRule(organization = "org.jboss.netty")
+val excludeIONetty = ExclusionRule(organization = "io.netty")
+val excludeEclipseJetty = ExclusionRule(organization = "org.eclipse.jetty")
+val excludeMortbayJetty = ExclusionRule(organization = "org.mortbay.jetty")
+val excludeAsm = ExclusionRule(organization = "org.ow2.asm")
+val excludeOldAsm = ExclusionRule(organization = "asm")
+val excludeCommonsLogging = ExclusionRule(organization = "commons-logging")
+
+
 libraryDependencies ++= Seq(
 	"org.apache.kafka" % "kafka_2.10" % "0.8.2-beta" intransitive(),
-    "org.apache.hadoop" % "hadoop-core" % "2.5.0-mr1-cdh5.3.0", 
-    "org.apache.hadoop" % "hadoop-common" % "2.5.0-cdh5.3.0",
-  	"org.apache.hadoop" % "hadoop-client" % "2.5.0-mr1-cdh5.3.0",
+    "org.apache.hadoop" % "hadoop-core" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi), 
+    "org.apache.hadoop" % "hadoop-common" % "2.5.0-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi),
+  	"org.apache.hadoop" % "hadoop-client" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi),
     "org.apache.hbase" % "hbase-client" % "0.98.6-cdh5.3.0",
     "org.apache.hbase" % "hbase-protocol" % "0.98.6-cdh5.3.0",
     "org.apache.hbase" % "hbase-common" % "0.98.6-cdh5.3.0",
     "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0",
-    "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0",
+    "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0" exclude("org.baz", "bam"),
     "net.liftweb" %% "lift-json" % "2.5" intransitive()
 )
 
