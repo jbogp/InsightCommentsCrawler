@@ -26,4 +26,4 @@ libraryDependencies ++= Seq(
     "org.apache.spark" % "spark-streaming_2.10" % "1.2.0-cdh5.3.0" % "provided",
     "org.apache.spark" % "spark-streaming-kafka_2.10" % "1.2.0-cdh5.3.0" % "provided",
     "net.liftweb" %% "lift-json" % "2.5"
-)
+).map(_.exclude("commons-logging", "commons-logging"))
