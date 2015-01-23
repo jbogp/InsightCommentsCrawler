@@ -32,15 +32,15 @@ resolvers ++= Seq(
 
 
 libraryDependencies ++= Seq(
-	"org.apache.kafka" % "kafka_2.10" % "0.8.2-beta" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-    "org.apache.hadoop" % "hadoop-core" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi), 
-    "org.apache.hadoop" % "hadoop-common" % "2.5.0-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-  	"org.apache.hadoop" % "hadoop-client" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-    "org.apache.hbase" % "hbase-client" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-    "org.apache.hbase" % "hbase-protocol" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-    "org.apache.hbase" % "hbase-common" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-    "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-    "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0" % "provided" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeSLF4J, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi),
-    "net.liftweb" %% "lift-json" % "2.5" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi)
+	"org.apache.kafka" % "kafka_2.10" % "0.8.2-beta" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi, excludeEclipseJetty),
+    "org.apache.hadoop" % "hadoop-core" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi,excludeEclipseJetty), 
+    "org.apache.hadoop" % "hadoop-common" % "2.5.0-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi,excludeEclipseJetty),
+  	"org.apache.hadoop" % "hadoop-client" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi,excludeEclipseJetty),
+    "org.apache.hbase" % "hbase-client" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty),
+    "org.apache.hbase" % "hbase-protocol" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty),
+    "org.apache.hbase" % "hbase-common" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty),
+    "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty),
+    "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0",
+    "net.liftweb" %% "lift-json" % "2.5" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty)
 )
 
