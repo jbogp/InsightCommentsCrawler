@@ -41,9 +41,9 @@ object TopicsFinder {
 		  !dictionnary.contains(tuple._1)
 		})
 		
-		spark.stop
-		
 		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))
+		
+		spark.stop
 		
   	}
 
