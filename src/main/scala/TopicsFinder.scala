@@ -57,9 +57,7 @@ object TopicsFinder {
 		//val tokenized = spark.parallelize(corpusStriped :: Nil).flatMap(_.split(" "))
 		
 		
-		println(rdd.count())
-		
-		/*val tokenized = rdd
+		val tokenized = rdd
 		  .map(tuple => tuple._2)
 		  .map(result => result.getColumn("contents".getBytes(), "description".getBytes()))
 		  .map(keyValues => {
@@ -68,15 +66,15 @@ object TopicsFinder {
 			  }.getValue
 		  })
 		
-		val wordCounts = tokenized.map(cell => (new String(cell.get(0).getValue()), 1)).reduceByKey(_ + _)
+		/*val wordCounts = tokenized.map(cell => (new String(cell.get(0).getValue()), 1)).reduceByKey(_ + _)
 		
 		// filter out words with less than threshold occurrences
 		val filtered = wordCounts.filter((tuple) =>{
 		  (!dictionnary.contains(" "+tuple._1+" ")) && tuple._2 >1
 		})
 		
-		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))
-		tokenized.collect.foreach(res => println(new String(res)))*/
+		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))*/
+		tokenized.collect.foreach(res => println(new String(res)))
 		
 		spark.stop
 		
