@@ -103,7 +103,7 @@ object InsightCommentsCrawler {
 							topics.foreach(topic=>{
 								hbw.insert[String](
 								    table,
-								    new String(MessageDigest.getInstance("MD5").digest((topic+Calendar.getInstance().getTimeInMillis().toString).getBytes())),
+								    MessageDigest.getInstance("MD5").digest((topic+Calendar.getInstance().getTimeInMillis().toString).getBytes()).mkString,
 								    "infos",
 								    Array("val"),
 								    Array(topic),
