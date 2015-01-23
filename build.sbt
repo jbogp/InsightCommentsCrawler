@@ -27,7 +27,7 @@ resolvers ++= Seq(
   val excludeFastutil = ExclusionRule(organization = "it.unimi.dsi")
   val excludeJruby = ExclusionRule(organization = "org.jruby")
   val excludeThrift = ExclusionRule(organization = "org.apache.thrift")
-  val excludeServletApi = ExclusionRule(organization = "javax.servlet", artifact = "servlet-api")
+  val excludeServletApi = ExclusionRule(organization = "javax.servlet")
   val excludeJUnit = ExclusionRule(organization = "junit")
 
 
