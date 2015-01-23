@@ -40,7 +40,7 @@ object TopicsFinder {
 	  classOf[TableInputFormat],
 	  classOf[ImmutableBytesWritable],
 	  classOf[Result],
-	  hbaseConfiguration("/opt/cloudera/parcels/CDH/lib/hbase/conf", "article_links")
+	  hbaseConfiguration("/opt/cloudera/parcels/CDH/lib/hbase/conf/", "article_links")
 	)
 	
 	val dictionnary = Source.fromFile("common_words") mkString
