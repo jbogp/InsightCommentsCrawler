@@ -58,13 +58,19 @@ object TopicsFinder {
 		
 		
 		val tokenized = rdd
-		  .map(tuple => tuple._2)
-		  .map(result => result.getColumn("contents".getBytes(), "description".getBytes()))
+		  .map(tuple => tuple._2).collect
+		  
+		  tokenized.foreach(r =>{
+		    r.getColumn("infos".getBytes(), "url".getBytes()).get(0).getValue()
+		  })
+		  
+		/*val int = tokenized  
+		  .map(result => result.getColumn("infos".getBytes(), "url".getBytes()))
 		  .map(keyValues => {
 			  keyValues.asScala.reduceLeft {
 			    (a, b) => if (a.getTimestamp > b.getTimestamp) a else b
 			  }.getValue
-		  })
+		  })*/
 		
 		/*val wordCounts = tokenized.map(cell => (new String(cell.get(0).getValue()), 1)).reduceByKey(_ + _)
 		
@@ -74,7 +80,7 @@ object TopicsFinder {
 		})
 		
 		println(filtered.collect.reduceLeft((s,i) => (s._1 +" "+ i._1,1)))*/
-		tokenized.collect.foreach(res => println(new String(res)))
+		//tokenized.collect.foreach(res => println(new String(res)))
 		
 		spark.stop
 		
