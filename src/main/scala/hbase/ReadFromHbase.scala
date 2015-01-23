@@ -76,12 +76,19 @@ class ReadFromHbase {
 			  if(col.isEmpty())
 			    ""
 			  else
-			      new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue())
+			     new String(col.get(0).getValue())
+			}
+			val title = {
+			  val col = next.getColumn("contents".getBytes(), "title".getBytes())
+			  if(col.isEmpty())
+			    ""
+			  else
+			      new String(col.get(0).getValue())
 			}
 			new ArticleMeta(
 		    new String(next.getRow()),
 		    desc,
-		    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue())
+		    title
 			)		
 		}
 		/*Calling the database*/
