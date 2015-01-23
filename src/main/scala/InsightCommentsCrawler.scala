@@ -70,11 +70,6 @@ object InsightCommentsCrawler {
 						}
 					}
 					
-					case "test" => {
-					  val hbr = new ReadFromHbase
-					  val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 1)
-					  meta1h.foreach(f=>println(f.title))
-					}
 					/*
 					 * Refreshing the topics by spark map reduce from hbase
 					 * This happens at different time scales
@@ -112,42 +107,55 @@ object InsightCommentsCrawler {
 
 						}
 						
-						/* Getting 1h top 10 topics */
-						val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
-						val topics1h = TopicsFinder.getKeywords(10,meta1h)
+						while(true){
+							try{
+								/* Getting 1h top 10 topics */
+								val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
+								val topics1h = TopicsFinder.getKeywords(10,meta1h)
+								
+								/* Getting 12h top 10 topics */
+								val meta12h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
+								val topics12h = TopicsFinder.getKeywords(10,meta12h)
+								
+								/* Getting all time topics */
+								val topicsAllTime = TopicsFinder.getKeywords(100)
+								
+								/*Sending to the kafka queues*/
+								writeTopicsKafka("topics1h", topics1h)
+								writeTopicsKafka("topics12h", topics12h)
+								writeTopicsKafka("topicsalltime", topicsAllTime)
+								
+								/*writing in Hbase*/
+								writeTopicsHbase("topics1h", topics1h)
+								writeTopicsHbase("topics12h", topics12h)
+								writeTopicsHbase("topicsalltime", topicsAllTime)
+								
+								
+								/*fetching comments*/			  			
+					  		  
+					  			/*read items published between 20 min and 1 hours ago*/
+					  			CommentsFetcher.readItems(60, 20, topics1h,topics12h,topicsAllTime)
+					  		  
+					  			/*read items published between 1 and 2 hours ago*/
+					  			CommentsFetcher.readItems(120, 60,topics1h,topics12h,topicsAllTime)
+					  			
+					  			/*Read items published between 2 and 4 hours ago*/
+					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)
+					  			
+					  			/*Read items published between 4 and 10 hours ago*/
+					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
+					  			
+					  			/*Wait 20 minutes*/
+					  			Thread.sleep(1200000);
+							}
+				  			catch {
+								case e: Exception => {
+									e.printStackTrace
+									System.exit(1)
+								}
+				  			}
 						
-						/* Getting 12h top 10 topics */
-						val meta12h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
-						val topics12h = TopicsFinder.getKeywords(10,meta12h)
-						
-						/* Getting all time topics */
-						val topicsAllTime = TopicsFinder.getKeywords(100)
-						
-						/*Sending to the kafka queues*/
-						writeTopicsKafka("topics1h", topics1h)
-						writeTopicsKafka("topics12h", topics12h)
-						writeTopicsKafka("topicsalltime", topicsAllTime)
-						
-						/*writing in Hbase*/
-						writeTopicsHbase("topics1h", topics1h)
-						writeTopicsHbase("topics12h", topics12h)
-						writeTopicsHbase("topicsalltime", topicsAllTime)
-						
-						
-						/*fetching comments*/			  			
-			  		  
-			  			/*read items published between 20 min and 1 hours ago*/
-			  			CommentsFetcher.readItems(60, 20, topics1h,topics12h,topicsAllTime)
-			  		  
-			  			/*read items published between 1 and 2 hours ago*/
-			  			CommentsFetcher.readItems(120, 60,topics1h,topics12h,topicsAllTime)
-			  			
-			  			/*Read items published between 2 and 4 hours ago*/
-			  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)
-			  			
-			  			/*Read items published between 4 and 10 hours ago*/
-			  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
-				
+						}
 						
 					}
 					
