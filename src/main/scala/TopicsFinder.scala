@@ -17,7 +17,7 @@ object TopicsFinder {
   	val hbr = new ReadFromHbase
 	val hbw = new WriteToHbase
 	
-	val conf = new SparkConf().setAppName("Spark Topics")
+	val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
     val spark = new SparkContext(conf)
 
 	
