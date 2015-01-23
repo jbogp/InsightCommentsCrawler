@@ -62,6 +62,7 @@ object TopicsFinder {
 		  
 		  tokenized.foreach(r =>{
 		    println(new String(r.getRow()))
+		  })
 		  
 		/*val int = tokenized  
 		  .map(result => result.getColumn("infos".getBytes(), "url".getBytes()))
