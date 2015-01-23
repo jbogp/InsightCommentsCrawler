@@ -61,15 +61,16 @@ object TopicsFinder {
 		  .map(tuple => tuple._2)
 		  
 		val test =  tokenized.map[String](r => {
-			  		if(r.containsColumn("contents".getBytes(), "title".getBytes())){
-			  			new String(r.getColumnLatest("contents".getBytes(), "title".getBytes()).getValue())
+			  		if(r.containsColumn("contents".getBytes(), "description".getBytes())){
+			  			new String(r.getColumnLatest("contents".getBytes(), "description".getBytes()).getValue())
 			  		}
 			  		else {
 			  			""
 			  		}
 		  })
 		  
-		val wordCounts = test  
+		val wordCounts = test
+		  .flatMap(_.split(" "))  
 		  .map((_,1)).reduceByKey(_ + _)
 		
 		
