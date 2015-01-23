@@ -24,7 +24,7 @@ case class Comment(
 
 case class CommentsList(
   comments: List[Comment]
-)
+) 
 
 /*Case class for the JSON message that will be sent to kafka for URLS*/
 case class KafkaMessageURL(link:String,engine:String,engineId:String)
@@ -38,6 +38,7 @@ case class FeedInfo(info:String){
   val engineId = arrayInfo(3) 
 }
 
+
 /*Case class of Atom Rss feed*/
 case class AtomRssFeed(title:String, link:String, desc:String, items:Seq[RssItem]) extends RssFeed
 /*Case class of xml Rss feed*/
@@ -45,7 +46,7 @@ case class XmlRssFeed(title:String, link:String, desc:String, language:String, i
 
 case class SimpleRssItem(url:String,engine:String,engineId:String)
 
-case class ArticleMeta(url:String,title:String,desc:String)
+case class ArticleMeta(hash:String,title:String,desc:String) 
 
 /*Case class of an rss item within a rss feed*/
 case class RssItem(title:String, link:String, desc:String, guid:String) {

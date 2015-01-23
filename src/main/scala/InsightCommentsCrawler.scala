@@ -87,8 +87,8 @@ object InsightCommentsCrawler {
 					  			/*Read items published between 2 and 4 hours ago*/
 					  			CommentsFetcher.readItems(240, 60)
 					  			
-					  			/*Read items published between 4 and 8 hours ago*/
-					  			CommentsFetcher.readItems(480, 240)
+					  			/*Read items published between 4 and 10 hours ago*/
+					  			CommentsFetcher.readItems(600, 240)
 					  			
 						  		/*waiting 20 minutes*/
 						  		Thread.sleep(1200000);
@@ -99,9 +99,10 @@ object InsightCommentsCrawler {
 					}
 					
 					/*test*/
-					case "TestJSON" => {
-
-						
+					case "TestTopic" => {
+						val hbr = new ReadFromHbase
+						val meta = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
+						TopicsFinder.getKeywords(meta)
 					}
 					
 					case _ => {

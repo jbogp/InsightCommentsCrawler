@@ -14,6 +14,10 @@ import main.scala.rss.SimpleRssItem
 import org.apache.hadoop.hbase.client.Result
 import main.scala.rss.SimpleRssItem
 import main.scala.rss.SimpleRssItem
+import main.scala.rss.ArticleMeta
+import main.scala.rss.ArticleMeta
+import main.scala.rss.ArticleMeta
+import main.scala.rss.ArticleMeta
 
 class ReadFromHbase {
   
@@ -54,15 +58,17 @@ class ReadFromHbase {
 			readTimeFilterGeneric[SimpleRssItem](table, minutesBackMax, minutesBackMin, handleRow)
 	}
 	
-	/*def readTimeFilterArticlesMeta(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[SimpleRssItem] =  {
-		/*function to handle links results*/
-		def handleRow(next:Result):SimpleRssItem = {
-			new SimpleRssItem(
-		    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
-		    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
-		    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue())
+	def readTimeFilterArticlesMeta(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[ArticleMeta] =  {
+		/*function to handle meta link results*/
+		def handleRow(next:Result):ArticleMeta = {
+			new ArticleMeta(
+		    new String(next.getRow()),
+		    new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue()),
+		    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue())
 			)		
 		}
-	}*/
+		/*Calling the database*/
+		readTimeFilterGeneric[ArticleMeta](table, minutesBackMax, minutesBackMin, handleRow)
+	}
 
 }
