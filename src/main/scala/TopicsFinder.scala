@@ -28,7 +28,7 @@ object TopicsFinder {
 	def getKeywords(corpus:ArrayBuffer[ArticleMeta])= {
   		/*Getting all infos together*/
   		
-  		val all = corpus.map(article => article.desc+" "+article.title).reduceLeft(_ + " " +_)
+  		val all = corpus.map(article => article.title).reduceLeft(_ + " " +_)
 		/*Cleaning*/
 		val corpusStriped = all.replaceAll("[^a-zA-Z ]", "")
 		
