@@ -24,6 +24,14 @@ libraryDependencies ++= Seq(
     "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0",
     "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0" % "provided",
     "org.apache.spark" % "spark-streaming_2.10" % "1.2.0-cdh5.3.0" % "provided",
+    "org.slf4j" % "slf4j-api" % slf4j,
     "org.apache.spark" % "spark-streaming-kafka_2.10" % "1.2.0-cdh5.3.0" % "provided",
     "net.liftweb" %% "lift-json" % "2.5"
-).map(_.exclude("commons-logging", "commons-logging"))
+)
+
+ivyXML := 
+  <dependencies>
+    <exclude org="log4j" name="log4j" />
+    <exclude org="commons-logging" name="commons-logging" />
+    <exclude org="org.slf4j" name="slf4j-log4j12" />
+  </dependencies>
