@@ -17,7 +17,7 @@ object TopicsFinder {
   	val hbr = new ReadFromHbase
 	val hbw = new WriteToHbase
 	
-	val conf = new SparkConf().setAppName("Spark Topics").setMaster("spark://ec2-54-67-99-96.us-west-1.compute.amazonaws.com/:7077")
+	val conf = new SparkConf().setAppName("Spark Topics").setMaster("spark://ec2-54-67-99-96.us-west-1.compute.amazonaws.com:7077")
     val spark = new SparkContext(conf)
 
 	
