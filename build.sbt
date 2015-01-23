@@ -13,6 +13,7 @@ resolvers ++= Seq(
 )
  
 libraryDependencies ++= Seq(
+	"com.google.guava" % "guava" % "12.0",
 	"org.apache.kafka" % "kafka_2.10" % "0.8.2-beta",
     "org.apache.hadoop" % "hadoop-core" % "2.5.0-mr1-cdh5.3.0" % "provided", 
     "org.apache.hadoop" % "hadoop-common" % "2.5.0-cdh5.3.0" % "provided",
