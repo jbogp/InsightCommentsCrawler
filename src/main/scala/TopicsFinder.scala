@@ -70,7 +70,7 @@ object TopicsFinder {
 		  })
 		  
 		val wordCounts = test
-		  .flatMap(_.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").drop(1))  
+		  .flatMap(_.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" "))  
 		  .map((_,1)).reduceByKey(_ + _)
 		
 		
@@ -82,8 +82,10 @@ object TopicsFinder {
 		println(filtered
 		    .collect
 		    .sortBy(r=>r._2)
-		    .takeRight(10)
+		    .takeRight(11)
 		    .reverse
+		    //Removing empty string
+		    .drop(1)
 		    .reduceLeft((s,i) => ("("+s._1+","+s._2+"),("+ i._1+","+i._2+")",1)))
 		//tokenized.collect.foreach(res => println(new String(res)))
 		
