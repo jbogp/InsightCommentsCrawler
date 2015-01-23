@@ -39,11 +39,11 @@ object TopicsFinder {
   	  
   		/*Getting all infos together either from Hbase or corpus*/
 		val titles = {
-			 if(corpus.nonEmpty){
+			 if(corpus != null){
 		  		val all = corpus.map(article => article.title).reduceLeft(_ + " " +_)
 				/*Cleaning*/
 				val corpusStriped = all.replaceAll("[^a-zA-Z ]", "").toLowerCase()
-				println(corpus)
+				println(corpusStriped)
 				spark.parallelize(corpusStriped :: Nil).flatMap(_.split(" "))
 			}
 			else{
