@@ -71,9 +71,16 @@ class ReadFromHbase {
 	def readTimeFilterArticlesMeta(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[ArticleMeta] =  {
 		/*function to handle meta link results*/
 		def handleRow(next:Result):ArticleMeta = {
+			val desc = {
+			  val col = next.getColumn("contents".getBytes(), "description".getBytes())
+			  if(col.isEmpty())
+			    ""
+			  else
+			      new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue())
+			}
 			new ArticleMeta(
 		    new String(next.getRow()),
-		    new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue()),
+		    desc,
 		    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue())
 			)		
 		}

@@ -79,6 +79,7 @@ object InsightCommentsCrawler {
 					 */
 					 
 					case "InferTopics" => {
+						
 					  
 					  	/*Hbase reader*/
 						val hbr = new ReadFromHbase
