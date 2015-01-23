@@ -61,9 +61,9 @@ object TopicsFinder {
 		  .map(tuple => tuple._2)
 		  
 		  tokenized.foreach(r =>{
-				if(!r.isEmpty()){
-					println(new String(r.getColumnLatest("contents".getBytes(), "title".getBytes()).getValue()))
-				}
+			  		if(r.containsColumn("contents".getBytes(), "title".getBytes())){
+			  			println(new String(r.getColumnLatest("contents".getBytes(), "title".getBytes()).getValue()))
+			  		}
 		  })
 		  
 		/*val int = tokenized  
