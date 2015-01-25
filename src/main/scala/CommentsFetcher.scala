@@ -56,7 +56,11 @@ object CommentsFetcher {
 	  			  		val comments = fbReader.readJSON(json)
 	  			  		val jsonString = write(comments)
 	  			  	}
-	  			  	case _ => println("error")
+	  			  	case _ => {
+	  			  		println("error")
+	  			  		jsonString = "[]"
+	  			  	}
+	  			  	jsonString
 	  			}
 	  			/*Put in Hbase if not empty*/
 	  			if(jsonString != "[]") {
