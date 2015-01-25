@@ -27,7 +27,6 @@ class FBAPI extends ExternalAPI {
   
   
 	def fetchJSONFromURL(params:Array[String]):String = {
-			println(params(0))
 			val html = Source.fromURL("https://graph.facebook.com/v2.1/?fields=og_object{comments}&access_token=334762316566120|jbMVNQY0mIuS_Bw9aJzUIsfcOOc&id="+params(0))
 			html.mkString
 	}

@@ -17,6 +17,8 @@ object CommentsFetcher {
 	def readItems(minMax:Int,minMin:Int,topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]){
 		val items = hbr.readTimeFilterLinks("article_links",minMax,minMin)
 		println("Starting fetching comments for "+ items.length +" articles")
+		var success = 0
+		var empty = 0
 
   		items.foreach(item => {
   			try{
@@ -26,7 +28,6 @@ object CommentsFetcher {
 	  			  		if(item.url.contains("abcnews")) {
 	  			  			if(item.url.contains("story?id=")) {
 		  			  			val urlParts = item.url.split("/")
-		  			  			println("getting from disqus (abc news)")
 		  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
 		  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 			  			  		val comments = dReader.readJSON(json)
@@ -38,20 +39,17 @@ object CommentsFetcher {
 	  			  		}
 	  			  		else if(item.url.contains("japantimes")){
 	  			  			val newUrl = item.url.split("\\?").apply(0)
-	  			  			println("getting from disqus (japannews)")
 	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 		  			  		val comments = dReader.readJSON(json)
 		  			  		write(comments)
 	  			  		}
 	  			  		else {
-		  			  		println("getting from disqus")
 		  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
 		  			  		val comments = dReader.readJSON(json)
 		  			  		write(comments)
 	  			  		}
 	  			  	}
 	  			  	case "fb" => {
-	  			  		println("getting from fb")
 	  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
 	  			  		val comments = fbReader.readJSON(json)
 	  			  		write(comments)
@@ -63,11 +61,14 @@ object CommentsFetcher {
 	  			}
 	  			/*Put in Hbase if not empty*/
 	  			if(jsonString != "[]") {
+	  				success = success+1
 	  				hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
 	  			}
 	  			else{
+	  				empty = empty+1
 	  				println("comments empty, skipping")
 	  			}
+	  			println("added: "+success+ "skipped: "+empty)
   			}
   			catch {
 				case e: Exception => {
