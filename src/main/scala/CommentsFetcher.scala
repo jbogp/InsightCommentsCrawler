@@ -62,6 +62,9 @@ object CommentsFetcher {
 	  			if(jsonString != "[]") {
 	  				hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
 	  			}
+	  			else{
+	  				println("comments empty, skipping")
+	  			}
   			}
   			catch {
 				case e: Exception => {
