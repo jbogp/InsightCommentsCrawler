@@ -66,17 +66,16 @@ object CommentsFetcher {
 	  			}
 	  			else{
 	  				empty = empty+1
-	  				println("comments empty, skipping")
 	  			}
-	  			println("added: "+success+ "skipped: "+empty)
   			}
   			catch {
 				case e: Exception => {
 					println("Error fetching this comment")
 				}
   			}
+ 	  		println("added: "+success+ "| skipped: "+empty)
   			/*waiting to avoid scaring off the APIS*/
-  			Thread.sleep(500);
+  			Thread.sleep(100);
   		})
 
 	}
