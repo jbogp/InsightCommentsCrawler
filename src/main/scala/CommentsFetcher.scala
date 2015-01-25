@@ -20,17 +20,21 @@ object CommentsFetcher {
 
   		items.foreach(item => {
   			try{
-	  			item.engine match {
+	  			val jsonString:String = item.engine match {
 	  			  	case "disqus" => {
 	  			  		/*boring particular cases*/
-	  			  		if(item.url.contains("abcnews") && item.url.contains("story?id=")) {
-	  			  			val urlParts = item.url.split("/")
-	  			  			println("getting from disqus (abc news)")
-	  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
-	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-		  			  		val comments = dReader.readJSON(json)
-		  			  		val jsonString = write(comments)
-		  			  		hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
+	  			  		if(item.url.contains("abcnews")) {
+	  			  			if(item.url.contains("story?id=")) {
+		  			  			val urlParts = item.url.split("/")
+		  			  			println("getting from disqus (abc news)")
+		  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
+		  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
+			  			  		val comments = dReader.readJSON(json)
+			  			  		val jsonString = write(comments)
+			  			  	}
+			  			  	else {
+			  			  		val jsonString = "[]"
+			  			  	}
 	  			  		}
 	  			  		else if(item.url.contains("japantimes")){
 	  			  			val newUrl = item.url.split("\\?").apply(0)
@@ -38,14 +42,12 @@ object CommentsFetcher {
 	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 		  			  		val comments = dReader.readJSON(json)
 		  			  		val jsonString = write(comments)
-		  			  		hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
 	  			  		}
-	  			  		else if(!item.url.contains("abcnews")) {
+	  			  		else {
 		  			  		println("getting from disqus")
 		  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
 		  			  		val comments = dReader.readJSON(json)
 		  			  		val jsonString = write(comments)
-		  			  		hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
 	  			  		}
 	  			  	}
 	  			  	case "fb" => {
@@ -53,9 +55,12 @@ object CommentsFetcher {
 	  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
 	  			  		val comments = fbReader.readJSON(json)
 	  			  		val jsonString = write(comments)
-	  			  		hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
 	  			  	}
 	  			  	case _ => println("error")
+	  			}
+	  			/*Put in Hbase if not empty*/
+	  			if(jsonString != "[]") {
+	  				hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
 	  			}
   			}
   			catch {
