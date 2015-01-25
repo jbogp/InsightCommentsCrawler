@@ -30,10 +30,10 @@ object CommentsFetcher {
 		  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
 		  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 			  			  		val comments = dReader.readJSON(json)
-			  			  		val jsonString = write(comments)
+			  			  		write(comments)
 			  			  	}
 			  			  	else {
-			  			  		val jsonString = "[]"
+			  			  		"[]"
 			  			  	}
 	  			  		}
 	  			  		else if(item.url.contains("japantimes")){
@@ -41,26 +41,25 @@ object CommentsFetcher {
 	  			  			println("getting from disqus (japannews)")
 	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 		  			  		val comments = dReader.readJSON(json)
-		  			  		val jsonString = write(comments)
+		  			  		write(comments)
 	  			  		}
 	  			  		else {
 		  			  		println("getting from disqus")
 		  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
 		  			  		val comments = dReader.readJSON(json)
-		  			  		val jsonString = write(comments)
+		  			  		write(comments)
 	  			  		}
 	  			  	}
 	  			  	case "fb" => {
 	  			  		println("getting from fb")
 	  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
 	  			  		val comments = fbReader.readJSON(json)
-	  			  		val jsonString = write(comments)
+	  			  		write(comments)
 	  			  	}
 	  			  	case _ => {
 	  			  		println("error")
-	  			  		jsonString = "[]"
+	  			  		"[]"
 	  			  	}
-	  			  	jsonString
 	  			}
 	  			/*Put in Hbase if not empty*/
 	  			if(jsonString != "[]") {
