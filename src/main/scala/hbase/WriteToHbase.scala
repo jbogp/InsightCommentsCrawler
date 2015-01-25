@@ -80,10 +80,10 @@ case class WriteToHbase() {
 				if(topics1h.contains(word)) {
 					insert[String]("comments1h",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))
 				}
-				else if(topics12h.contains(word)) {
+				if(topics12h.contains(word)) {
 					insert[String]("comments12h",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))				  
 				}
-				else if(topicsAllTime.contains(word)) {
+				if(topicsAllTime.contains(word)) {
 					insert[String]("commentsalltime",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))				  
 				}
 			})
