@@ -133,16 +133,16 @@ object InsightCommentsCrawler {
 								/*fetching comments*/			  			
 					  		  
 					  			/*read items published between 20 min and 1 hours ago*/
-					  			CommentsFetcher.readItems(6000, 700, topics1h,topics12h,topicsAllTime)
+					  			CommentsFetcher.readItems(60, 20, topics1h,topics12h,topicsAllTime)
 					  		  
-					  			/*read items published between 1 and 2 hours ago
+					  			/*read items published between 1 and 2 hours ago*/
 					  			CommentsFetcher.readItems(120, 60,topics1h,topics12h,topicsAllTime)
 					  			
 					  			/*Read items published between 2 and 4 hours ago*/
 					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
-					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)*/
+					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
 					  			
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);

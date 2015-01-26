@@ -81,13 +81,13 @@ case class WriteToHbase() {
 
 			val in = title.foreach(word =>{
 				if(topics1h.contains(word)) {
-					insert[String]("comments1h",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))
+					insert[String]("comments1h",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
 				}
 				if(topics12h.contains(word)) {
-					insert[String]("comments12h",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))				  
+					insert[String]("comments12h",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))				  
 				}
 				if(topicsAllTime.contains(word) || topics1h.contains(word) || topics12h.contains(word)) {
-					insert[String]("commentsalltime",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))
+					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
 					println(values(3)+" "+row)
 				}
 			})
