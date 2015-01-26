@@ -54,7 +54,6 @@ object InsightCommentsCrawler {
 							} subreader.read(feedInfo)
 							
 							/*Sending messages to Kafka article_links queue*/
-
 							subreader.itemArray.foreach( item => {
 								println(item.link)
 								var values = Array(item.link,item.engine,item.engineId,item.desc,item.title)

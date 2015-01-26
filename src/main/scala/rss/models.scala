@@ -44,7 +44,7 @@ case class AtomRssFeed(title:String, link:String, desc:String, items:Seq[RssItem
 /*Case class of xml Rss feed*/
 case class XmlRssFeed(title:String, link:String, desc:String, language:String, items:Seq[RssItem]) extends RssFeed
 
-case class SimpleRssItem(url:String,engine:String,engineId:String,title:String)
+case class SimpleRssItem(url:String,engine:String,engineId:String,title:String,desc:String)
 
 case class ArticleMeta(hash:String,title:String,desc:String) 
 

@@ -52,7 +52,8 @@ class ReadFromHbase {
 			    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
 			    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
 			    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue()),
-			    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue())
+			    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue()),
+			    new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue())
 				)		
 			}
 			/*Calling the database*/

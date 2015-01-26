@@ -62,7 +62,7 @@ object CommentsFetcher {
 	  			/*Put in Hbase if not empty*/
 	  			if(jsonString != "[]") {
 	  				success = success+1
-	  				hbw.insertComments(Array(item.url,jsonString,item.title),topics1h,topics12h,topicsAllTime)
+	  				hbw.insertComments(Array(item.url,jsonString,item.title,item.desc),topics1h,topics12h,topicsAllTime)
 	  			}
 	  			else{
 	  				empty = empty+1
