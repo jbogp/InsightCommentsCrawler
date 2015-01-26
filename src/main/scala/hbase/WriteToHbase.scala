@@ -84,6 +84,8 @@ case class WriteToHbase() {
 					insert[String]("comments12h",row,"infos",Array(word,"theArticleLink","theArticleTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))				  
 				}
 				if(topicsAllTime.contains(word) || topics1h.contains(word) || topics12h.contains(word)) {
+					println("value(2): "+values(2))
+					println("value(3): "+values(3))
 					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theArticleTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))				  
 				}
 			})
