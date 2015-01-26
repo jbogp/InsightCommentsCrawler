@@ -30,7 +30,7 @@ object CommentsFetcher {
 		  			  			val urlParts = item.url.split("/")
 		  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
 		  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-			  			  		val comments = dReader.readJSON(json)
+			  			  		val comments = dReader.readJSON(json,newUrl)
 			  			  		write(comments)
 			  			  	}
 			  			  	else {
@@ -40,18 +40,18 @@ object CommentsFetcher {
 	  			  		else if(item.url.contains("japantimes")){
 	  			  			val newUrl = item.url.split("\\?").apply(0)
 	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-		  			  		val comments = dReader.readJSON(json)
+		  			  		val comments = dReader.readJSON(json,newUrl)
 		  			  		write(comments)
 	  			  		}
 	  			  		else {
 		  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
-		  			  		val comments = dReader.readJSON(json)
+		  			  		val comments = dReader.readJSON(json,item.url)
 		  			  		write(comments)
 	  			  		}
 	  			  	}
 	  			  	case "fb" => {
 	  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
-	  			  		val comments = fbReader.readJSON(json)
+	  			  		val comments = fbReader.readJSON(json,item.url)
 	  			  		write(comments)
 	  			  	}
 	  			  	case _ => {
@@ -75,7 +75,7 @@ object CommentsFetcher {
   			}
  	  		println("added: "+success+ "| skipped: "+empty)
   			/*waiting to avoid scaring off the APIS*/
-  			Thread.sleep(100);
+  			Thread.sleep(500);
   		})
 
 	}

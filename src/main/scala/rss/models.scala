@@ -19,7 +19,8 @@ case class Comment(
   created_time: String, 
   from: String,
   like_count: Int,
-  message:String
+  message:String,
+  url:String
 )
 
 case class CommentsList(

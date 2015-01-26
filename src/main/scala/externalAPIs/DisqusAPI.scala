@@ -87,7 +87,7 @@ class DisqusAPI extends ExternalAPI {
 			html.mkString
 	}
 
-	def readJSON(jsonString:String):ArrayBuffer[Comment] ={
+	def readJSON(jsonString:String,url:String):ArrayBuffer[Comment] ={
 			/*Parsing*/
 			val json = parse(jsonString)
 			val comments = (json \\ "response").children
@@ -96,12 +96,12 @@ class DisqusAPI extends ExternalAPI {
 			for ( comment <- comments) {
 				try{
 					val m = comment.extract[DisqusComment]
-					ret.append(new Comment(m.createdAt,m.author.name,m.likes,m.raw_message))
+					ret.append(new Comment(m.createdAt,m.author.name,m.likes,m.raw_message,url))
 				}
 				catch {
 				  	case e:Exception => {
 				  		val m = comment.extract[DisqusAnonComment]
-				  		ret.append(new Comment(m.createdAt,m.author.name,m.likes,m.raw_message))
+				  		ret.append(new Comment(m.createdAt,m.author.name,m.likes,m.raw_message,url))
 				  	}
 				}
 			}
