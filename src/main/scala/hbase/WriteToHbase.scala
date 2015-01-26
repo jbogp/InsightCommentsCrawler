@@ -74,8 +74,8 @@ case class WriteToHbase() {
 			insert[String]("comments_all",row,"infos",columns,values.take(2),s => Bytes.toBytes(s))
 			
 			/*Writing on topics tables*/
-			val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()>15).drop(1)
-			
+			val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
+
 			val in = title.foreach(word =>{
 				if(topics1h.contains(word)) {
 					insert[String]("comments1h",row,"infos",Array(word,"theArticleLink","theArticleTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
