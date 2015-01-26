@@ -21,7 +21,7 @@ case class WriteToHbase() {
 	val admin = new HBaseAdmin(conf)
 	
 	/*Generic function to insert in HBase*/
-	def insert[T](table:String, rowkey:String, familly:String, column:Array[String], value:Array[T], convertToBytes:(T)=>Array[Byte]) {
+	def insert[T](table:String, rowkey:String, familly:String, column:Array[String], value:Array[T], convertToBytes:(T)=>Array[Byte], overwrite:Boolean=true) {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
 		
@@ -30,7 +30,10 @@ case class WriteToHbase() {
 			/*Defining the rowkey*/
 			val theput= new Put(Bytes.toBytes(rowkey))
 			theput.add(Bytes.toBytes(familly),Bytes.toBytes(col),convertToBytes(valueTowrite))
-			httable.checkAndPut(Bytes.toBytes(rowkey),Bytes.toBytes(familly),Bytes.toBytes(col),null,theput)	
+			if(overwrite)
+				httable.put(theput)
+			else
+				httable.checkAndPut(Bytes.toBytes(rowkey),Bytes.toBytes(familly),Bytes.toBytes(col),null,theput)
 		})
 	
 	}
@@ -54,8 +57,8 @@ case class WriteToHbase() {
 			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
 			rowExists("article_links", row) match {
 				  case false => {
-					  insert[String]("article_links",row,"infos",columns.take(3),values.take(3),s => Bytes.toBytes(s))
-					  insert[String]("article_links",row,"contents",columns.takeRight(2),values.takeRight(2),s => Bytes.toBytes(s))
+					  insert[String]("article_links",row,"infos",columns.take(3),values.take(3),s => Bytes.toBytes(s),false)
+					  insert[String]("article_links",row,"contents",columns.takeRight(2),values.takeRight(2),s => Bytes.toBytes(s),false)
 					  true
 				  }
 				  case true => false
@@ -84,7 +87,7 @@ case class WriteToHbase() {
 					insert[String]("comments12h",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))				  
 				}
 				if(topicsAllTime.contains(word) || topics1h.contains(word) || topics12h.contains(word)) {
-					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),"test"+values(3)),s => Bytes.toBytes(s))
+					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
 					println(values(3)+" "+row)
 				}
 			})
