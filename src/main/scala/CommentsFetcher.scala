@@ -75,7 +75,7 @@ object CommentsFetcher {
   			}
  	  		println("added: "+success+ "| skipped: "+empty)
   			/*waiting to avoid scaring off the APIS*/
-  			Thread.sleep(500);
+  			Thread.sleep(10);
   		})
 
 	}
