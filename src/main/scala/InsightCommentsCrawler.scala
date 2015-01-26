@@ -133,7 +133,7 @@ object InsightCommentsCrawler {
 								/*fetching comments*/			  			
 					  		  
 					  			/*read items published between 20 min and 1 hours ago*/
-					  			CommentsFetcher.readItems(12000, 700, topics1h,topics12h,topicsAllTime)
+					  			CommentsFetcher.readItems(10000, 700, topics1h,topics12h,topicsAllTime)
 					  		  
 					  			/*read items published between 1 and 2 hours ago
 					  			CommentsFetcher.readItems(120, 60,topics1h,topics12h,topicsAllTime)
