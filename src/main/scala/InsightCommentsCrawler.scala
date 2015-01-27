@@ -165,13 +165,32 @@ object InsightCommentsCrawler {
 					
 					case "StormTest" => {
 					  
+						val hbr = new ReadFromHbase
 						val twitterStream = TwitterStreamingAPI.getStream
-						val filterQuery = new FilterQuery()
-						filterQuery.track(Array(" snow "))	
-						filterQuery.language(Array("en"))
-										
-						twitterStream.addListener(new OnTweetPosted(s => println(s.getText())))
-						twitterStream.filter(filterQuery)
+						
+						while(true){
+							/*Getting the topics*/
+							val topics1h = hbr.readTrendsComments("topics1h","val")
+							
+							/*Creating the filter*/
+							val filterQuery = new FilterQuery()
+							filterQuery.track(Array(" babababakok "))	
+							filterQuery.language(Array("en"))
+							
+							/*Starting the streaming*/
+							twitterStream.addListener(new OnTweetPosted(s => println(s.getText())))
+							twitterStream.filter(filterQuery)
+							
+							println("test")
+							
+				  			/*Wait 20 minutes*/
+				  			Thread.sleep(1200000);
+							
+							twitterStream.clearListeners()
+							
+							
+						}
+						
 					  
 					}
 					

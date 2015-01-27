@@ -18,6 +18,7 @@ import main.scala.rss.ArticleMeta
 import main.scala.rss.ArticleMeta
 import main.scala.rss.ArticleMeta
 import main.scala.rss.ArticleMeta
+import org.apache.hadoop.hbase.CellUtil
 
 class ReadFromHbase {
   
@@ -43,6 +44,24 @@ class ReadFromHbase {
 			ret.append(handleRow(next))		
 		}
 		ret		
+	}
+
+	def readTrendsComments(table:String,column:String):ArrayBuffer[String] =  {
+		/*function to handle meta link results*/
+		def handleRow(next:Result):String = {
+			val jsonString = {
+			  val col = next.getColumnLatestCell("infos".getBytes(), column.getBytes())
+			  val value = CellUtil.cloneValue(col)
+			  if(value.length != 0)
+				  new String(value)
+			  else
+				  "empty"
+			}
+			
+			jsonString
+		}
+		/*Calling the database*/
+		readTimeFilterGeneric[String](table, 20, 0, handleRow)
 	}
  
 	def readTimeFilterLinks(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[SimpleRssItem] =  {
