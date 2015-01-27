@@ -167,8 +167,8 @@ object InsightCommentsCrawler {
 					  
 						val twitterStream = TwitterStreamingAPI.getStream
 						val filterQuery = new FilterQuery()
-											.locations(Array(Array(-126.562500,30.448674),Array(-61.171875,44.087585)))
-											.track(Array("test"))
+						filterQuery.track(Array(" snow "))	
+						filterQuery.language(Array("en"))
 										
 						twitterStream.addListener(new OnTweetPosted(s => println(s.getText())))
 						twitterStream.filter(filterQuery)
