@@ -19,12 +19,16 @@ import main.scala.rss.ArticleMeta
 import main.scala.rss.ArticleMeta
 import main.scala.rss.ArticleMeta
 import org.apache.hadoop.hbase.CellUtil
+import org.apache.hadoop.hbase.HBaseConfiguration
 
 class ReadFromHbase {
   
   	/*Creating configuration and connecting*/
-	val conf = new Configuration()
-	val admin = new HBaseAdmin(conf)
+	val conf = HBaseConfiguration.create()
+    conf.clear();
+    conf.set("hbase.zookeeper.quorum", "ip-172-31-11-73.us-west-1.compute.internal");
+    conf.set("hbase.zookeeper.property.clientPort","2181");
+    conf.set("hbase.master", "ip-172-31-11-73.us-west-1.compute.internal:60000");
 	
 	/*Generic Hbase reader to fetch all the rows of a table beetween 2 times and create objects out of that*/
 	def readTimeFilterGeneric[T](table:String,minutesBackMax:Int,minutesBackMin:Int,handleRow:Result=>T):ArrayBuffer[T] = {
