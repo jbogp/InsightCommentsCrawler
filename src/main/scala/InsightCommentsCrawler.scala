@@ -174,14 +174,13 @@ object InsightCommentsCrawler {
 							
 							/*Creating the filter*/
 							val filterQuery = new FilterQuery()
-							filterQuery.track(Array(" babababakok "))	
+							filterQuery.track(topics1h.toArray)	
 							filterQuery.language(Array("en"))
 							
 							/*Starting the streaming*/
 							twitterStream.addListener(new OnTweetPosted(s => println(s.getText())))
 							twitterStream.filter(filterQuery)
 							
-							println("test")
 							
 				  			/*Wait 20 minutes*/
 				  			Thread.sleep(1200000);
