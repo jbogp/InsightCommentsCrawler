@@ -94,13 +94,14 @@ object InsightCommentsCrawler {
 						}
 						
 						def writeTopicsHbase(table:String,topics:Array[String]) {
-							topics.foreach(topic=>{
+							topics.zipWithIndex.foreach(topicWithIndex=>{
+								val prefix = String.format("%08d", int2Integer(topicWithIndex._2))
 								hbw.insert[String](
 								    table,
-								    MessageDigest.getInstance("MD5").digest((topic+Calendar.getInstance().getTimeInMillis().toString).getBytes()).mkString,
+								    prefix+MessageDigest.getInstance("MD5").digest((topicWithIndex._1+Calendar.getInstance().getTimeInMillis().toString).getBytes()).mkString,
 								    "infos",
 								    Array("val"),
-								    Array(topic),
+								    Array(topicWithIndex._1),
 								    s => Bytes.toBytes(s))
 							})	
 
