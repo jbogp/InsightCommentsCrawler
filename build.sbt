@@ -48,6 +48,7 @@ libraryDependencies ++= Seq(
     exclude("org.apache.zookeeper", "zookeeper")
     exclude("org.slf4j", "log4j-over-slf4j"),
     "org.apache.storm" % "storm-kafka" % "0.9.3"
-    exclude("org.apache.zookeeper", "zookeeper")
+    exclude("org.apache.zookeeper", "zookeeper"),
+    "org.twitter4j" % "twitter4j-stream" % "4.0.2"
 )
 

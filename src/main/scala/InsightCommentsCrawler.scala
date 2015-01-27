@@ -21,6 +21,10 @@ import org.apache.spark._
 import main.scala.hbase.ReadFromHbase
 import main.scala.hbase.WriteToHbase
 import java.security.MessageDigest
+import externalAPIs.TwitterStreamingAPI
+import externalAPIs.OnTweetPosted
+import twitter4j.FilterQuery
+import externalAPIs.OnTweetPosted
 
 
 
@@ -160,6 +164,14 @@ object InsightCommentsCrawler {
 					}
 					
 					case "StormTest" => {
+					  
+						val twitterStream = TwitterStreamingAPI.getStream
+						val filterQuery = new FilterQuery()
+											.locations(Array(Array(-126.562500,30.448674),Array(-61.171875,44.087585)))
+											.track(Array("test"))
+										
+						twitterStream.addListener(new OnTweetPosted(s => println(s.getText())))
+						twitterStream.filter(filterQuery)
 					  
 					}
 					
