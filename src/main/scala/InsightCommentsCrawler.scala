@@ -174,7 +174,7 @@ object InsightCommentsCrawler {
 							
 							/*Creating the filter*/
 							val filterQuery = new FilterQuery()
-							filterQuery.track(topics1h.toArray)	
+							filterQuery.track(topics1h.map(" "+_+" ").toArray[String])	
 							filterQuery.language(Array("en"))
 							
 							/*Starting the streaming*/
