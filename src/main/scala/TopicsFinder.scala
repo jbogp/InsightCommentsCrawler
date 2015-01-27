@@ -18,6 +18,7 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.client.Result
 import scala.collection.JavaConverters._
 import org.apache.spark.rdd.RDD
+import org.apache.hadoop.hbase.CellUtil
 
 
 object TopicsFinder {
@@ -67,7 +68,7 @@ object TopicsFinder {
 				val tokenized = rdd.map(tuple => tuple._2)
 				tokenized.map[String](r => {
 					  		if(r.containsColumn("contents".getBytes(), "description".getBytes())){
-					  			new String(r.getColumnLatest("contents".getBytes(), "description".getBytes()).getValue())
+					  			new String(CellUtil.cloneValue(r.getColumnLatestCell("contents".getBytes(), "description".getBytes())))
 					  		}
 					  		else {
 					  			""

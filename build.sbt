@@ -9,7 +9,9 @@ resolvers ++= Seq(
   "Hadoop Releases" at "https://repository.cloudera.com/content/repositories/releases/",
   "Cloudera" at "https://repository.cloudera.com/artifactory/public/",
   "Cloudera2" at "http://repository.cloudera.com/cloudera/cloudera-repos/",
-  "releases" at "http://oss.sonatype.org/content/repositories/releases"
+  "releases" at "http://oss.sonatype.org/content/repositories/releases",
+  "typesafe-repository" at "http://repo.typesafe.com/typesafe/releases/",
+  "clojars-repository" at "https://clojars.org/repo"
 )
  
   val excludeJBossNetty = ExclusionRule(organization = "org.jboss.netty")
@@ -41,6 +43,11 @@ libraryDependencies ++= Seq(
     "org.apache.hbase" % "hbase-common" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
     "org.apache.hbase" % "hbase-server" % "0.98.6-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
     "org.apache.spark" % "spark-core_2.10" % "1.2.0-cdh5.3.0" excludeAll(excludeServletApi,excludeJBossNetty),
-    "net.liftweb" %% "lift-json" % "2.5" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty)
+    "net.liftweb" %% "lift-json" % "2.5" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
+    "org.apache.storm" % "storm-core" % "0.9.3" 
+    exclude("org.apache.zookeeper", "zookeeper")
+    exclude("org.slf4j", "log4j-over-slf4j"),
+    "org.apache.storm" % "storm-kafka" % "0.9.3"
+    exclude("org.apache.zookeeper", "zookeeper")
 )
 

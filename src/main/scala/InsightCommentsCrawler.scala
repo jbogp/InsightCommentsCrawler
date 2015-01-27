@@ -159,6 +159,10 @@ object InsightCommentsCrawler {
 						
 					}
 					
+					case "StormTest" => {
+					  
+					}
+					
 					case _ => {
 					  println("Sorry, did not understand this command")
 					  exit(0)
