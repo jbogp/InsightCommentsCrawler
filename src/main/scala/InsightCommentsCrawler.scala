@@ -218,7 +218,7 @@ object InsightCommentsCrawler {
 						
 						val consumer = new KafkaConsumer("tweets","TweetsConsumer",args(1),false,timestamp)
 						consumer.read(msg => println(new String(msg)))
-
+						consumer.close
 						
 						println(timestamp)
 						
