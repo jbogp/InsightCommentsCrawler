@@ -54,6 +54,8 @@ case class TweetToJSON(kafkaProducer:KafkaProducer) {
 			    cb.getUser().getProfileImageURL(),
 			    cb.getUser().getURL()
 			)
+			println("writing to kafka")
+			println(write(tweet))
 			
 			
 			
