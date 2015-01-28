@@ -72,7 +72,7 @@ class FilteringBolt extends BaseRichBolt {
 
   override def execute(tuple: Tuple) {
     //this.collector.emit(tuple, new Values(TweetsFilter.filter(tuple.getString(0))))
-    TweetsFilter.filter(tuple.getString(0))
+    TweetsFilter.filter(new String(tuple.getBinary(0)))
     this.collector.ack(tuple)
   }
 
