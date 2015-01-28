@@ -161,17 +161,17 @@ object InsightCommentsCrawler {
 								
 								
 								/*Getting the Twitter Streams for every topic*/
-								/*Creating the filter*/
+								/*Creating the filter
 								val filterQuery = new FilterQuery()
 								filterQuery.track((topics1h++topics12h++topicsAllTime).map(" "+_+" ").toArray[String])	
 								filterQuery.language(Array("en"))
 								
 								/*Starting the streaming*/
 								twitterStream.addListener(new OnTweetPosted(cb =>tweetToJSon.statusHandler(cb)))
-								twitterStream.filter(filterQuery)
+								twitterStream.filter(filterQuery)*/
 								
 								
-								/*fetching comments			  			
+								/*fetching comments	*/		  			
 					  		  
 					  			/*read items published between 0 min and 1 hours ago*/
 					  			CommentsFetcher.readItems(60, 0, topics1h,topics12h,topicsAllTime)
@@ -184,7 +184,7 @@ object InsightCommentsCrawler {
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
 					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
-					  			*/
+					  			
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);
 								
