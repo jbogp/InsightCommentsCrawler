@@ -202,11 +202,13 @@ object InsightCommentsCrawler {
 						val hbr = new ReadFromHbase
 
 						/*writing time of last computation in mysql*/
-						val timestamp = MySQLConnector
+						val timestampRes = MySQLConnector
 							.connection
 							.createStatement()
-							.executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC")
-							.getLong(0)
+							.executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC LIMIT 1;")
+						/*moving cursor to first element*/
+						timestampRes.first()
+						val timestamp = timestampRes.getLong("timestamp")
 							
 						println(timestamp)
 
