@@ -26,9 +26,11 @@ import main.scala.kafka.KafkaProducer
 
 class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 1,topologyName: String = "kafka-storm-starter") {
 
-  def runTopology() {
-    val zkHosts = new ZkHosts(kafkaZkConnect,"/brokers")
-    val zkRoot = "/kafka-spout"
+  
+  
+def runTopology() {
+    val zkHosts = new ZkHosts(kafkaZkConnect)
+    val zkRoot = ""
     // The spout appends this id to zkRoot when composing its ZooKeeper path.  You don't need a leading `/`.
     val zkSpoutId = "kafka-storm-starter"
     val kafkaConfig = new SpoutConfig(zkHosts, topic, zkRoot, zkSpoutId)
@@ -43,26 +45,17 @@ class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int 
       val c = new Config
       c.put(Config.NIMBUS_HOST, "ec2-54-67-119-111.us-west-1.compute.amazonaws.com");
       c.put(Config.NIMBUS_THRIFT_PORT,6627:Integer);
-      c.setDebug(false)
+      c.setDebug(true)
       c.setNumWorkers(4)
-      c.setMaxSpoutPending(1000)
-      c.setMessageTimeoutSecs(60)
-      c.setNumAckers(0)
-      c.setMaxTaskParallelism(50)
-      c.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384: Integer)
-      c.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE, 16384: Integer)
-      c.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE, 8: Integer)
-      c.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, 32: Integer)
-      c.put(Config.TOPOLOGY_STATS_SAMPLE_RATE, 0.05: java.lang.Double)
       c
     }
     
     System.setProperty("storm.jar","/home/ubuntu/scala/InsightCommentsCrawler/target/scala-2.10/something.jar")
     
     builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
-    builder.setBolt("filterTweets", new FilteringBolt(), 3).shuffleGrouping(spoutId)
+    builder.setBolt("filterTweets", new FilteringBolt(), 1).shuffleGrouping(spoutId)
 
-    // Now run the topology in a local, in-memory Storm cluster
+    // Now run the topology
     StormSubmitter.submitTopology(topologyName, topologyConfiguration, builder.createTopology())
   }
 
