@@ -35,6 +35,8 @@ class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int 
     // Showcases how to customize the topology configuration
     val topologyConfiguration = {
       val c = new Config
+      c.put(Config.NIMBUS_HOST, "ec2-54-67-119-111.us-west-1.compute.amazonaws.com");
+      c.put(Config.NIMBUS_THRIFT_PORT,6627:Integer);
       c.setDebug(false)
       c.setNumWorkers(4)
       c.setMaxSpoutPending(1000)
