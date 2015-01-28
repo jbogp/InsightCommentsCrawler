@@ -50,8 +50,7 @@ libraryDependencies ++= Seq(
     exclude("org.apache.zookeeper", "zookeeper"),
     "org.twitter4j" % "twitter4j-stream" % "4.0.2",
     "mysql" % "mysql-connector-java" % "5.1.34",
-    "org.apache.logging.log4j" % "log4j-core" % "2.1"
-
+    "org.slf4j" % "log4j-over-slf4j" % "1.7.7"
 )
 
 assemblyMergeStrategy in assembly := {
