@@ -25,6 +25,8 @@ import externalAPIs.TwitterStreamingAPI
 import externalAPIs.OnTweetPosted
 import twitter4j.FilterQuery
 import externalAPIs.OnTweetPosted
+import main.scala.kafka.KafkaProducer
+import externalAPIs.TweetToJSON
 
 
 
@@ -87,11 +89,14 @@ object InsightCommentsCrawler {
 						val hbr = new ReadFromHbase
 						/*Hbase writer*/
 						val hbw = new WriteToHbase
+						
+						/*kafka connector*/
+						def getKafkaProducer(kafkaTop:String):KafkaProducer ={
+							new KafkaProducer(kafkaTop,args(1))
+						} 
 					  
-						def writeTopicsKafka(kafkaTop:String,topics:Array[String]) {
-							/*kafka connector*/
-							val kafkaProducer = new KafkaProducer(kafkaTop,args(1))
-							
+						def writeToKafka(kafkaTop:String,topics:Array[String]) {
+							val kafkaProducer = getKafkaProducer(kafkaTop)
 							topics.foreach(topic=>{
 								kafkaProducer.send(topic, "1")
 							})	
@@ -111,8 +116,16 @@ object InsightCommentsCrawler {
 
 						}
 						
+						val twitterStream = TwitterStreamingAPI.getStream
+						val twitterKafkaProducer = getKafkaProducer("tweets")
+						val tweetToJSon = new TweetToJSON(twitterKafkaProducer)
+						
 						while(true){
 							try{
+							  
+								/*If any exit, clear Twitter Listeners*/
+							  	twitterStream.clearListeners()
+							  
 								/* Getting 1h top 10 topics */
 								val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
 								val topics1h = TopicsFinder.getKeywords(10,meta1h)
@@ -125,14 +138,25 @@ object InsightCommentsCrawler {
 								val topicsAllTime = TopicsFinder.getKeywords(100)
 								
 								/*Sending to the kafka queues*/
-								writeTopicsKafka("topics1h", topics1h)
-								writeTopicsKafka("topics12h", topics12h)
-								writeTopicsKafka("topicsalltime", topicsAllTime)
+								writeToKafka("topics1h", topics1h)
+								writeToKafka("topics12h", topics12h)
+								writeToKafka("topicsalltime", topicsAllTime)
 								
 								/*writing in Hbase*/
 								writeTopicsHbase("topics1h", topics1h)
 								writeTopicsHbase("topics12h", topics12h)
 								writeTopicsHbase("topicsalltime", topicsAllTime)
+								
+								
+								/*Getting the Twitter Streams for every topic*/
+								/*Creating the filter*/
+								val filterQuery = new FilterQuery()
+								filterQuery.track((topics1h++topics12h++topicsAllTime).map(" "+_+" ").toArray[String])	
+								filterQuery.language(Array("en"))
+								
+								/*Starting the streaming*/
+								twitterStream.addListener(new OnTweetPosted(cb =>tweetToJSon.statusHandler(cb)))
+								twitterStream.filter(filterQuery)
 								
 								
 								/*fetching comments*/			  			
@@ -151,6 +175,7 @@ object InsightCommentsCrawler {
 					  			
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);
+								
 							}
 				  			catch {
 								case e: Exception => {
@@ -166,26 +191,17 @@ object InsightCommentsCrawler {
 					case "StormTest" => {
 					  
 						val hbr = new ReadFromHbase
-						val twitterStream = TwitterStreamingAPI.getStream
+
 						
 						while(true){
 							/*Getting the topics*/
 							val topics1h = hbr.readTrendsComments("topics1h","val")
 							
-							/*Creating the filter*/
-							val filterQuery = new FilterQuery()
-							filterQuery.track(topics1h.map(" "+_+" ").toArray[String])	
-							filterQuery.language(Array("en"))
-							
-							/*Starting the streaming*/
-							twitterStream.addListener(new OnTweetPosted(s => println(s.getText())))
-							twitterStream.filter(filterQuery)
 							
 							
 				  			/*Wait 20 minutes*/
 				  			Thread.sleep(1200000);
 							
-							twitterStream.clearListeners()
 							
 							
 						}
