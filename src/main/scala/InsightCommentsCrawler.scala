@@ -201,8 +201,15 @@ object InsightCommentsCrawler {
 					  
 						val hbr = new ReadFromHbase
 
+						/*writing time of last computation in mysql*/
+						val timestamp = MySQLConnector
+							.connection
+							.createStatement()
+							.executeQuery("INSERT INTO timestamp VALUES ("+Calendar.getInstance().getTimeInMillis()+")")
+
+
 						
-						while(true){
+						/*while(true){
 							/*Getting the topics*/
 							val topics1h = hbr.readTrendsComments("topics1h","val")
 							
@@ -211,7 +218,7 @@ object InsightCommentsCrawler {
 							
 							
 							
-						}
+						}*/
 						
 					  
 					}
