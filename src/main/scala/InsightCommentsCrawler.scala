@@ -29,7 +29,8 @@ import main.scala.kafka.KafkaProducer
 import externalAPIs.TweetToJSONToKafka
 import main.scala.sql.MySQLConnector
 import main.scala.kafka.KafkaConsumer
-import main.scala.kafka.KafkaConsumer
+import main.scala.storm.KafkaStorm
+
 
 
 
@@ -172,8 +173,8 @@ object InsightCommentsCrawler {
 								
 								/*fetching comments			  			
 					  		  
-					  			/*read items published between 20 min and 1 hours ago*/
-					  			CommentsFetcher.readItems(60, 20, topics1h,topics12h,topicsAllTime)
+					  			/*read items published between 0 min and 1 hours ago*/
+					  			CommentsFetcher.readItems(60, 0, topics1h,topics12h,topicsAllTime)
 					  		  
 					  			/*read items published between 1 and 2 hours ago*/
 					  			CommentsFetcher.readItems(120, 60,topics1h,topics12h,topicsAllTime)
@@ -203,38 +204,19 @@ object InsightCommentsCrawler {
 					  
 						val hbr = new ReadFromHbase
 
-						
-						/*writing time of last computation in mysql*/
-						val timestampRes = MySQLConnector
-							.connection
-							.createStatement()
-							.executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC LIMIT 1;")
-						/*moving cursor to first element*/
-						timestampRes.first()
-						/*Getting timestamp*/
-						//val timestamp = timestampRes.getLong("timestamp")
-						val timestamp = Calendar.getInstance().getTimeInMillis()
-						println(timestamp)
-						
-						val consumer = new KafkaConsumer("tweets","TweetsConsumer",args(1),false,timestamp)
-						consumer.read(msg => println(new String(msg)))
-						consumer.close
-						
-						println(timestamp)
-						
-						
+						while(true){
+							/*Getting time of last computation in mysql*/
+							val timestampRes = MySQLConnector
+								.connection
+								.createStatement()
+								.executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC LIMIT 1;")
+							/*moving cursor to first element*/
+							timestampRes.first()
+							/*Getting timestamp*/
+							val timestamp = timestampRes.getLong("timestamp")
 							
-
-						/*while(true){
-							/*Getting the topics*/
-							val topics1h = hbr.readTrendsComments("topics1h","val")
-							
-				  			/*Wait 20 minutes*/
-				  			Thread.sleep(1200000);
-							
-							
-							
-						}*/
+							val storm = new KafkaStorm(args(1),"tweets")
+						}
 						
 					  
 					}
