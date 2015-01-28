@@ -33,7 +33,7 @@ resolvers ++= Seq(
   val excludeJUnit = ExclusionRule(organization = "junit")
 
 libraryDependencies ++= Seq(
-	"org.apache.kafka" % "kafka_2.10" % "0.8.2-beta" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi, excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
+	"org.apache.kafka" % "kafka_2.10" % "0.8.2-beta" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeOldAsm, excludeServletApi, excludeEclipseJetty,excludeIONetty,excludeJBossNetty,excludeSLF4J),
     "org.apache.hadoop" % "hadoop-core" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty), 
     "org.apache.hadoop" % "hadoop-common" % "2.5.0-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
   	"org.apache.hadoop" % "hadoop-client" % "2.5.0-mr1-cdh5.3.0" excludeAll(excludeJBossNetty, excludeMortbayJetty, excludeAsm, excludeCommonsLogging, excludeSLF4J, excludeOldAsm, excludeServletApi,excludeEclipseJetty,excludeIONetty,excludeJBossNetty),
@@ -48,7 +48,8 @@ libraryDependencies ++= Seq(
     exclude("org.slf4j", "log4j-over-slf4j"),
     "org.apache.storm" % "storm-kafka" % "0.9.3"
     exclude("org.apache.zookeeper", "zookeeper")
-    exclude("org.slf4j", "log4j-over-slf4j"),
+    exclude("org.slf4j", "log4j-over-slf4j")
+    excludeAll(excludeSLF4J),
     "org.twitter4j" % "twitter4j-stream" % "4.0.2" excludeAll(excludeSLF4J),
     "mysql" % "mysql-connector-java" % "5.1.34" excludeAll(excludeSLF4J)
 )
