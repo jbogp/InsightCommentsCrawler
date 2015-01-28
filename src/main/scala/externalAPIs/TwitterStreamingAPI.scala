@@ -25,7 +25,7 @@ class OnTweetPosted(cb: Status => Unit) extends StatusListener {
     override def onTrackLimitationNotice(numberOfLimitedStatuses: Int): Unit = {}
 }
 
-case class TweetToJSON(kafkaProducer:KafkaProducer) {
+case class TweetToJSONToKafka(kafkaProducer:KafkaProducer) {
   
 	implicit val formats = Serialization.formats(NoTypeHints)
 	
@@ -43,6 +43,7 @@ case class TweetToJSON(kafkaProducer:KafkaProducer) {
 					  	}
 					}
 			}
+			/*Getting a Tweet object in order to serialize later*/
 			val tweet = new Tweet(
 			    cb.getSource(),
 			    cb.getCreatedAt().getTime(),
@@ -54,11 +55,7 @@ case class TweetToJSON(kafkaProducer:KafkaProducer) {
 			    cb.getUser().getProfileImageURL(),
 			    cb.getUser().getURL()
 			)
-			println("writing to kafka")
-			println(write(tweet))
-			
-			
-			
+			/*Serialize and send to kafka*/
 			kafkaProducer.send(write(tweet), null)
 	}
 }

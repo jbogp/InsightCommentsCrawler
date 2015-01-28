@@ -26,7 +26,8 @@ import externalAPIs.OnTweetPosted
 import twitter4j.FilterQuery
 import externalAPIs.OnTweetPosted
 import main.scala.kafka.KafkaProducer
-import externalAPIs.TweetToJSON
+import externalAPIs.TweetToJSONToKafka
+import main.scala.sql.MySQLConnector
 
 
 
@@ -118,7 +119,7 @@ object InsightCommentsCrawler {
 						
 						val twitterStream = TwitterStreamingAPI.getStream
 						val twitterKafkaProducer = getKafkaProducer("tweets")
-						val tweetToJSon = new TweetToJSON(twitterKafkaProducer)
+						val tweetToJSon = new TweetToJSONToKafka(twitterKafkaProducer)
 						
 						while(true){
 							try{
@@ -142,7 +143,15 @@ object InsightCommentsCrawler {
 								writeToKafka("topics12h", topics12h)
 								writeToKafka("topicsalltime", topicsAllTime)
 								
-								/*writing in Hbase*/
+								/*writing time of last computation in mysql*/
+								val timestamp = MySQLConnector
+									.connection
+									.createStatement()
+									.executeQuery("INSERT INTO timestamp VALUES ("+Calendar.getInstance().getTimeInMillis()+")")
+
+								
+								
+								/*writing in Hbase
 								writeTopicsHbase("topics1h", topics1h)
 								writeTopicsHbase("topics12h", topics12h)
 								writeTopicsHbase("topicsalltime", topicsAllTime)
@@ -172,7 +181,7 @@ object InsightCommentsCrawler {
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
 					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
-					  			
+					  			*/
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);
 								
@@ -196,8 +205,6 @@ object InsightCommentsCrawler {
 						while(true){
 							/*Getting the topics*/
 							val topics1h = hbr.readTrendsComments("topics1h","val")
-							
-							
 							
 				  			/*Wait 20 minutes*/
 				  			Thread.sleep(1200000);
