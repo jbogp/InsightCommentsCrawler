@@ -27,7 +27,7 @@ import main.scala.kafka.KafkaProducer
 class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 1,topologyName: String = "kafka-storm-starter") {
 
   def runTopology() {
-    val zkHosts = new ZkHosts(kafkaZkConnect)
+    val zkHosts = new ZkHosts(kafkaZkConnect,"/brokers")
     val zkRoot = "/kafka-spout"
     // The spout appends this id to zkRoot when composing its ZooKeeper path.  You don't need a leading `/`.
     val zkSpoutId = "kafka-storm-starter"
