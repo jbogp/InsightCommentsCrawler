@@ -29,7 +29,7 @@ class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int 
   def runTopology() {
     val zkHosts = new ZkHosts(kafkaZkConnect)
     val topic = "tweets"
-    val zkRoot = "/"
+    val zkRoot = "/kafka-spout"
     // The spout appends this id to zkRoot when composing its ZooKeeper path.  You don't need a leading `/`.
     val zkSpoutId = "kafka-storm-starter"
     val kafkaConfig = new SpoutConfig(zkHosts, topic, zkRoot, zkSpoutId)
