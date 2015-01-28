@@ -51,6 +51,8 @@ class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int 
       c
     }
     
+    System.setProperty("storm.jar","/home/ubuntu/scala/InsightCommentsCrawler/target/scala-2.10/something.jar")
+    
 
     builder.setSpout("word", new TestWordSpout(), 10)
     builder.setBolt("exclaim", new ExclamationBolt(), 3).shuffleGrouping("word")
