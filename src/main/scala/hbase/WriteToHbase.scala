@@ -10,15 +10,18 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.util.Bytes
 import java.security.MessageDigest
 import java.util.Calendar
+import org.apache.hadoop.hbase.HBaseConfiguration
 
 /*Stores and reads values in the Hbase*/
 case class WriteToHbase() {
 	
   
-  
-	/*Creating configuration and connecting*/
-	val conf = new Configuration()
-	val admin = new HBaseAdmin(conf)
+  	/*Creating configuration and connecting*/
+	val conf = HBaseConfiguration.create()
+    conf.clear();
+    conf.set("hbase.zookeeper.quorum", "ip-172-31-11-73.us-west-1.compute.internal");
+    conf.set("hbase.zookeeper.property.clientPort","2181");
+    conf.set("hbase.master", "ip-172-31-11-73.us-west-1.compute.internal:60000");
 	
 	/*Generic function to insert in HBase*/
 	def insert[T](table:String, rowkey:String, familly:String, column:Array[String], value:Array[T], convertToBytes:(T)=>Array[Byte], overwrite:Boolean=true) {
