@@ -75,6 +75,7 @@ assemblyMergeStrategy in assembly := {
     case PathList("org", "apache","commons","beanutils", xs @ _*)         => MergeStrategy.first
     case PathList("org", "apache","commons","collections", xs @ _*)         => MergeStrategy.first
     case PathList("org", "apache","commons","logging", xs @ _*)         => MergeStrategy.first
+    case PathList("org", "apache","log4j", xs @ _*)         => MergeStrategy.last
     case PathList("org", "apache","jute", xs @ _*)         => MergeStrategy.first
     case PathList("org", "slf4j","impl", xs @ _*)         => MergeStrategy.first
     case x if x.startsWith("plugin.properties") => MergeStrategy.last
