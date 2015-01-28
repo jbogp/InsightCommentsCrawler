@@ -204,7 +204,7 @@ object InsightCommentsCrawler {
 					  
 						val hbr = new ReadFromHbase
 
-						while(true){
+
 							/*Getting time of last computation in mysql*/
 							val timestampRes = MySQLConnector
 								.connection
@@ -215,8 +215,7 @@ object InsightCommentsCrawler {
 							/*Getting timestamp*/
 							val timestamp = timestampRes.getLong("timestamp")
 							
-							val storm = new KafkaStorm(args(1),"tweets")
-						}
+							new KafkaStorm(args(1),"tweets").runTopology
 						
 					  
 					}
