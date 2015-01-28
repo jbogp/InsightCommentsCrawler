@@ -28,6 +28,7 @@ import externalAPIs.OnTweetPosted
 import main.scala.kafka.KafkaProducer
 import externalAPIs.TweetToJSONToKafka
 import main.scala.sql.MySQLConnector
+import main.scala.kafka.KafkaConsumer
 
 
 
@@ -200,7 +201,10 @@ object InsightCommentsCrawler {
 					case "StormTest" => {
 					  
 						val hbr = new ReadFromHbase
+						val consumer = new KafkaConsumer("tweets","CommentsFetcher",args(1),false)
 
+						
+						consumer.read(msg => println(new String(msg)))
 						/*writing time of last computation in mysql*/
 						val timestampRes = MySQLConnector
 							.connection
@@ -208,12 +212,11 @@ object InsightCommentsCrawler {
 							.executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC LIMIT 1;")
 						/*moving cursor to first element*/
 						timestampRes.first()
+						/*Getting timestamp*/
 						val timestamp = timestampRes.getLong("timestamp")
-							
 						println(timestamp)
+							
 
-
-						
 						/*while(true){
 							/*Getting the topics*/
 							val topics1h = hbr.readTrendsComments("topics1h","val")
