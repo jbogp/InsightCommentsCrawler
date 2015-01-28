@@ -46,10 +46,12 @@ libraryDependencies ++= Seq(
     "org.apache.storm" % "storm-core" % "0.9.3" % "provided" 
     exclude("org.apache.zookeeper", "zookeeper")
     exclude("org.slf4j", "log4j-over-slf4j"),
-    "org.apache.storm" % "storm-kafka" % "0.9.3" % "provided"
+    "org.apache.storm" % "storm-kafka" % "0.9.3"
     exclude("org.apache.zookeeper", "zookeeper"),
     "org.twitter4j" % "twitter4j-stream" % "4.0.2",
-    "mysql" % "mysql-connector-java" % "5.1.34"
+    "mysql" % "mysql-connector-java" % "5.1.34",
+    "org.apache.logging.log4j" % "log4j-core" % "2.1"
+
 )
 
 assemblyMergeStrategy in assembly := {
