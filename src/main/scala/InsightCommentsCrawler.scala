@@ -147,7 +147,7 @@ object InsightCommentsCrawler {
 								val timestamp = MySQLConnector
 									.connection
 									.createStatement()
-									.executeQuery("INSERT INTO timestamp VALUES ("+Calendar.getInstance().getTimeInMillis()+")")
+									.executeUpdate("INSERT INTO timestamp VALUES ("+Calendar.getInstance().getTimeInMillis()+")")
 
 								
 								
@@ -205,7 +205,7 @@ object InsightCommentsCrawler {
 						val timestamp = MySQLConnector
 							.connection
 							.createStatement()
-							.executeQuery("INSERT INTO timestamp VALUES ("+Calendar.getInstance().getTimeInMillis()+")")
+							.executeUpdate("INSERT INTO timestamp VALUES ("+Calendar.getInstance().getTimeInMillis()+")")
 
 
 						
