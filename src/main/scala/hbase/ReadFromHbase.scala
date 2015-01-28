@@ -30,7 +30,7 @@ class ReadFromHbase {
     conf.set("hbase.zookeeper.property.clientPort","2181");
     conf.set("hbase.master", "ip-172-31-11-73.us-west-1.compute.internal:60000");
 	
-	/*Generic Hbase reader to fetch all the rows of a table beetween 2 times and create objects out of that*/
+	/*Generic Hbase reader to fetch all the rows of a table beetween 2 times (in minutes) and create objects out of that*/
 	def readTimeFilterGeneric[T](table:String,minutesBackMax:Int,minutesBackMin:Int,handleRow:Result=>T):ArrayBuffer[T] = {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
@@ -50,7 +50,25 @@ class ReadFromHbase {
 		ret		
 	}
 
-	def readTrendsComments(table:String,column:String):ArrayBuffer[String] =  {
+	/*Generic Hbase reader to fetch all the rows of a table beetween from 1 timestamp and create objects out of that*/
+	def readFromTimeGeneric[T](table:String,timestampFrom:Long,handleRow:Result=>T):ArrayBuffer[T] = {
+		/*Fetch the table*/
+		val httable = new HTable(conf, table)
+		val theScan = new Scan().setTimeRange(timestampFrom, Calendar.getInstance().getTimeInMillis());
+		
+		/*Adding timestamp filter*/
+		val res = httable.getScanner(theScan)
+
+		val iterator = res.iterator()
+		val ret = new ArrayBuffer[T]
+		while(iterator.hasNext()) {
+			val next = iterator.next()
+			ret.append(handleRow(next))		
+		}
+		ret		
+	}
+
+	def readTrendsComments(table:String,column:String,timestampFrom:Long):ArrayBuffer[String] =  {
 		/*function to handle meta link results*/
 		def handleRow(next:Result):String = {
 			val jsonString = {
@@ -65,7 +83,7 @@ class ReadFromHbase {
 			jsonString
 		}
 		/*Calling the database*/
-		readTimeFilterGeneric[String](table, 20, 0, handleRow)
+		readFromTimeGeneric[String](table, timestampFrom, handleRow)
 	}
  
 	def readTimeFilterLinks(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[SimpleRssItem] =  {
