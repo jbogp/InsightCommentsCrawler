@@ -170,7 +170,7 @@ object InsightCommentsCrawler {
 								twitterStream.filter(filterQuery)
 								
 								
-								/*fetching comments*/			  			
+								/*fetching comments			  			
 					  		  
 					  			/*read items published between 20 min and 1 hours ago*/
 					  			CommentsFetcher.readItems(60, 20, topics1h,topics12h,topicsAllTime)
@@ -183,7 +183,7 @@ object InsightCommentsCrawler {
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
 					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
-					  			
+					  			*/
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);
 								
@@ -217,6 +217,8 @@ object InsightCommentsCrawler {
 						println(timestamp)
 						
 						val consumer = new KafkaConsumer("tweets","TweetsConsumer",args(1),false,timestamp)
+						consumer.read(msg => println(new String(msg)))
+
 						
 						println(timestamp)
 						

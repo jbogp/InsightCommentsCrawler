@@ -44,6 +44,8 @@ class KafkaConsumer (topic: String, groupId: String, zookeeperConnect: String, r
   info("setup:start topic=%s for zk=%s and groupId=%s".format(topic,zookeeperConnect,groupId))
   val stream = connector.createMessageStreamsByFilter(filterSpec, 1, new DefaultDecoder(), new DefaultDecoder()).get(0)
   info("setup:complete topic=%s for zk=%s and groupId=%s".format(topic,zookeeperConnect,groupId))
+  
+
 
   def read(write: (Array[Byte])=>Unit) = {
     info("reading on stream now")
