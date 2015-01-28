@@ -16,6 +16,13 @@ import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.tuple.{ Fields, Tuple, Values }
 import java.util.{ Map => JMap }
 import backtype.storm.testing.TestWordSpout
+import main.scala.hbase.WriteToHbase
+import main.scala.hbase.ReadFromHbase
+import main.scala.sql.MySQLConnector
+import net.liftweb.json._
+import externalAPIs.Tweet
+import main.scala.kafka.KafkaConsumer
+import main.scala.kafka.KafkaProducer
 
 class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 1,topologyName: String = "kafka-storm-starter") {
 
@@ -30,7 +37,7 @@ class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int 
     val numSpoutExecutors = numTopicPartitions
     val builder = new TopologyBuilder
     val spoutId = "kafka-spout"
-    //builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
+    
 
     // Showcases how to customize the topology configuration
     val topologyConfiguration = {
@@ -53,9 +60,8 @@ class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int 
     
     System.setProperty("storm.jar","/home/ubuntu/scala/InsightCommentsCrawler/target/scala-2.10/something.jar")
     
-
-    builder.setSpout("word", new TestWordSpout(), 10)
-    builder.setBolt("exclaim", new ExclamationBolt(), 3).shuffleGrouping("word")
+    builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
+    builder.setBolt("filterTweets", new FilteringBolt(), 3).shuffleGrouping(spoutId)
 
     // Now run the topology in a local, in-memory Storm cluster
     StormSubmitter.submitTopology(topologyName, topologyConfiguration, builder.createTopology())
@@ -65,7 +71,7 @@ class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int 
 
 
 
-class ExclamationBolt extends BaseRichBolt {
+class FilteringBolt extends BaseRichBolt {
   var collector: OutputCollector = _
 
   override def prepare(config: JMap[_, _], context: TopologyContext, collector: OutputCollector) {
@@ -73,20 +79,39 @@ class ExclamationBolt extends BaseRichBolt {
   }
 
   override def execute(tuple: Tuple) {
-    this.collector.emit(tuple, new Values(Exclaimer.exclaim(tuple.getString(0))))
+    //this.collector.emit(tuple, new Values(TweetsFilter.filter(tuple.getString(0))))
+    TweetsFilter.filter(tuple.getString(0))
     this.collector.ack(tuple)
   }
 
   override def declareOutputFields(declarer: OutputFieldsDeclarer) {
-    declarer.declare(new Fields("word"))
+    //declarer.declare(new Fields("word"))
   }
 }
 
 
-object Exclaimer {
-  def exclaim(s: String): String = {
-    s + "!!!"
-  }
+object TweetsFilter {
+	val hbr = new WriteToHbase
+	val rhb = new ReadFromHbase
+	implicit val formats = Serialization.formats(NoTypeHints)
+	val kcPro = new KafkaProducer("test","ec2-54-67-99-96.us-west-1.compute.amazonaws.com:9092")
+	
+	def filter(s: String): Unit = {
+		val timestamp = MySQLConnector.getLastTimestamp
+		/*Getting the topics*/
+		val topics = rhb.readTrendsComments("topcics1h", "val", timestamp)++
+		rhb.readTrendsComments("topcics12h", "val", timestamp)++
+		rhb.readTrendsComments("topcicsalltime", "val", timestamp)
+		.distinct
+		s match {
+				/*We don't want retweets, links or replies*/
+		    	case x if(!x.contains("RT") && !x.contains("http://")) && !x.startsWith("@") => {
+		    		hbr.insertTweets(parse(x).extract[Tweet], topics.toArray)
+		    		kcPro.send(x)
+		    	}
+		    	case _ =>
+		  }
+	}
 }
 
 

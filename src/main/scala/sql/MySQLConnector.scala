@@ -21,5 +21,19 @@ object MySQLConnector {
 	// make the connection
 	Class.forName(driver)
 	val connection = DriverManager.getConnection(url, confmysql._1, confmysql._2)
+	
+	def getLastTimestamp():Long  ={
+	  
+		/*Getting time of last computation in mysql*/
+		val timestampRes = 	this	
+		.connection
+		.createStatement()
+		.executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC LIMIT 1;")
+
+		/*moving cursor to first element*/
+		timestampRes.first()
+		/*Getting timestamp*/
+		timestampRes.getLong("timestamp")
+	}
 
 }

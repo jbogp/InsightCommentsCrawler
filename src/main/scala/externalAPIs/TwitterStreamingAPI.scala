@@ -45,7 +45,7 @@ case class TweetToJSONToKafka(kafkaProducer:KafkaProducer) {
 			}
 			/*Getting a Tweet object in order to serialize later*/
 			val tweet = new Tweet(
-			    cb.getSource(),
+			    cb.getText(),
 			    cb.getCreatedAt().getTime(),
 			    latlong._1,
 			    latlong._2,
@@ -61,7 +61,7 @@ case class TweetToJSONToKafka(kafkaProducer:KafkaProducer) {
 }
 
 /*Case class for Tweet Message*/
-case class Tweet(source:String,createdAt:Long,latitude:Double,longitude:Double,id:Long,rt_count:Int,from:String,from_pic:String,from_url:String)
+case class Tweet(message:String,createdAt:Long,latitude:Double,longitude:Double,id:Long,rt_count:Int,from:String,from_pic:String,from_url:String)
 
 object TwitterStreamingAPI {
   

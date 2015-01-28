@@ -7,10 +7,14 @@ import org.apache.hadoop.hbase.client.Put
 import org.apache.hadoop.hbase.client.HBaseAdmin
 import org.apache.hadoop.hbase.client.HConnectionManager
 import org.apache.hadoop.conf.Configuration
+import net.liftweb.json.Serialization.{read, write}
 import org.apache.hadoop.hbase.util.Bytes
 import java.security.MessageDigest
 import java.util.Calendar
 import org.apache.hadoop.hbase.HBaseConfiguration
+import externalAPIs.Tweet
+import net.liftweb.json.Serialization
+import net.liftweb.json.NoTypeHints
 
 /*Stores and reads values in the Hbase*/
 case class WriteToHbase() {
@@ -22,6 +26,8 @@ case class WriteToHbase() {
     conf.set("hbase.zookeeper.quorum", "ip-172-31-11-73.us-west-1.compute.internal");
     conf.set("hbase.zookeeper.property.clientPort","2181");
     conf.set("hbase.master", "ip-172-31-11-73.us-west-1.compute.internal:60000");
+    
+    implicit val formats = Serialization.formats(NoTypeHints)
 	
 	/*Generic function to insert in HBase*/
 	def insert[T](table:String, rowkey:String, familly:String, column:Array[String], value:Array[T], convertToBytes:(T)=>Array[Byte], overwrite:Boolean=true) {
@@ -69,9 +75,7 @@ case class WriteToHbase() {
 	}
 	
 	/* 
-	 * Insert comments the general comments table
-	 * Parameters are the columns values
-	 * returns true if the row was inserted (didn't exist before)
+	 * Insert comments in Hbase
 	 */
 	def insertComments(values:Array[String],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
 			val columns = Array("URL","json")
@@ -83,22 +87,34 @@ case class WriteToHbase() {
 			val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
 
 			val in = title.foreach(word =>{
-				if(topics1h.contains(word)) {
-					insert[String]("comments1h",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
-				}
-				if(topics12h.contains(word)) {
-					insert[String]("comments12h",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))				  
-				}
-				if(topicsAllTime.contains(word) || topics1h.contains(word) || topics12h.contains(word)) {
+				if((topicsAllTime++topics1h++topics12h).contains(word)) {
 					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
 					println(values(3)+" "+row)
 				}
 			})
+	}
+	
+	
+	/* 
+	 * Insert Tweets in Hbase
+	 */
+	def insertTweets(tweet:Tweet,topics:Array[String]) {
+			val columns = Array("URL","json")
+			val row = MessageDigest.getInstance("MD5").digest(tweet.id.toString.getBytes()).map("%02X".format(_)).mkString
 			
-			
-			
-			
+			/*Writing on topics tables*/
+			val content = tweet.message
+				.replaceAll("[^a-zA-Z ]", "")
+				.toLowerCase()
+				.split(" ")
+				.filter(_.length()<15)
+				.drop(1)
 
+			val in = content.foreach(word =>{
+				if((topics).contains(word)) {
+					insert[String]("commentsalltime",row,"infos",Array("theTweets_"+word),Array(write(tweet)),s => Bytes.toBytes(s))
+				}
+			})
 	}
 	
 	

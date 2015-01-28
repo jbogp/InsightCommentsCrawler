@@ -205,15 +205,7 @@ object InsightCommentsCrawler {
 						val hbr = new ReadFromHbase
 
 
-							/*Getting time of last computation in mysql*/
-							val timestampRes = MySQLConnector
-								.connection
-								.createStatement()
-								.executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC LIMIT 1;")
-							/*moving cursor to first element*/
-							timestampRes.first()
-							/*Getting timestamp*/
-							val timestamp = timestampRes.getLong("timestamp")
+							val timestamp = MySQLConnector.getLastTimestamp
 							
 							new KafkaStorm(args(1),"tweets").runTopology
 						
