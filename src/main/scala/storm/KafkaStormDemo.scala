@@ -18,10 +18,10 @@ import java.util.{ Map => JMap }
 import backtype.storm.testing.TestWordSpout
 import main.scala.hbase.WriteToHbase
 import main.scala.hbase.ReadFromHbase
-import main.scala.sql.MySQLConnector
 import externalAPIs.Tweet
 import main.scala.kafka.KafkaConsumer
 import main.scala.kafka.KafkaProducer
+import java.util.Calendar
 
 class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 4,topologyName: String = "kafka-storm-starter") {
 
@@ -95,11 +95,11 @@ object TweetsFilter {
 	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
 	
 	def filter(s: String): Unit = {
-		val timestamp = MySQLConnector.getLastTimestamp
 		/*Getting the topics*/
-		val topics = rhb.readTrendsComments("topics1h", "val", timestamp)++
-		rhb.readTrendsComments("topics12h", "val", timestamp)++
-		rhb.readTrendsComments("topicsalltime", "val", timestamp)
+		val back = Calendar.getInstance().getTimeInMillis() - 20*60000L
+		val topics = rhb.readTrendsComments("topics1h", "val", back)++
+		rhb.readTrendsComments("topics12h", "val", back)++
+		rhb.readTrendsComments("topicsalltime", "val", back)
 		.distinct
 		val tweet = net.liftweb.json.parse(s).extract[Tweet]
 		tweet.message match {
