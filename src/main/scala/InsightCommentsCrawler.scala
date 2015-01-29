@@ -176,7 +176,8 @@ object InsightCommentsCrawler {
 								twitterStream.filter(filterQuery)
 								
 								
-								/*fetching comments	*/  			
+								/*fetching comments	*/  	
+								println("fetch")
 					  		  
 					  			/*read items published between 0 min and 1 hours ago*/
 					  			CommentsFetcher.readItems(60, 0, topics1h,topics12h,topicsAllTime)
