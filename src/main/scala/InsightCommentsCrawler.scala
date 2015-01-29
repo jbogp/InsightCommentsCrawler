@@ -122,7 +122,7 @@ object InsightCommentsCrawler {
 							try{
 							  
 								/*If any exit, clear Twitter Listeners*/
-							  	twitterStream.clearListeners()
+							  	//twitterStream.clearListeners()
 							  
 								/* Getting 1h top 10 topics */
 								val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
@@ -167,13 +167,13 @@ object InsightCommentsCrawler {
 								
 								/*Getting the Twitter Streams for every topic*/
 								/*Creating the filter*/
-								val filterQuery = new FilterQuery()
-								filterQuery.track((topics1h++topics12h++topicsAllTime).map(" "+_+" ").toArray[String])	
-								filterQuery.language(Array("en"))
+								//val filterQuery = new FilterQuery()
+								//filterQuery.track((topics1h++topics12h++topicsAllTime).map(" "+_+" ").toArray[String])	
+								//filterQuery.language(Array("en"))
 								
 								/*Starting the streaming*/
-								twitterStream.addListener(new OnTweetPosted(cb =>tweetToJSon.statusHandler(cb)))
-								twitterStream.filter(filterQuery)
+								//twitterStream.addListener(new OnTweetPosted(cb =>tweetToJSon.statusHandler(cb)))
+								//twitterStream.filter(filterQuery)
 								
 								
 								/*fetching comments	*/  	
