@@ -19,7 +19,6 @@ import backtype.storm.testing.TestWordSpout
 import main.scala.hbase.WriteToHbase
 import main.scala.hbase.ReadFromHbase
 import main.scala.sql.MySQLConnector
-import net.liftweb.json._
 import externalAPIs.Tweet
 import main.scala.kafka.KafkaConsumer
 import main.scala.kafka.KafkaProducer
@@ -86,7 +85,7 @@ class FilteringBolt extends BaseRichBolt {
 object TweetsFilter {
 	val hbr = new WriteToHbase
 	val rhb = new ReadFromHbase
-	implicit val formats = Serialization.formats(NoTypeHints)
+	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
 	val kcPro = new KafkaProducer("test","ec2-54-67-99-96.us-west-1.compute.amazonaws.com:9092")
 	
 	def filter(s: String): Unit = {
@@ -100,7 +99,7 @@ object TweetsFilter {
 		s match {
 				/*We don't want retweets, links or replies*/
 		    	case x if(!x.contains("RT") && !x.contains("http://")) && !x.startsWith("@") => {
-		    		hbr.insertTweets(parse(x).extract[Tweet], topics.toArray)
+		    		hbr.insertTweets(net.liftweb.json.parse(x).extract[Tweet], topics.toArray)
 
 		    	}
 		    	case _ =>
