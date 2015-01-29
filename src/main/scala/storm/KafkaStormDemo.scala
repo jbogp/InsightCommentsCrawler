@@ -95,12 +95,12 @@ object TweetsFilter {
 		rhb.readTrendsComments("topics12h", "val", timestamp)++
 		rhb.readTrendsComments("topicsalltime", "val", timestamp)
 		.distinct
-		kcPro.send(s)
-		s match {
+		val tweet = net.liftweb.json.parse(s).extract[Tweet]
+		kcPro.send(tweet.message+" "+(!tweet.message.contains("RT") && !tweet.message.contains("http://") && !tweet.message.startsWith("@")))
+		tweet.message match {
 				/*We don't want retweets, links or replies*/
-		    	case x if(!x.contains("RT") && !x.contains("http://")) && !x.startsWith("@") => {
-		    		hbr.insertTweets(net.liftweb.json.parse(x).extract[Tweet], topics.toArray)
-
+		    	case x if(!x.contains("RT") && !x.contains("http://") && !x.startsWith("@")) => {
+		    		hbr.insertTweets(tweet, topics.toArray)
 		    	}
 		    	case _ =>
 		  }
