@@ -72,7 +72,8 @@ class FilteringBolt extends BaseRichBolt {
 
   override def execute(tuple: Tuple) {
     //this.collector.emit(tuple, new Values(TweetsFilter.filter(tuple.getString(0))))
-    TweetsFilter.filter(new String(tuple.getBinary(0)))
+    tuple.getValue(0).toString()
+    TweetsFilter.filter()
     this.collector.ack(tuple)
   }
 
@@ -95,11 +96,12 @@ object TweetsFilter {
 		rhb.readTrendsComments("topics12h", "val", timestamp)++
 		rhb.readTrendsComments("topicsalltime", "val", timestamp)
 		.distinct
+		kcPro.send(s)
 		s match {
 				/*We don't want retweets, links or replies*/
 		    	case x if(!x.contains("RT") && !x.contains("http://")) && !x.startsWith("@") => {
 		    		hbr.insertTweets(parse(x).extract[Tweet], topics.toArray)
-		    		kcPro.send(x)
+
 		    	}
 		    	case _ =>
 		  }
