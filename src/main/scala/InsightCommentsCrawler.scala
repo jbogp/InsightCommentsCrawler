@@ -147,10 +147,25 @@ object InsightCommentsCrawler {
 								writeToKafka("topicsalltime", topicsAllTime)
 								
 								/*writing time of last computation in mysql*/
-								val timestamp = MySQLConnector
-									.connection
+								val timestamp = Calendar.getInstance().getTimeInMillis()
+								MySQLConnector.connection
 									.createStatement()
-									.executeUpdate("INSERT INTO topics_computations VALUES ('"+Calendar.getInstance().getTimeInMillis()+"')")
+									.executeUpdate("INSERT INTO topics_computations VALUES ('"+timestamp+"')")
+								/*writing the topics in Mysql*/
+								topics1h.foreach(topic => {MySQLConnector.connection
+									.createStatement()
+									.executeUpdate("INSERT INTO topics1h VALUES ('"+timestamp+"','"+topic+"')")
+								})
+
+								topics12h.foreach(topic => {MySQLConnector.connection
+									.createStatement()
+									.executeUpdate("INSERT INTO topics12h VALUES ('"+timestamp+"','"+topic+"')")
+								})
+								
+								topicsAllTime.foreach(topic => {MySQLConnector.connection
+									.createStatement()
+									.executeUpdate("INSERT INTO topicsalltime VALUES ('"+timestamp+"','"+topic+"')")
+								})
 
 								
 								

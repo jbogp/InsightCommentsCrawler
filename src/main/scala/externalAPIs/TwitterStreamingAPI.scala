@@ -55,7 +55,6 @@ case class TweetToJSONToKafka(kafkaProducer:KafkaProducer) {
 			    cb.getUser().getProfileImageURL(),
 			    cb.getUser().getURL()
 			)
-			println(tweet.from)
 			/*Serialize and send to kafka*/
 			kafkaProducer.send(write(tweet), null)
 	}
