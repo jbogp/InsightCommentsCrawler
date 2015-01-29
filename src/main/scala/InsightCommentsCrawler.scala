@@ -154,17 +154,17 @@ object InsightCommentsCrawler {
 								/*writing the topics in Mysql*/
 								topics1h.foreach(topic => {MySQLConnector.connection
 									.createStatement()
-									.executeUpdate("INSERT INTO topics1h VALUES ('"+timestamp+"','"+topic+"')")
+									.executeUpdate("INSERT INTO topics1h VALUES (NULL,'"+timestamp+"','"+topic+"')")
 								})
 
 								topics12h.foreach(topic => {MySQLConnector.connection
 									.createStatement()
-									.executeUpdate("INSERT INTO topics12h VALUES ('"+timestamp+"','"+topic+"')")
+									.executeUpdate("INSERT INTO topics12h VALUES (NULL,'"+timestamp+"','"+topic+"')")
 								})
 								
 								topicsAllTime.foreach(topic => {MySQLConnector.connection
 									.createStatement()
-									.executeUpdate("INSERT INTO topicsalltime VALUES ('"+timestamp+"','"+topic+"')")
+									.executeUpdate("INSERT INTO topicsalltime VALUES (NULL,'"+timestamp+"','"+topic+"')")
 								})
 
 								
