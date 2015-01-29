@@ -99,12 +99,6 @@ object InsightCommentsCrawler {
 							new KafkaProducer(kafkaTop,args(1))
 						} 
 					  
-						def writeToKafka(kafkaTop:String,topics:Array[String]) {
-							val kafkaProducer = getKafkaProducer(kafkaTop)
-							topics.foreach(topic=>{
-								kafkaProducer.send(topic, "1")
-							})	
-						}
 						
 						def writeTopicsHbase(table:String,topics:Array[String]) {
 							topics.zipWithIndex.foreach(topicWithIndex=>{
@@ -141,10 +135,6 @@ object InsightCommentsCrawler {
 								/* Getting all time topics */
 								val topicsAllTime = TopicsFinder.getKeywords(100)
 								
-								/*Sending to the kafka queues*/
-								writeToKafka("topics1h", topics1h)
-								writeToKafka("topics12h", topics12h)
-								writeToKafka("topicsalltime", topicsAllTime)
 								
 								/*writing time of last computation in mysql*/
 								val timestamp = Calendar.getInstance().getTimeInMillis()

@@ -59,7 +59,7 @@ def runTopology() {
     
     System.getProperties().list(System.out)
     builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
-    builder.setBolt("filterTweets", new FilteringBolt(), 1).shuffleGrouping(spoutId)
+    builder.setBolt("filterTweets", new FilteringBolt(), 4).shuffleGrouping(spoutId)
 
     // Now run the topology
     StormSubmitter.submitTopology(topologyName, topologyConfiguration, builder.createTopology())
