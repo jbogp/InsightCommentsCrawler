@@ -23,7 +23,7 @@ import externalAPIs.Tweet
 import main.scala.kafka.KafkaConsumer
 import main.scala.kafka.KafkaProducer
 
-class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 1,topologyName: String = "kafka-storm-starter") {
+class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 4,topologyName: String = "kafka-storm-starter") {
 
   
   
@@ -45,7 +45,15 @@ def runTopology() {
       c.put(Config.NIMBUS_HOST, "ec2-54-67-119-111.us-west-1.compute.amazonaws.com");
       c.put(Config.NIMBUS_THRIFT_PORT,6627:Integer);
       c.setDebug(true)
-      c.setNumWorkers(4)
+      c.setNumWorkers(10)
+      c.setMaxSpoutPending(1000)
+      c.setMessageTimeoutSecs(120)
+      c.setMaxTaskParallelism(50)
+      c.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384: Integer)
+      c.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE, 16384: Integer)
+      c.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE, 8: Integer)
+      c.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, 32: Integer)
+      c.put(Config.TOPOLOGY_STATS_SAMPLE_RATE, 0.05: java.lang.Double)
       c
     }
     
@@ -86,7 +94,6 @@ object TweetsFilter {
 	val hbr = new WriteToHbase
 	val rhb = new ReadFromHbase
 	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
-	val kcPro = new KafkaProducer("test","ec2-54-67-99-96.us-west-1.compute.amazonaws.com:9092")
 	
 	def filter(s: String): Unit = {
 		val timestamp = MySQLConnector.getLastTimestamp
@@ -96,7 +103,6 @@ object TweetsFilter {
 		rhb.readTrendsComments("topicsalltime", "val", timestamp)
 		.distinct
 		val tweet = net.liftweb.json.parse(s).extract[Tweet]
-		kcPro.send(tweet.message+" "+(!tweet.message.contains("RT") && !tweet.message.contains("http://") && !tweet.message.startsWith("@")))
 		tweet.message match {
 				/*We don't want retweets, links or replies*/
 		    	case x if(!x.contains("RT") && !x.contains("http://") && !x.startsWith("@")) => {

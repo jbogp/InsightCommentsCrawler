@@ -147,10 +147,10 @@ object InsightCommentsCrawler {
 								writeToKafka("topicsalltime", topicsAllTime)
 								
 								/*writing time of last computation in mysql*/
-								/*val timestamp = MySQLConnector
+								val timestamp = MySQLConnector
 									.connection
 									.createStatement()
-									.executeUpdate("INSERT INTO topics_computations VALUES ('"+Calendar.getInstance().getTimeInMillis()+"')")*/
+									.executeUpdate("INSERT INTO topics_computations VALUES ('"+Calendar.getInstance().getTimeInMillis()+"')")
 
 								
 								
