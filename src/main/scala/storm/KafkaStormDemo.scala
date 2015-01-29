@@ -91,9 +91,9 @@ object TweetsFilter {
 	def filter(s: String): Unit = {
 		val timestamp = MySQLConnector.getLastTimestamp
 		/*Getting the topics*/
-		val topics = rhb.readTrendsComments("topcics1h", "val", timestamp)++
-		rhb.readTrendsComments("topcics12h", "val", timestamp)++
-		rhb.readTrendsComments("topcicsalltime", "val", timestamp)
+		val topics = rhb.readTrendsComments("topics1h", "val", timestamp)++
+		rhb.readTrendsComments("topics12h", "val", timestamp)++
+		rhb.readTrendsComments("topicsalltime", "val", timestamp)
 		.distinct
 		s match {
 				/*We don't want retweets, links or replies*/
