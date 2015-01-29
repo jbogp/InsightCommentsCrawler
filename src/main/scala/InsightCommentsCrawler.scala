@@ -150,11 +150,11 @@ object InsightCommentsCrawler {
 								val timestamp = MySQLConnector
 									.connection
 									.createStatement()
-									.executeUpdate("INSERT INTO topics_computations VALUES ("+Calendar.getInstance().getTimeInMillis()+")")
+									.executeUpdate("INSERT INTO topics_computations VALUES ('"+Calendar.getInstance().getTimeInMillis()+"')")
 
 								
 								
-								/*writing in Hbase*/
+								/*writing in Hbase
 								writeTopicsHbase("topics1h", topics1h)
 								writeTopicsHbase("topics12h", topics12h)
 								writeTopicsHbase("topicsalltime", topicsAllTime)
@@ -184,7 +184,7 @@ object InsightCommentsCrawler {
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
 					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
-					  			
+					  			*/
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);
 								
