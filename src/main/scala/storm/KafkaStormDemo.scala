@@ -57,7 +57,6 @@ def runTopology() {
       c
     }
     
-    System.setProperty("storm.jar","/home/ubuntu/scala/InsightCommentsCrawler/target/scala-2.10/something.jar")
     System.getProperties().list(System.out)
     builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
     builder.setBolt("filterTweets", new FilteringBolt(), 1).shuffleGrouping(spoutId)
