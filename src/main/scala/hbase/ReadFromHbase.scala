@@ -20,6 +20,7 @@ import main.scala.rss.ArticleMeta
 import main.scala.rss.ArticleMeta
 import org.apache.hadoop.hbase.CellUtil
 import org.apache.hadoop.hbase.HBaseConfiguration
+import main.scala.rss.SimpleRssItem
 
 class ReadFromHbase {
   
@@ -73,13 +74,17 @@ class ReadFromHbase {
 	def readTimeFilterLinks(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[SimpleRssItem] =  {
 			/*function to handle links results*/
 			def handleRow(next:Result):SimpleRssItem = {
-				new SimpleRssItem(
-			    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
-			    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
-			    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue()),
-			    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue()),
-			    new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue())
-				)		
+				if(!next.getColumn("infos".getBytes(), "URL".getBytes()).isEmpty()) {
+					new SimpleRssItem(
+				    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
+				    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
+				    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue()),
+				    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue()),
+				    new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue())
+					)
+				}
+				else
+				  new SimpleRssItem("none","none","none","none","none")
 			}
 			/*Calling the database*/
 			readTimeFilterGeneric[SimpleRssItem](table, minutesBackMax, minutesBackMin, handleRow)
