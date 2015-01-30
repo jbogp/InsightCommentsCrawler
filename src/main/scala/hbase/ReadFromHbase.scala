@@ -63,6 +63,7 @@ class ReadFromHbase {
 		val ret = new ArrayBuffer[T]
 		while(iterator.hasNext()) {
 			val next = iterator.next()
+			println(new String(next.getRow()))
 			ret.append(handleRow(next))		
 		}
 		ret		
