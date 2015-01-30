@@ -79,7 +79,7 @@ case class WriteToHbase() {
 	 */
 	def insertComments(values:Array[String],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
 			val columns = Array("URL","json")
-			val row = Calendar.getInstance().getTimeInMillis()+MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
+			val row = "Z"+(Long.MaxValue-Calendar.getInstance().getTimeInMillis())+MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
 			/*Writing on the All comments*/
 			insert[String]("comments_all",row,"infos",columns,values.take(2),s => Bytes.toBytes(s))
 			
@@ -100,7 +100,7 @@ case class WriteToHbase() {
 	 */
 	def insertTweets(tweet:Tweet,topics:Array[String]) {
 			val columns = Array("URL","json")
-			val row = Calendar.getInstance().getTimeInMillis()+MessageDigest.getInstance("MD5").digest(tweet.id.toString.getBytes()).map("%02X".format(_)).mkString
+			val row = "Z"+(Long.MaxValue-Calendar.getInstance().getTimeInMillis())+MessageDigest.getInstance("MD5").digest(tweet.id.toString.getBytes()).map("%02X".format(_)).mkString
 			
 			/*Writing on topics tables*/
 			val content = tweet.message
