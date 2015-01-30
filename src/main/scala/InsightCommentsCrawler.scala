@@ -70,7 +70,7 @@ object InsightCommentsCrawler {
 								/*If successfully inserted in Hbase (new Item) send to Kafka*/ 
 								hbaseconnect.insertURL(values) match {
 									case true => {
-										kafkaProducer.send(write(Extraction.decompose(KafkaMessageURL(item.link,item.engine,item.engineId))), "1")
+										println(item.link+item.engine+item.engineId)
 									}
 									case false => println("Skipping link, already registered")
 								}
