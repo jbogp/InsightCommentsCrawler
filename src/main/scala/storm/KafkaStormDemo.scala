@@ -22,6 +22,7 @@ import externalAPIs.Tweet
 import main.scala.kafka.KafkaConsumer
 import main.scala.kafka.KafkaProducer
 import java.util.Calendar
+import main.scala.sql.MySQLConnector
 
 class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 4,topologyName: String = "kafka-storm-starter") {
 
@@ -90,21 +91,20 @@ class FilteringBolt extends BaseRichBolt {
 
 
 object TweetsFilter {
-	val hbr = new WriteToHbase
-	val rhb = new ReadFromHbase
 	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
 	
 	def filter(s: String): Unit = {
 		/*Getting the topics*/
-		val back = Calendar.getInstance().getTimeInMillis() - 20*60000L
-		val topics = rhb.readTrendsComments("topics1h", "val", back)++
-		rhb.readTrendsComments("topics12h", "val", back)++
-		rhb.readTrendsComments("topicsalltime", "val", back)
-		.distinct
 		val tweet = net.liftweb.json.parse(s).extract[Tweet]
 		tweet.message match {
 				/*We don't want retweets, links or replies*/
 		    	case x if(!x.contains("RT") && !x.contains("http://") && !x.startsWith("@")) => {
+		    		/*Get the topics*/
+		    		val topics = MySQLConnector.getTopics("topics1h",10)++
+		    				MySQLConnector.getTopics("topics12h",10)++
+		    				MySQLConnector.getTopics("topicsalltime",100)
+		    				.distinct
+		    		val hbr = new WriteToHbase
 		    		hbr.insertTweets(tweet, topics.toArray)
 		    	}
 		    	case _ =>
