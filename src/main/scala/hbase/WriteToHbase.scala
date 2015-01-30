@@ -42,7 +42,7 @@ case class WriteToHbase() {
 			if(overwrite)
 				httable.put(theput)
 			else
-				httable.checkAndPut(Bytes.toBytes(rowkey),Bytes.toBytes(familly),Bytes.toBytes(col),null,theput)
+				println(httable.checkAndPut(Bytes.toBytes(rowkey),Bytes.toBytes(familly),Bytes.toBytes(col),null,theput))
 		})
 	
 	}
