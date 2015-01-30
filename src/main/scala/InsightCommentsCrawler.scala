@@ -53,7 +53,6 @@ object InsightCommentsCrawler {
 						val subreader = new RssReader
 						
 						/*Kafka and Hbase connectors*/
-						val kafkaProducer = new KafkaProducer("article_links",args(1))
 						val hbaseconnect = new WriteToHbase
 						
 						
