@@ -68,23 +68,6 @@ class ReadFromHbase {
 		ret		
 	}
 
-	def readTrendsComments(table:String,column:String,timestampFrom:Long):ArrayBuffer[String] =  {
-		/*function to handle meta link results*/
-		def handleRow(next:Result):String = {
-			val jsonString = {
-			  val col = next.getColumnLatestCell("infos".getBytes(), column.getBytes())
-			  val value = CellUtil.cloneValue(col)
-			  if(value.length != 0)
-				  new String(value)
-			  else
-				  "empty"
-			}
-			
-			jsonString
-		}
-		/*Calling the database*/
-		readFromTimeGeneric[String](table, timestampFrom, handleRow)
-	}
  
 	def readTimeFilterLinks(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[SimpleRssItem] =  {
 			/*function to handle links results*/
