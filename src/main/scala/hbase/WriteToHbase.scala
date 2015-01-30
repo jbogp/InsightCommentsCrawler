@@ -79,7 +79,7 @@ case class WriteToHbase() {
 	 */
 	def insertComments(values:Array[String],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
 			val columns = Array("URL","json")
-			val row = "Z"+(Long.MaxValue-Calendar.getInstance().getTimeInMillis())+MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
+			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
 			/*Writing on the All comments*/
 			insert[String]("comments_all",row,"infos",columns,values.take(2),s => Bytes.toBytes(s))
 			
