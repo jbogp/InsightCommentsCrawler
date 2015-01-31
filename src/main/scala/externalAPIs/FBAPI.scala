@@ -37,6 +37,7 @@ class FBAPI extends ExternalAPI {
 			val comments = (json \\ "data").children
 			val ret = new ArrayBuffer[Comment]
 			/*Extracting the comments*/
+			println(title)
 			for ( comment <- comments) {
 				val m = comment.extract[FBComment]
 				ret.append(new Comment(m.created_time,m.from.name,m.like_count,m.message,url,title))

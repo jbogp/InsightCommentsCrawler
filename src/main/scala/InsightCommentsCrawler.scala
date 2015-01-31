@@ -132,7 +132,7 @@ object InsightCommentsCrawler {
 								val topics12h = TopicsFinder.getKeywords(10,meta12h)*/
 								
 								/* Getting all time topics */
-								val topicsAllTime = TopicsFinder.getKeywords(100)
+								val topicsAllTime = TopicsFinder.getKeywords(300)
 								
 								
 								/*writing time of last computation in mysql
@@ -188,7 +188,7 @@ object InsightCommentsCrawler {
 					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)*/
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
-					  			CommentsFetcher.readItems(10000, 0,topicsAllTime,topicsAllTime,topicsAllTime)
+					  			CommentsFetcher.readItems(10300, 0,topicsAllTime,topicsAllTime,topicsAllTime)
 					  			
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);

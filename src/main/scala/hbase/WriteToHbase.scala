@@ -87,7 +87,7 @@ case class WriteToHbase() {
 			val in = title.foreach(word =>{
 				if((topicsAllTime++topics1h++topics12h).contains(word)) {
 					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
-					println(values(3)+" "+row)
+					println(row)
 				}
 			})
 	}

@@ -30,7 +30,7 @@ object CommentsFetcher {
 		  			  			val urlParts = item.url.split("/")
 		  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
 		  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-			  			  		val comments = dReader.readJSON(json,newUrl,item.title)
+			  			  		val comments = dReader.readJSON(json,newUrl,item.desc)
 			  			  		write(comments)
 			  			  	}
 			  			  	else {
@@ -40,18 +40,18 @@ object CommentsFetcher {
 	  			  		else if(item.url.contains("japantimes")){
 	  			  			val newUrl = item.url.split("\\?").apply(0)
 	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-		  			  		val comments = dReader.readJSON(json,newUrl,item.title)
+		  			  		val comments = dReader.readJSON(json,newUrl,item.desc)
 		  			  		write(comments)
 	  			  		}
 	  			  		else {
 		  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
-		  			  		val comments = dReader.readJSON(json,item.url,item.title)
+		  			  		val comments = dReader.readJSON(json,item.url,item.desc)
 		  			  		write(comments)
 	  			  		}
 	  			  	}
 	  			  	case "fb" => {
 	  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
-	  			  		val comments = fbReader.readJSON(json,item.url,item.title)
+	  			  		val comments = fbReader.readJSON(json,item.url,item.desc)
 	  			  		write(comments)
 	  			  	}
 	  			  	case _ => {

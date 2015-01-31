@@ -92,6 +92,7 @@ class DisqusAPI extends ExternalAPI {
 			val json = parse(jsonString)
 			val comments = (json \\ "response").children
 			val ret = new ArrayBuffer[Comment]
+			println(title)
 			/*Extracting the comments*/
 			for ( comment <- comments) {
 				try{
