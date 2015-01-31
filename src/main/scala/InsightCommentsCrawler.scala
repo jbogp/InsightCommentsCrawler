@@ -123,19 +123,19 @@ object InsightCommentsCrawler {
 								/*If any exit, clear Twitter Listeners*/
 							  	twitterStream.clearListeners()
 							  
-								/* Getting 1h top 10 topics 
+								/* Getting 1h top 10 topics */
 								val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
 								val topics1h = TopicsFinder.getKeywords(10,meta1h)
 								
 								/* Getting 12h top 10 topics */
 								val meta12h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
-								val topics12h = TopicsFinder.getKeywords(10,meta12h)*/
+								val topics12h = TopicsFinder.getKeywords(10,meta12h)
 								
 								/* Getting all time topics */
-								val topicsAllTime = TopicsFinder.getKeywords(500)
+								val topicsAllTime = TopicsFinder.getKeywords(100)
 								
 								
-								/*writing time of last computation in mysql
+								/*writing time of last computation in mysql*/
 								val timestamp = Calendar.getInstance().getTimeInMillis()
 								MySQLConnector.connection
 									.createStatement()
@@ -172,23 +172,23 @@ object InsightCommentsCrawler {
 								
 								/*Starting the streaming*/
 								twitterStream.addListener(new OnTweetPosted(cb =>tweetToJSon.statusHandler(cb)))
-								twitterStream.filter(filterQuery)*/
+								twitterStream.filter(filterQuery)
 								
 								
 								/*fetching comments	*/  	
 								println("fetch")
 					  		  
-					  			/*read items published between 0 min and 1 hours ago
+					  			/*read items published between 0 min and 1 hours ago*/
 					  			CommentsFetcher.readItems(60, 0, topics1h,topics12h,topicsAllTime)
 					  		  
 					  			/*read items published between 1 and 2 hours ago*/
 					  			CommentsFetcher.readItems(120, 60,topics1h,topics12h,topicsAllTime)
 					  			
 					  			/*Read items published between 2 and 4 hours ago*/
-					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)*/
+					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
-					  			CommentsFetcher.readItems(10300, 0,topicsAllTime,topicsAllTime,topicsAllTime)
+					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
 					  			
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);
