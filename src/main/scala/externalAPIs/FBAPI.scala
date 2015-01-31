@@ -31,7 +31,7 @@ class FBAPI extends ExternalAPI {
 			html.mkString
 	}
 
-	def readJSON(jsonString:String,url:String):ArrayBuffer[Comment] ={
+	def readJSON(jsonString:String,url:String,title:String):ArrayBuffer[Comment] ={
 			/*Parsing*/
 			val json = parse(jsonString)
 			val comments = (json \\ "data").children
@@ -39,7 +39,7 @@ class FBAPI extends ExternalAPI {
 			/*Extracting the comments*/
 			for ( comment <- comments) {
 				val m = comment.extract[FBComment]
-				ret.append(new Comment(m.created_time,m.from.name,m.like_count,m.message,url))
+				ret.append(new Comment(m.created_time,m.from.name,m.like_count,m.message,url,title))
 			}
 			ret
 	}

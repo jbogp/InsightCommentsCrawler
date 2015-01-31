@@ -19,7 +19,7 @@ trait ExternalAPI {
 	
 	def fetchJSONFromURL(params:Array[String]):String
 	
-	def readJSON(json:String,url:String):ArrayBuffer[Comment]
+	def readJSON(json:String,url:String,title:String):ArrayBuffer[Comment]
 	
 	/*Get JSON from the comments list*/
 	def getJSON(comments:ArrayBuffer[Comment]):String ={

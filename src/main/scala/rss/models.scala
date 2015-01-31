@@ -20,7 +20,8 @@ case class Comment(
   from: String,
   like_count: Int,
   message:String,
-  url:String
+  url:String,
+  title:String
 )
 
 case class CommentsList(
