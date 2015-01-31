@@ -188,7 +188,7 @@ object InsightCommentsCrawler {
 					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)*/
 					  			
 					  			/*Read items published between 4 and 10 hours ago*/
-					  			CommentsFetcher.readItems(21600, 0,topicsAllTime,topicsAllTime,topicsAllTime)
+					  			CommentsFetcher.readItems(10000, 0,topicsAllTime,topicsAllTime,topicsAllTime)
 					  			
 					  			/*Wait 20 minutes*/
 					  			Thread.sleep(1200000);
