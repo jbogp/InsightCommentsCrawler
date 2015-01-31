@@ -132,7 +132,7 @@ object InsightCommentsCrawler {
 								val topics12h = TopicsFinder.getKeywords(10,meta12h)*/
 								
 								/* Getting all time topics */
-								val topicsAllTime = TopicsFinder.getKeywords(500)
+								val topicsAllTime = TopicsFinder.getKeywords(300)
 								
 								
 								/*writing time of last computation in mysql
