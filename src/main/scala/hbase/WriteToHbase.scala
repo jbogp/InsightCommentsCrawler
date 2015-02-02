@@ -83,7 +83,8 @@ case class WriteToHbase() {
 			
 			/*Writing on topics tables*/
 			val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
-			println(title)
+			title.foreach(print)
+			println
 			title.foreach(word =>{
 				if((topicsAllTime++topics1h++topics12h).contains(word)) {
 					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
