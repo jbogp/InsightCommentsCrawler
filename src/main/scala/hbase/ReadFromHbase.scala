@@ -32,15 +32,12 @@ class ReadFromHbase {
     conf.set("hbase.master", "ip-172-31-11-73.us-west-1.compute.internal:60000");
 	
 	/*Generic Hbase reader to fetch all the rows of a table beetween 2 times (in minutes) and create objects out of that*/
-	def readTimeFilterGeneric[T](table:String,minutesBackMax:Int,minutesBackMin:Int,handleRow:Result=>T,timerange:Boolean=true):ArrayBuffer[T] = {
+	def readTimeFilterGeneric[T](table:String,minutesBackMax:Int,minutesBackMin:Int,handleRow:Result=>T):ArrayBuffer[T] = {
 		/*Fetch the table*/
 		val httable = new HTable(conf, table)
 		val offsetMax:Long = minutesBackMax*60000L
 		val offsetMin:Long = minutesBackMin*60000L
-		val theScan = new Scan()
-		if(timerange){
-		 theScan.setTimeRange(Calendar.getInstance().getTimeInMillis()-offsetMax, Calendar.getInstance().getTimeInMillis()-offsetMin);
-		}
+		val theScan = new Scan().setTimeRange(Calendar.getInstance().getTimeInMillis()-offsetMax, Calendar.getInstance().getTimeInMillis()-offsetMin);
 		
 		/*Adding timestamp filter*/
 		val res = httable.getScanner(theScan)
@@ -96,7 +93,7 @@ class ReadFromHbase {
 				  new SimpleRssItem("none","none","none","none","none")
 			}
 			/*Calling the database*/
-			readTimeFilterGeneric[SimpleRssItem](table, minutesBackMax, minutesBackMin, handleRow,false)
+			readTimeFilterGeneric[SimpleRssItem](table, minutesBackMax, minutesBackMin, handleRow)
 	}
 	
 	def readTimeFilterTopics(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[String] =  {
