@@ -133,10 +133,10 @@ object InsightCommentsCrawler {
 								val topics12h = TopicsFinder.getKeywords(10,meta12h)
 								
 								/* Getting all time topics */
-								val topicsAllTime = TopicsFinder.getKeywords(100)
+								val topicsAllTime = TopicsFinder.getKeywords(500)
 								
 								
-								/*writing time of last computation in mysql*/
+								/*writing time of last computation in mysql
 								val timestamp = Calendar.getInstance().getTimeInMillis()
 								MySQLConnector.connection
 									.createStatement()
@@ -175,7 +175,7 @@ object InsightCommentsCrawler {
 								twitterStream.addListener(new OnTweetPosted(cb =>tweetToJSon.statusHandler(cb)))
 								twitterStream.filter(filterQuery)
 								
-								
+
 								/*fetching comments	*/  	
 								println("fetch")
 					  		  
@@ -187,7 +187,7 @@ object InsightCommentsCrawler {
 					  			
 					  			/*Read items published between 2 and 4 hours ago*/
 					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)
-					  			
+					  			*/
 					  			/*Read items published between 4 and 10 hours ago*/
 					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
 					  			

@@ -78,14 +78,13 @@ case class WriteToHbase() {
 	 * Insert comments in Hbase
 	 */
 	def insertComments(values:Array[String],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
-			val columns = Array("URL","json")
-			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
+			val row = (Long.MaxValue-Calendar.getInstance().getTimeInMillis())+MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
 			
 			/*Writing on topics tables*/
 			val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
 			title.foreach(word =>{
 				if((topicsAllTime++topics1h++topics12h).contains(word)) {
-					insert[String]("commentsalltime",row,"infos",Array(word,"theArticleLink","theTitle"),Array(values(1),values(0),values(3)),s => Bytes.toBytes(s))
+					insert[String]("realcomments",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))
 					println(row)
 				}
 			})
