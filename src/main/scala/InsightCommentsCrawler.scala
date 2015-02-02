@@ -58,11 +58,12 @@ object InsightCommentsCrawler {
 						
 						while(true) {
 							/*Reading the subscription file and iterating on feeds*/
+							subreader.itemArray.clear
 							for {
 								feedInfo <- Utils.getUrls("subscriptions.xml")
 							} subreader.read(feedInfo)
 							
-							subreader.itemArray.clear
+							
 							subreader.itemArray.foreach( item => {
 								println(item.link)
 								var values = Array(item.link,item.engine,item.engineId,item.desc,item.title)
