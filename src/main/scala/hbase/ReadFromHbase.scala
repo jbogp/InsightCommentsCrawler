@@ -78,13 +78,19 @@ class ReadFromHbase {
 			/*function to handle links results*/
 			def handleRow(next:Result):SimpleRssItem = {
 				if(!next.getColumn("infos".getBytes(), "URL".getBytes()).isEmpty()) {
-					new SimpleRssItem(
-				    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
-				    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
-				    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue()),
-				    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue()),
-				    new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue())
-					)
+					try{
+						new SimpleRssItem(
+					    new String(next.getColumn("infos".getBytes(), "URL".getBytes()).get(0).getValue()),
+					    new String(next.getColumn("infos".getBytes(), "engine".getBytes()).get(0).getValue()),
+					    new String(next.getColumn("infos".getBytes(), "engineId".getBytes()).get(0).getValue()),
+					    new String(next.getColumn("contents".getBytes(), "title".getBytes()).get(0).getValue()),
+					    new String(next.getColumn("contents".getBytes(), "description".getBytes()).get(0).getValue())
+						)
+					}
+					catch{
+					  case e:Exception=>
+						new SimpleRssItem("none","none","none","none","none")
+					}
 				}
 				else
 				  new SimpleRssItem("none","none","none","none","none")
