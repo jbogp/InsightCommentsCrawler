@@ -5,6 +5,7 @@ import net.liftweb.json.DefaultFormats
 import net.liftweb.json._
 import main.scala.rss.Comment
 import scala.collection.mutable.ArrayBuffer
+import scala.util.Random
 
 /*defining case classes*/
 case class DisqusComment(
@@ -83,7 +84,13 @@ class DisqusAPI extends ExternalAPI {
   
   
 	def fetchJSONFromURL(params:Array[String]):String = {
-			val html = Source.fromURL("http://disqus.com/api/3.0/threads/listPosts.json?api_key=JWuvdKJkgmUDTCiCpqAz7yHECoiMpaSLKYa3LY0XkI0yLDlCPwzXVwFI2FoBXY0N&limit=100&thread=link:"+params(0)+"&forum="+params(1))
+			val keys = Array("wnii9oY7d5a7yay80egKAnF7jAAkytjMZfFTPSqyjMqpCOI7WpCUQl7XPCDfti7V",
+			    "mx8SdLAdFQRFncQAYlt1qwVpFCOjTjO7q9YctA4dPL57tQ1ERzt3iN16yKYWKB9V",
+			    "JWuvdKJkgmUDTCiCpqAz7yHECoiMpaSLKYa3LY0XkI0yLDlCPwzXVwFI2FoBXY0N")
+			val rand = new Random(System.currentTimeMillis());
+			val random_index = rand.nextInt(keys.length);
+			val i = keys(random_index);
+			val html = Source.fromURL("http://disqus.com/api/3.0/threads/listPosts.json?api_key="+i+"&limit=100&thread=link:"+params(0)+"&forum="+params(1))
 			html.mkString
 	}
 
