@@ -78,16 +78,19 @@ case class WriteToHbase() {
 	 * Insert comments in Hbase
 	 */
 	def insertComments(values:Array[String],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
-			val row = MessageDigest.getInstance("MD5").digest(values(0).getBytes()).map("%02X".format(_)).mkString
+		val alltopics = topicsAllTime++topics1h++topics12h
+		
+		val url = values(0)
+		val comments = values(1)
 			
-			/*Writing on topics tables*/
-			val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
-			title.foreach(word =>{
-				if((topicsAllTime++topics1h++topics12h).contains(word)) {
-					insert[String]("realcomments",row,"infos",Array(word),Array(values(1)),s => Bytes.toBytes(s))
-					println(row)
-				}
-			})
+		/*Writing on topics tables*/
+		val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
+		title.foreach(word =>{
+			if((topicsAllTime++topics1h++topics12h).contains(word)) {
+				insert[String]("comments",word,"infos",Array(url),Array(values(1)),s => Bytes.toBytes(s))
+				println(word)
+			}
+		})
 	}
 	
 	
@@ -95,8 +98,7 @@ case class WriteToHbase() {
 	 * Insert Tweets in Hbase
 	 */
 	def insertTweets(tweet:Tweet,topics:Array[String]) {
-			val columns = Array("URL","json")
-			val row = "Z"+(Long.MaxValue-Calendar.getInstance().getTimeInMillis())+MessageDigest.getInstance("MD5").digest(tweet.id.toString.getBytes()).map("%02X".format(_)).mkString
+			val column = "Z"+(Long.MaxValue-Calendar.getInstance().getTimeInMillis())+MessageDigest.getInstance("MD5").digest(tweet.id.toString.getBytes()).map("%02X".format(_)).mkString
 			
 			/*Writing on topics tables*/
 			val content = tweet.message
@@ -108,7 +110,7 @@ case class WriteToHbase() {
 
 			val in = content.foreach(word =>{
 				if((topics).contains(word)) {
-					insert[String]("commentsalltime",row,"infos",Array("theTweets_"+word),Array(write(tweet)),s => Bytes.toBytes(s))
+					insert[String]("tweets",word,"infos",Array(column),Array(write(tweet)),s => Bytes.toBytes(s))
 				}
 			})
 	}
