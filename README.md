@@ -11,6 +11,6 @@ The project is not in anyway attempting to cure this disease, but to save time w
 The repository is structured in 3 independent branches corresponding to the 3 main parts of the application I built.
  - First off, the master branch contains all the ingredient that make up the backend data handling pipline. Fully written in Scala, in hanles crawling, comments fetching, data ingestion (with Kafka), batch queries (with Spark), streaming analysis (with Storm), and of course data storage mainly in Hbase for a source of truth and sometimes mySQL when convinient.
 
-  - The InsightJsonAPI branch contains a scala program based on Spray.io, which creates the views to the pipeline databases, web facing, the API serves JSON file to fetch comments, trends, or tweets from the pipeline.
+ - The InsightJsonAPI branch contains a scala program based on Spray.io, which creates the views to the pipeline databases, web facing, the API serves JSON file to fetch comments, trends, or tweets from the pipeline.
 
-  - The InsightClientAp branch contains an AngularJS client accessible on http://flockingcomments.com that queries and serves the Json API on a client machine. As it is static js/HTML, it can be deployed retty much on any server. 
+ - The InsightClientAp branch contains an AngularJS client accessible on http://flockingcomments.com that queries and serves the Json API on a client machine. As it is static js/HTML, it can be deployed retty much on any server. 
