@@ -72,7 +72,7 @@ object ReadFromHbase {
 	
 	
 	/*Generic Hbase reader to fetch all the rows of a table beetween 2 times and create objects out of that*/
-	def readTimestampGeneric[T](table:String,timestampBack:Long,handleRow:Result=>T,column:String):ArrayBuffer[T] = {
+	def readTimestampGeneric[T](table:String,timestampBack:Long,handleRow:Cell=>T,row:String):ArrayBuffer[T] = {
 		/*Fetch the table*/
 	  
 		val httable = conn.getTable(table)
@@ -80,21 +80,22 @@ object ReadFromHbase {
 		
 		
 
-		val theScan = new Scan()
-			.addColumn("infos".getBytes(),column.getBytes())
+		val theGet = new Get(row.getBytes())
 			.setTimeRange(timestampBack, Calendar.getInstance().getTimeInMillis())
 			
 			
 		
 		
 		/*Adding timestamp filter*/
-		val res = httable.getScanner(theScan)
+		val res = httable.get(theGet)
 
-		val iterator = res.iterator()
+		val columns = res.getFamilyMap("infos".getBytes()).keySet()
+
+		val iterator = columns.iterator()
 		val ret = new ArrayBuffer[T]
 		while(iterator.hasNext()) {
-			val next = iterator.next()
-			ret.append(handleRow(next))		
+			val nextColumn = iterator.next()
+			ret.append(handleRow(res.getColumnLatestCell("infos".getBytes(), nextColumn)))		
 		}
 		ret		
 	}
@@ -103,7 +104,7 @@ object ReadFromHbase {
 	
 	
 	
-	def readFutureTrendsComments(table:String,column:String):Future[ArrayBuffer[String]] =  Future{
+	def readFutureTrendsComments(table:String,row:String):Future[ArrayBuffer[String]] =  Future{
 		/*function to handle meta link results*/
 		def handleRow(next:Cell):String = {
 			val jsonString = {
@@ -117,11 +118,11 @@ object ReadFromHbase {
 			jsonString
 		}
 		/*Calling the database*/
-		readTimeFilterGeneric[String](table, 20, 0, handleRow,column)
+		readTimeFilterGeneric[String](table, 20, 0, handleRow,row)
 	}
  
 	
-	def readFutureTimeFilterComments(table:String,column:String,minutesBackMax:Int,minutesBackMin:Int):Future[ArrayBuffer[List[Comment]]] = Future {
+	def readFutureTimeFilterComments(table:String,row:String,minutesBackMax:Int,minutesBackMin:Int):Future[ArrayBuffer[List[Comment]]] = Future {
 		/*function to handle meta link results*/
 		def handleRow(next:Cell):List[Comment] = {
 			/*getting comments*/
@@ -139,16 +140,15 @@ object ReadFromHbase {
 			json.extract[List[Comment]]
 		}
 		/*Calling the database*/
-		readTimeFilterGeneric[List[Comment]](table, minutesBackMax, minutesBackMin, handleRow,column)
+		readTimeFilterGeneric[List[Comment]](table, minutesBackMax, minutesBackMin, handleRow,row)
 	}
 	
-	def readFutureTimeFilterTweets(table:String,column:String,timestampBack:Long):Future[ArrayBuffer[Tweet]] = Future {
+	def readFutureTimeFilterTweets(table:String,row:String,timestampBack:Long):Future[ArrayBuffer[Tweet]] = Future {
 		/*function to handle meta link results*/
-		def handleRow(next:Result):Tweet = {
+		def handleRow(next:Cell):Tweet = {
 			/*getting comments*/
 			val jsonString = {
-			  val col = next.getColumnLatestCell("infos".getBytes(), column.getBytes())
-			  val value = CellUtil.cloneValue(col)
+			  val value = CellUtil.cloneValue(next)
 			  new String(value)
 			}
 			
@@ -156,7 +156,7 @@ object ReadFromHbase {
 			json.extract[Tweet]
 		}
 		/*Calling the database*/
-		readTimestampGeneric[Tweet](table, timestampBack, handleRow,column)
+		readTimestampGeneric[Tweet](table, timestampBack, handleRow,row)
 	}
 
 }
