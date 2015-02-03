@@ -1,0 +1,24 @@
+/* app css stylesheet */
+
+body {
+	margin-top: 25px;
+}
+
+
+.thumb {	
+}
+
+.comment {
+	border-bottom: 1px solid #ddd;
+}
+
+.comment_box{
+	margin-bottom: 20px;
+	padding: 15px
+}
+
+.odd_row {
+	background-color: #F2F2F2;
+}
+
+.angular-google-map-container { height: 200px; margin-bottom: 25px}

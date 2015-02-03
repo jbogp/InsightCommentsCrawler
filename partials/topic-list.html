@@ -1,0 +1,38 @@
+    <div class="col-md-2">
+      <!--Sidebar content-->
+
+      Search: <input ng-model="query">
+
+    </div>
+    <div class="col-md-offset-1 col-md-3">
+      <!--Body content-->
+<h2>1h topics</h2>
+      <ul class="phones">
+        <li ng-repeat="topic in topics1h | filter:query" class="thumbnail">
+          <a href="#/comments/{{topic}}">{{topic}}</a>
+        </li>
+      </ul>
+
+    </div>
+
+    <div class="col-md-3">
+      <!--Body content-->
+<h2>12h topics</h2>
+      <ul class="phones">
+        <li ng-repeat="topic in topics12h | filter:query" class="thumbnail">
+          <a href="#/comments/{{topic}}">{{topic}}</a>
+        </li>
+      </ul>
+
+    </div>
+
+    <div class="col-md-3">
+      <!--Body content-->
+<h2>All time topics</h2>
+      <ul class="phones">
+        <li ng-repeat="topic in topicsalltime | filter:query" class="thumbnail">
+          <a href="#/comments/{{topic}}">{{topic}}</a>
+        </li>
+      </ul>
+
+    </div>

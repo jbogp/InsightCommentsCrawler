@@ -1,0 +1,134 @@
+  <div class="row">
+    <div class="col-md-12 thumbnail" style="background-image:url('img/back.png')">
+      <h2>Flocking topics</h2>
+      <div class="row">
+        <div class="col-md-12">
+        <h4>Last hour</h4>
+          <div class="btn-group btn-group-xs" role="group">
+            <a href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topics1h">
+              #{{$index+1}} {{theTopic}}
+            </a>
+          </div>
+        </div>
+        <div class="col-md-12">
+        <h4>Last 12h</h4>
+          <div class="btn-group btn-group-xs" role="group">
+            <a href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topics12h">
+              #{{$index+1}} {{theTopic}}
+            </a>
+          </div>
+        </div>
+        <div class="col-md-12">
+        <h4>All time</h4>
+          <div class="btn-group btn-group-xs" role="group">
+            <a href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topicsalltime | limitTo:limitTopics">
+              #{{$index+1}} {{theTopic}}
+            </a> 
+            <button class="btn btn-primary" ng-if="limitTopics < 100" data-ng-click="incrementLimit()">more</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-7 thumbnail" style="padding:14px">
+      <!-- COMMENTS PART -->
+      <h2>Herd of comments about "{{topic}}"</h2>
+      <h5>What's not to like?</h5>
+      <h3>Have it your way</h3>
+      <div class="row" style="margin-bottom:25px;">
+        <div class="col-md-3">
+          <div>
+          Sort comments by:
+          </div>
+          <div>
+          Search: 
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div>
+            <select ng-model="orderProp">
+              <option value="">Most Recent first</option>
+              <option value="-like_count">Likes</option>
+            </select>
+          </div>
+          <div>
+            <input ng-model="query">
+          </div>
+        </div>
+        <div class="col-md-3">
+          Nested <input type="checkbox" ng-model="nest">
+        </div>
+      </div>
+
+      <!--Spinner wheel for comments-->
+      <div ng-if="!loadedComments" style="text-align:center">
+        <img src="img/loading.gif" height="400">  
+      </div>
+      <!-- Comments as a flat organization -->
+      <div class="row" ng-if="!nest && loadedComments"  ng-repeat="comment in comments | filter:query | orderBy:orderProp">
+          <div class="col-md-12 phones thumbnail">
+            <div>
+              <img src="img/like.png" height="10" width="10"> {{comment.like_count}} published {{comment.created_time}} on <a href="{{comment.url}}">{{comment.url.substring(7,25)+"..."}}</a>
+            </div>
+            <div>
+              {{comment.from}}: {{comment.message}}
+            </div>
+          </div>
+      </div>
+
+      <!-- Comments as a nested organization -->
+      <div class="row" ng-if="nest  && loadedComments"  ng-repeat="article in articles | orderBy:'-firstPost'">
+        <div class="col-md-12 comment_box thumbnail">
+          <h4 class="pull-right">
+            <a ng-show="nested_article[{{$index}}]" ng-click="toggle($index)" href="javascript:;">[&ndash;]</a>
+          </h4>
+          <h4 class="pull-right">
+            <a ng-show="!nested_article[{{$index}}]" ng-click="toggle($index)" href="javascript:;">[+]</a>
+          </h4>
+          <blockquote>
+            <a href="{{article.url}}">{{article.title}}</a>
+          </blockquote>
+          <div ng-show="nested_article[{{$index}}]">
+            <div class="row" ng-if="nest" ng-repeat="comment in article.comments | filter:query | orderBy:orderProp">
+              <div class="col-md-12 comment" ng-class-even="'odd_row'">
+                <div>
+                  <img src="img/like.png" height="10" width="10"> {{comment.like_count}} published {{comment.created_time}}
+                </div>
+                <div>
+                  {{comment.from}}: {{comment.message}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- TWITTER PART -->
+    <div class="col-md-offset-1 col-md-4 thumbnail" style="padding:14px">
+      <h2>Flock of Tweets</h2>
+      <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+        <ui-gmap-markers models="tweetMarkers" coords="'self'" icon="'icon'">
+        </ui-gmap-markers>
+      </ui-gmap-google-map>
+      <!--Spinner wheel for tweets-->
+      <div ng-if="!loadedTweets" style="text-align:center">
+        <img src="img/loading.gif" width="100%">  
+      </div>
+      <div class="row" ng-if="loadedTweets" ng-repeat="tweet in tweets | filter:query | limitTo:100">
+          <div class="col-md-12 phones thumbnail">
+            <div>
+               <img ng-src="{{tweet.from_pic}}">{{tweet.from}}
+            </div>
+            <div>
+              {{tweet.message}}
+            </div>
+          </div>
+      </div>
+    </div>
+
+  </div>
