@@ -98,7 +98,7 @@ case class WriteToHbase() {
 	 * Insert Tweets in Hbase
 	 */
 	def insertTweets(tweet:Tweet,topics:Array[String]) {
-			val column = "Z"+(Long.MaxValue-Calendar.getInstance().getTimeInMillis())+MessageDigest.getInstance("MD5").digest(tweet.id.toString.getBytes()).map("%02X".format(_)).mkString
+			val column = tweet.id.toString
 			
 			/*Writing on topics tables*/
 			val content = tweet.message
