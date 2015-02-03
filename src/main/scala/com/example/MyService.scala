@@ -93,7 +93,7 @@ Nothing to see here
 					}
 					
 					//Fetching the data from hbase
-					onComplete(ReadFromHbase.readFutureTimeFilterTweets("commentsalltime", "theTweets_"+req, timeBackMin)) {
+					onComplete(ReadFromHbase.readFutureTimeFilterTweets("tweets", req, timeBackMin)) {
 			    	      case Success(value) => respondWithMediaType(`application/json`) {
 			    	        complete{
 			    	        	GetCommentsTopic.getTweetsJson(value)
