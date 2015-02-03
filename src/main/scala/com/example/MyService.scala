@@ -60,7 +60,7 @@ Nothing to see here
 		}~
 		path("comments"){
 			parameters('req,'org) { (req,org) => respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")){
-			    onComplete(ReadFromHbase.readFutureTimeFilterComments("realcomments", req, 6000, 0)) {
+			    onComplete(ReadFromHbase.readFutureTimeFilterComments("comments", req, 6000, 0)) {
 			    	      case Success(value) => respondWithMediaType(`application/json`) {
 								complete{
 									org match{
