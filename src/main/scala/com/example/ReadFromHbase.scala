@@ -17,6 +17,7 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import org.apache.hadoop.hbase.CellUtil
 import org.apache.hadoop.hbase.client.HConnectionManager
+import org.apache.hadoop.hbase.Cell
 
 case class Comment(created_time:String,from:String,like_count:Int,message:String,url:Option[String],title:Option[String])
 
@@ -40,7 +41,7 @@ object ReadFromHbase {
 		
 	
 	/*Generic Hbase reader to fetch all the rows of a table beetween 2 times and create objects out of that*/
-	def readTimeFilterGeneric[T](table:String,minutesBackMax:Int,minutesBackMin:Int,handleRow:Result=>T,column:String):ArrayBuffer[T] = {
+	def readTimeFilterGeneric[T](table:String,minutesBackMax:Int,minutesBackMin:Int,handleRow:Cell=>T,row:String):ArrayBuffer[T] = {
 		/*Fetch the table*/
 	  
 		val httable = conn.getTable(table)
@@ -49,21 +50,22 @@ object ReadFromHbase {
 		
 		
 
-		val theScan = new Scan()
-			.addColumn("infos".getBytes(),column.getBytes())
+		val theGet = new Get(row.getBytes())
 			.setTimeRange(Calendar.getInstance().getTimeInMillis()-offsetMax, Calendar.getInstance().getTimeInMillis()-offsetMin)
 			
 			
 		
 		
 		/*Adding timestamp filter*/
-		val res = httable.getScanner(theScan)
+		val res = httable.get(theGet)
+		
+		val columns = res.getFamilyMap("infos".getBytes()).keySet()
 
-		val iterator = res.iterator()
+		val iterator = columns.iterator()
 		val ret = new ArrayBuffer[T]
 		while(iterator.hasNext()) {
-			val next = iterator.next()
-			ret.append(handleRow(next))		
+			val nextColumn = iterator.next()
+			ret.append(handleRow(res.getColumnLatestCell("infos".getBytes(), nextColumn)))		
 		}
 		ret		
 	}
@@ -103,10 +105,9 @@ object ReadFromHbase {
 	
 	def readFutureTrendsComments(table:String,column:String):Future[ArrayBuffer[String]] =  Future{
 		/*function to handle meta link results*/
-		def handleRow(next:Result):String = {
+		def handleRow(next:Cell):String = {
 			val jsonString = {
-			  val col = next.getColumnLatestCell("infos".getBytes(), column.getBytes())
-			  val value = CellUtil.cloneValue(col)
+			  val value = CellUtil.cloneValue(next)
 			  if(value.length != 0)
 				  new String(value)
 			  else
@@ -122,12 +123,12 @@ object ReadFromHbase {
 	
 	def readFutureTimeFilterComments(table:String,column:String,minutesBackMax:Int,minutesBackMin:Int):Future[ArrayBuffer[List[Comment]]] = Future {
 		/*function to handle meta link results*/
-		def handleRow(next:Result):List[Comment] = {
+		def handleRow(next:Cell):List[Comment] = {
 			/*getting comments*/
 			val jsonString = {
-			  val col = next.getColumnLatestCell("infos".getBytes(), column.getBytes())
-			  if(col != null){
-				  val value = CellUtil.cloneValue(col)
+			  
+			  if(next != null){
+				  val value = CellUtil.cloneValue(next)
 				  new String(value)
 			  }
 			  else
