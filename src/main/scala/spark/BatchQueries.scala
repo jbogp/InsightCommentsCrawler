@@ -115,7 +115,7 @@ class BatchQueries extends Serializable{
 		val (columns_spam, values_spam) = spam_reduce.unzip 
 		
 		/*register the values in Hbase*/
-		val timestamp = Calendar.getInstance().getTimeInMillis()
+		val timestamp = Long.MaxValue-Calendar.getInstance().getTimeInMillis()
 		hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => s.toString.getBytes(),true)	
 		hbw.insert[Int]("users_aggregates", timestamp.toString, "infos", users.toArray, likes.toArray, s => s.toString.getBytes(),true)
 						
