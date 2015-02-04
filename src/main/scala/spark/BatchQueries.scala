@@ -83,7 +83,7 @@ class BatchQueries extends Serializable{
 		})
 		
 		
-		/*Map every comment to the number they've been posted to detect potential spam messages
+		/*Map every comment to the number they've been posted to detect potential spam messages*/
 		val spam_detect = rdd.map(tuple => tuple._2)
 		/*transforming into an arraybuffer of lists of properties for every user*/
 		.flatMap[(String,Int)](r => {
@@ -93,24 +93,30 @@ class BatchQueries extends Serializable{
 			val ret = new ArrayBuffer[(String,Int)]
 			while(it.hasNext()){
 				val currentCol = it.next()
-				val comment = net.liftweb.json.parse(new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol))))
-							.extract[UserComment]
+				val comment = new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol)))
+				
+				/*hacking json parse*/
+				val likes = """(?s).*\"message\"\:\"(.*)\"\,\"title\"\:""".r
+				val message = comment match {
+				  	case likes(mess) => s"$mess"
+				} 
+				
 				/*emitting the tuples*/
-				ret.append((comment.message,1))
+				ret.append((message,1))
 			}
 			ret
 		})
-		*/
+		
 		  
   	  	/*reduce step*/
 		val likes_reduce = likes_map.reduceByKey(_ + _).collect.sortBy(_._2).reverse
 		val (users, likes) = likes_reduce.unzip
-		//val spam_reduce = spam_detect.reduceByKey(_+_).filter(_._2>1).sortByKey(false, 1).collect
-		//val (columns_spam, values_spam) = spam_reduce.unzip 
+		val spam_reduce = spam_detect.reduceByKey(_+_).filter(_._2>1).sortByKey(false, 1).collect
+		val (columns_spam, values_spam) = spam_reduce.unzip 
 		
 		/*register the values in Hbase*/
 		val timestamp = Calendar.getInstance().getTimeInMillis()
-		//hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => Bytes.toBytes(s),true)	
+		hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => Bytes.toBytes(s),true)	
 		hbw.insert[Int]("users_aggregates", timestamp.toString, "infos", users.toArray, likes.toArray, s => s.toString.getBytes(),true)
 						
 		spark.stop
