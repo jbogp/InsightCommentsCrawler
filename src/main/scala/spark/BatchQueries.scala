@@ -26,6 +26,7 @@ class BatchQueries extends Serializable{
   
   	val hbr = new ReadFromHbase
 	val hbw = new WriteToHbase
+	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
 							
   		
 	/*Map reduce procedure to aggregate the number of likes users get*/
@@ -34,7 +35,7 @@ class BatchQueries extends Serializable{
   	  	val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
 		val spark = new SparkContext(conf)
   	  	
-  	  	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
+
   	
   	  
 
@@ -73,6 +74,7 @@ class BatchQueries extends Serializable{
 			}
 			ret
 		})
+		
 		
 		/*Map every comment to the number they've been posted to detect potential spam messages*/
 		val spam_detect = rdd.map(tuple => tuple._2)
