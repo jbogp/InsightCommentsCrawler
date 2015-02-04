@@ -77,7 +77,7 @@ class BatchQueries extends Serializable{
 				} 
 				
 				/*emitting the tuples*/
-				ret.append((new String(r.getRow()),like_count(0).toInt))
+				ret.append((new String(r.getRow()),like_count.toInt))
 			}
 			ret
 		})
