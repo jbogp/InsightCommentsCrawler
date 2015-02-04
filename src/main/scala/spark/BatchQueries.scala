@@ -72,7 +72,9 @@ class BatchQueries extends Serializable{
 				
 				/*hacking json parse*/
 				val likes = """"like_count" ?: ?(\d+),""".r
-				val like_count = (likes findAllIn comment).toList 
+				val like_count = comment match {
+				  	case count => count
+				} 
 				
 				/*emitting the tuples*/
 				ret.append((new String(r.getRow()),like_count(0).toInt))
