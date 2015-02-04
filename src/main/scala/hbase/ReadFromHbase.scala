@@ -96,7 +96,7 @@ class ReadFromHbase {
 				  new SimpleRssItem("none","none","none","none","none")
 			}
 			/*Calling the database*/
-			readTimeFilterGeneric[SimpleRssItem](table, minutesBackMax, minutesBackMin, handleRow,false)
+			readTimeFilterGeneric[SimpleRssItem](table, minutesBackMax, minutesBackMin, handleRow)
 	}
 	
 	def readTimeFilterTopics(table:String,minutesBackMax:Int,minutesBackMin:Int):ArrayBuffer[String] =  {
