@@ -71,7 +71,7 @@ class BatchQueries extends Serializable{
 				val comment = new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol)))
 				
 				/*hacking json parse*/
-				val likes = """.*like\_count\"\:(\d+)\,.*""".r
+				val likes = """(?s).*like\_count\"\:(\d+)\,.*""".r
 				val like_count = comment match {
 				  	case likes(count) => s"$count"
 				} 
