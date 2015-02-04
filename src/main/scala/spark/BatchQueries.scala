@@ -2,7 +2,6 @@ package main.scalaspark
 import main.scala.hbase.WriteToHbase
 import main.scala.hbase.ReadFromHbase
 import scala.io.Source
-import net.liftweb.json.DefaultFormats
 import scala.collection.mutable.ArrayBuffer
 import org.apache.spark._
 import org.apache.spark.SparkContext._
@@ -20,13 +19,16 @@ import scala.Array.canBuildFrom
 import main.scala.hbase.UserComment
 import java.util.Calendar
 import org.apache.hadoop.hbase.util.Bytes
+import net.liftweb.json.JInt
+import net.liftweb.json.JsonAST.JField
+
 
 
 class BatchQueries extends Serializable{
   
   	val hbr = new ReadFromHbase
 	val hbw = new WriteToHbase
-	implicit val formats = DefaultFormats
+	
 							
   		
 	/*Map reduce procedure to aggregate the number of likes users get*/
@@ -68,15 +70,15 @@ class BatchQueries extends Serializable{
 			while(it.hasNext()){
 				val currentCol = it.next()
 				val comment = net.liftweb.json.parse(new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol))))
-							.extract[UserComment]
 				/*emitting the tuples*/
-				ret.append((new String(r.getRow()),comment.like_count))
+				ret.append((new String(r.getRow()),
+				    for{JField("like_count", JInt(age)) <- comment} yield age))
 			}
 			ret
 		})
 		
 		
-		/*Map every comment to the number they've been posted to detect potential spam messages*/
+		/*Map every comment to the number they've been posted to detect potential spam messages
 		val spam_detect = rdd.map(tuple => tuple._2)
 		/*transforming into an arraybuffer of lists of properties for every user*/
 		.flatMap[(String,Int)](r => {
@@ -92,18 +94,18 @@ class BatchQueries extends Serializable{
 				ret.append((comment.message,1))
 			}
 			ret
-		})
+		})*/
 		
 		  
   	  	/*reduce step*/
 		val likes_reduce = likes_map.reduceByKey(_ + _).collect.sortBy(_._2).reverse
 		val (users, likes) = likes_reduce.unzip
-		val spam_reduce = spam_detect.reduceByKey(_+_).filter(_._2>1).sortByKey(false, 1).collect
-		val (columns_spam, values_spam) = spam_reduce.unzip 
+		//val spam_reduce = spam_detect.reduceByKey(_+_).filter(_._2>1).sortByKey(false, 1).collect
+		//val (columns_spam, values_spam) = spam_reduce.unzip 
 		
 		/*register the values in Hbase*/
 		val timestamp = Calendar.getInstance().getTimeInMillis()
-		hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => Bytes.toBytes(s),true)	
+		//hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => Bytes.toBytes(s),true)	
 		hbw.insert[Int]("users_aggregates", timestamp.toString, "infos", users.toArray, likes.toArray, s => Bytes.toBytes(s),true)
 						
 		spark.stop
