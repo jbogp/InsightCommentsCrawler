@@ -22,7 +22,7 @@ import java.util.Calendar
 import org.apache.hadoop.hbase.util.Bytes
 
 
-class BatchQueries {
+class BatchQueries extends Serializable{
   
   	val hbr = new ReadFromHbase
 	val hbw = new WriteToHbase
