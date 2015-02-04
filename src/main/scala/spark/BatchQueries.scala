@@ -3,7 +3,6 @@ import main.scala.hbase.WriteToHbase
 import main.scala.hbase.ReadFromHbase
 import scala.io.Source
 import net.liftweb.json.DefaultFormats
-import net.liftweb.json._
 import scala.collection.mutable.ArrayBuffer
 import org.apache.spark._
 import org.apache.spark.SparkContext._
@@ -35,7 +34,7 @@ class BatchQueries {
   	  	val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
 		val spark = new SparkContext(conf)
   	  	
-  	  	implicit val formats = Serialization.formats(NoTypeHints)
+  	  	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
   	
   	  
 
@@ -60,14 +59,14 @@ class BatchQueries {
 		/*Map every user to it's like*/
 		val likes_map = rdd.map(tuple => tuple._2)
 		/*transforming into an arraybuffer of lists of properties for every user*/
-		.flatMap[(String,Int)](r => {
+		.flatMap(r => {
 			/*getting the family map for the current row*/
 			val col = r.getFamilyMap("infos".getBytes()).keySet()
 			val it = col.iterator()
 			val ret = new ArrayBuffer[(String,Int)]
 			while(it.hasNext()){
 				val currentCol = it.next()
-				val comment = parse(new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol))))
+				val comment = net.liftweb.json.parse(new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol))))
 							.extract[UserComment]
 				/*emitting the tuples*/
 				ret.append((new String(r.getRow()),comment.like_count))
@@ -85,7 +84,7 @@ class BatchQueries {
 			val ret = new ArrayBuffer[(String,Int)]
 			while(it.hasNext()){
 				val currentCol = it.next()
-				val comment = parse(new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol))))
+				val comment = net.liftweb.json.parse(new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol))))
 							.extract[UserComment]
 				/*emitting the tuples*/
 				ret.append((comment.message,1))
