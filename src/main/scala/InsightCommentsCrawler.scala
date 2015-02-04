@@ -30,6 +30,7 @@ import externalAPIs.TweetToJSONToKafka
 import main.scala.sql.MySQLConnector
 import main.scala.kafka.KafkaConsumer
 import main.scala.storm.KafkaStorm
+import main.scala.spark.TopicsFinder
 
 
 

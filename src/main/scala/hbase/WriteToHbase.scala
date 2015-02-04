@@ -15,6 +15,11 @@ import org.apache.hadoop.hbase.HBaseConfiguration
 import externalAPIs.Tweet
 import net.liftweb.json.Serialization
 import net.liftweb.json.NoTypeHints
+import scala.collection.mutable.ArrayBuffer
+import main.scala.rss.Comment
+
+/*Some case classes*/
+case class UserComment(url:String,message:String,title:String,like_count:Int,created_at:String)
 
 /*Stores and reads values in the Hbase*/
 case class WriteToHbase() {
@@ -77,19 +82,27 @@ case class WriteToHbase() {
 	/* 
 	 * Insert comments in Hbase
 	 */
-	def insertComments(values:Array[String],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
+	def insertComments(values:Array[String],comments:ArrayBuffer[Comment],topics1h:Array[String],topics12h:Array[String],topicsAllTime:Array[String]) {
 		val alltopics = topicsAllTime++topics1h++topics12h
 		
 		val url = values(0)
-		val comments = values(1)
+		val titleStr = values(2)
+		val commentsJson = write(comments)
 			
-		/*Writing on topics tables*/
-		val title = (values(2)+values(3)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
+		/*Writing on topics table*/
+		val title = (values(1)+values(2)).replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ").filter(_.length()<15).drop(1)
 		title.foreach(word =>{
 			if((topicsAllTime++topics1h++topics12h).contains(word)) {
-				insert[String]("comments",word,"infos",Array(url),Array(values(1)),s => Bytes.toBytes(s))
+				insert[String]("comments",word,"infos",Array(url),Array(commentsJson),s => Bytes.toBytes(s))
 				println(word)
 			}
+		})
+
+		/*Writing on users table*/
+		comments.foreach(comment =>{
+				val jsonUser = write(new UserComment(url,comment.message,titleStr,comment.like_count,comment.created_time))
+				insert[String]("users",word,"infos",Array(url),Array(values(1)),s => Bytes.toBytes(s))
+				println(comment.from)
 		})
 	}
 	

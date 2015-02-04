@@ -1,10 +1,6 @@
-package main.scala
-
-import main.scala.kafka.KafkaConsumer
-import hbase.WriteToHbase
-import hbase.ReadFromHbase
-import net.liftweb.json.Serialization
-import net.liftweb.json.NoTypeHints
+package main.scala.spark
+import main.scala.hbase.WriteToHbase
+import main.scala.hbase.ReadFromHbase
 import scala.io.Source
 import net.liftweb.json._
 import scala.collection.mutable.ArrayBuffer
@@ -17,8 +13,10 @@ import org.apache.spark.rdd.NewHadoopRDD
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.client.Result
 import scala.collection.JavaConverters._
-import org.apache.spark.rdd.RDD
 import org.apache.hadoop.hbase.CellUtil
+import org.apache.hadoop.hbase.client.Result
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable
+import scala.Array.canBuildFrom
 
 
 object TopicsFinder {

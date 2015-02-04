@@ -6,6 +6,8 @@ import hbase.ReadFromHbase
 import externalAPIs.DisqusAPI
 import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
+import scala.collection.mutable.ArrayBuffer
+import rss.Comment
 
 object CommentsFetcher {
 	val hbr = new ReadFromHbase
@@ -22,7 +24,7 @@ object CommentsFetcher {
 
   		items.foreach(item => {
   			try{
-	  			val jsonString:String = item.engine match {
+	  			val commentsArray:ArrayBuffer[Comment] = item.engine match {
 	  			  	case "disqus" => {
 	  			  		/*boring particular cases*/
 	  			  		if(item.url.contains("abcnews")) {
@@ -30,39 +32,36 @@ object CommentsFetcher {
 		  			  			val urlParts = item.url.split("/")
 		  			  			val newUrl = "http://abcnews.go.com/"+urlParts(urlParts.length-3)+"/"+urlParts(urlParts.length-1)
 		  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-			  			  		val comments = dReader.readJSON(json,newUrl,item.desc)
-			  			  		write(comments)
+			  			  		dReader.readJSON(json,newUrl,item.desc)
+
 			  			  	}
 			  			  	else {
-			  			  		"[]"
+			  			  		new ArrayBuffer[Comment]
 			  			  	}
 	  			  		}
 	  			  		else if(item.url.contains("japantimes")){
 	  			  			val newUrl = item.url.split("\\?").apply(0)
 	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
-		  			  		val comments = dReader.readJSON(json,newUrl,item.desc)
-		  			  		write(comments)
+	  			  			dReader.readJSON(json,newUrl,item.desc)
 	  			  		}
 	  			  		else {
 		  			  		val json = dReader.fetchJSONFromURL(Array(item.url,item.engineId))
-		  			  		val comments = dReader.readJSON(json,item.url,item.desc)
-		  			  		write(comments)
+		  			  		dReader.readJSON(json,item.url,item.desc)
 	  			  		}
 	  			  	}
 	  			  	case "fb" => {
 	  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
-	  			  		val comments = fbReader.readJSON(json,item.url,item.desc)
-	  			  		write(comments)
+	  			  		fbReader.readJSON(json,item.url,item.desc)
 	  			  	}
 	  			  	case _ => {
 	  			  		println("error")
-	  			  		"[]"
+	  			  		new ArrayBuffer[Comment]
 	  			  	}
 	  			}
 	  			/*Put in Hbase if not empty*/
-	  			if(jsonString != "[]") {
+	  			if(!commentsArray.isEmpty) {
 	  				success = success+1
-	  				hbw.insertComments(Array(item.url,jsonString,item.title,item.desc),topics1h,topics12h,topicsAllTime)
+	  				hbw.insertComments(Array(item.url,item.title,item.desc),commentsArray,topics1h,topics12h,topicsAllTime)
 	  			}
 	  			else{
 	  				empty = empty+1
