@@ -86,7 +86,9 @@ class DisqusAPI extends ExternalAPI {
 	def fetchJSONFromURL(params:Array[String]):String = {
 			val keys = Array("wnii9oY7d5a7yay80egKAnF7jAAkytjMZfFTPSqyjMqpCOI7WpCUQl7XPCDfti7V",
 			    "mx8SdLAdFQRFncQAYlt1qwVpFCOjTjO7q9YctA4dPL57tQ1ERzt3iN16yKYWKB9V",
-			    "JWuvdKJkgmUDTCiCpqAz7yHECoiMpaSLKYa3LY0XkI0yLDlCPwzXVwFI2FoBXY0N")
+			    "JWuvdKJkgmUDTCiCpqAz7yHECoiMpaSLKYa3LY0XkI0yLDlCPwzXVwFI2FoBXY0N",
+			    "IDXDDVf4RafAwx870i3XfxBg3jW75U7CUXeUsKN5cHpgNfVdsxLSoH8RRNPViTl1",
+			    "Ci9eNvHTCld09sQ0G5dfFGi0Ogmtg6shAFh5vI5shORXpHvwQH0rpREIcVOi5u9B")
 			val rand = new Random(System.currentTimeMillis());
 			val random_index = rand.nextInt(keys.length);
 			val i = keys(random_index);
