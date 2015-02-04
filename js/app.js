@@ -19,6 +19,10 @@ phonecatApp.config(['$routeProvider',
         templateUrl: 'partials/comments-list.html',
         controller: 'PhoneDetailCtrl'
       }).
+      when('/user/:pseudo', {
+        templateUrl: 'partials/user-list.html',
+        controller: 'UserCtrl'
+      }).
       otherwise({
         redirectTo: '/topics'
       });

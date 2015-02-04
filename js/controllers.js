@@ -1,6 +1,6 @@
 'use strict';
 
-/* Controllers */
+
 
 var phonecatControllers = angular.module('phonecatControllers', []);
 
@@ -71,6 +71,14 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 
 	}
 
+	$scope.getNiceDate = function(to){
+		var d = Date.parse(to);
+		var d2 = new Date(d);
+		return ('0' + (d2.getMonth()+1)).slice(-2) + '/'
+             + ('0' + d2.getDate()).slice(-2) + '/'
+             + d2.getFullYear();
+	}
+
 	function addMarkers(tweets){
     	angular.forEach(tweets, function(tweet){
 	  		if(tweet.longitude !== 0.0){
@@ -83,6 +91,8 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 	      	}
 		}, $scope.tweetMarkers);
 	}
+
+
 
 	function initTweets(){
 		//Getting the tweets
@@ -112,10 +122,26 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 	    });
 	}
 
+
+	$scope.getUserComments = function(pseudo) {
+		$http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/user?req=' + pseudo).success(function(data) {
+			$scope.showUser = true;
+		    $scope.userComments = data;
+		    $scope.currentUser = pseudo;
+	    })		
+	}
+
+	$scope.hideModal = function() {
+		$scope.showUser = false;
+	}
+
+	$scope.currentUser = "";
+	$scope.showUser = false;
 	$scope.loadedComments = false;
 	$scope.loadedTweets = false;
 	$scope.nest= true;
 	$scope.tweetMarkers = [];
+	$scope.userComments = [];
 
 	$scope.$watch('nest', function() {
 		$scope.loadedComments = false;
