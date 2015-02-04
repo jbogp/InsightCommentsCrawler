@@ -26,7 +26,7 @@ class BatchQueries extends Serializable{
   
   	val hbr = new ReadFromHbase
 	val hbw = new WriteToHbase
-	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
+	implicit val formats = DefaultFormats
 							
   		
 	/*Map reduce procedure to aggregate the number of likes users get*/
