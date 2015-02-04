@@ -101,8 +101,9 @@ case class WriteToHbase() {
 		/*Writing on users table*/
 		comments.foreach(comment =>{
 				val col = titleStr+comment.created_time
+				val row = comment.from.replaceAll("[^a-zA-Z0-9]", "")
 				val jsonUser = write(new UserComment(url,comment.message,col,comment.like_count,comment.created_time))
-				insert[String]("users",comment.from,"infos",Array(col),Array(jsonUser),s => Bytes.toBytes(s))
+				insert[String]("users",row,"infos",Array(col),Array(jsonUser),s => Bytes.toBytes(s))
 				println(comment.from)
 		})
 	}
