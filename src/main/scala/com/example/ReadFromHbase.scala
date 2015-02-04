@@ -25,6 +25,8 @@ case class Article(url:String,title:String,firstPost:Long,comments:List[Comment]
 /*Case class for Tweet Message*/
 case class Tweet(message:String,createdAt:Long,latitude:Double,longitude:Double,id:Long,rt_count:Int,from:String,from_pic:String,from_url:String)
 
+/*Some case classes*/
+case class UserComment(url:String,message:String,title:String,like_count:Int,created_at:String)
 
 
 object ReadFromHbase {
@@ -72,20 +74,21 @@ object ReadFromHbase {
 	
 	
 	/*Generic Hbase reader to fetch all the rows of a table beetween 2 times and create objects out of that*/
-	def readTimestampGeneric[T](table:String,timestampBack:Long,handleRow:Cell=>T,row:String):ArrayBuffer[T] = {
+	def readTimestampGeneric[T](table:String,handleRow:Cell=>T,row:String,timestampBack:Long=0L):ArrayBuffer[T] = {
 		/*Fetch the table*/
 	  
 		val httable = conn.getTable(table)
 		
-		
-		
-
-		val theGet = new Get(row.getBytes())
-			.setTimeRange(timestampBack, Calendar.getInstance().getTimeInMillis())
+		val theGet = {
+		  if(timestampBack == 0L){
+			new Get(row.getBytes())
+		  }
+		  else{
+		    new Get(row.getBytes())
+				.setTimeRange(timestampBack, Calendar.getInstance().getTimeInMillis())
+		  }
+		}
 			
-			
-		
-		
 		/*Adding timestamp filter*/
 		val res = httable.get(theGet)
 
@@ -119,6 +122,27 @@ object ReadFromHbase {
 		}
 		/*Calling the database*/
 		readTimeFilterGeneric[String](table, 20, 0, handleRow,row)
+	}
+	
+	def readUserComments(table:String,row:String):Future[ArrayBuffer[UserComment]] = Future {
+		/*function to handle meta link results*/
+		def handleRow(next:Cell):UserComment = {
+			/*getting comments*/
+			val jsonString = {
+			  
+			  if(next != null){
+				  val value = CellUtil.cloneValue(next)
+				  new String(value)
+			  }
+			  else
+				  """{"url":"noth""message":"never","title":"noone","like_count":0,"created_at":"nothing"}"""
+			}
+			
+			val json = parse(jsonString)
+			json.extract[UserComment]
+		}
+		/*Calling the database*/
+		readTimestampGeneric[UserComment](table, handleRow,row)
 	}
  
 	
@@ -156,7 +180,7 @@ object ReadFromHbase {
 			json.extract[Tweet]
 		}
 		/*Calling the database*/
-		readTimestampGeneric[Tweet](table, timestampBack, handleRow,row)
+		readTimestampGeneric[Tweet](table, handleRow,row, timestampBack)
 	}
 
 }

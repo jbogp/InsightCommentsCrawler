@@ -11,7 +11,9 @@ import scala.util.Success
 import scala.util.Failure
 import spray.http.HttpHeaders.RawHeader
 import java.util.Calendar
-
+import net.liftweb.json.Serialization.{read, write}
+import net.liftweb.json.Serialization
+import net.liftweb.json.NoTypeHints
 
 
 
@@ -33,7 +35,7 @@ class MyServiceActor extends Actor with MyService {
 // this trait defines our service behavior independently from the service actor
 trait MyService extends HttpService {
   
-  
+	implicit val formats = Serialization.formats(NoTypeHints)
 
 	def stringMarshaller(charset: HttpCharset, more: HttpCharset*): Marshaller[String] =
 			stringMarshaller(ContentType(`text/plain`, charset), more map (ContentType(`text/plain`, _)): _*)
@@ -56,6 +58,21 @@ trait MyService extends HttpService {
 Nothing to see here
 					</body>
 				</html>
+			}
+		}~
+		path("user"){
+			parameters('req) { (req) => respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")){
+			    onComplete(ReadFromHbase.readUserComments("users",req)) {
+			    	      case Success(value) => respondWithMediaType(`application/json`) {
+								complete{
+									write(value)
+								}
+			    	      }
+			    	      case Failure(ex)    => respondWithMediaType(`application/json`){
+			    	        complete("""{"error":"no comments on this topic"}""")
+			    	      }
+			    }
+			}
 			}
 		}~
 		path("comments"){
