@@ -31,6 +31,7 @@ import main.scala.sql.MySQLConnector
 import main.scala.kafka.KafkaConsumer
 import main.scala.storm.KafkaStorm
 import main.scala.spark.TopicsFinder
+import main.scalaspark.BatchQueries
 
 
 
@@ -122,8 +123,8 @@ object InsightCommentsCrawler {
 						while(true){
 							try{
 							  
-								/*If any exit, clear Twitter Listeners
-							  	twitterStream.clearListeners()*/
+								/*If any exit, clear Twitter Listeners*/
+							  	twitterStream.clearListeners()
 							  
 								/* Getting 1h top 10 topics */
 								val meta1h = hbr.readTimeFilterArticlesMeta("article_links", 60, 0)
@@ -207,14 +208,14 @@ object InsightCommentsCrawler {
 						
 					}
 					
-					case "StormTest" => {
+					case "BatchLayer" => {
 					  
-						val hbr = new ReadFromHbase
-
-
-							val timestamp = MySQLConnector.getLastTimestamp
-							
-							new KafkaStorm(args(1),"tweets").runTopology
+						val batch = new BatchQueries
+						while(true){
+							batch.registerLikedUsers
+				  			/*Wait 20 minutes*/
+				  			Thread.sleep(1200000);			  
+						}
 						
 					  
 					}
