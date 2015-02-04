@@ -20,7 +20,6 @@ import main.scala.hbase.UserComment
 import java.util.Calendar
 import org.apache.hadoop.hbase.util.Bytes
 import net.liftweb.json.JInt
-import net.liftweb.json.JsonAST.JField
 
 
 
@@ -69,10 +68,14 @@ class BatchQueries extends Serializable{
 			val ret = new ArrayBuffer[(String,Int)]
 			while(it.hasNext()){
 				val currentCol = it.next()
-				val comment = net.liftweb.json.parse(new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol))))
+				val comment = new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol)))
+				
+				/*hacking json parse*/
+				val likes = """"like_count" ?: ?(\d+),""".r
+				val like_count = (likes findAllIn comment).toList 
+				
 				/*emitting the tuples*/
-				ret.append((new String(r.getRow()),
-				    for{JField("like_count", JInt(age)) <- comment} yield age))
+				ret.append((new String(r.getRow()),like_count(0).toInt))
 			}
 			ret
 		})
@@ -94,8 +97,8 @@ class BatchQueries extends Serializable{
 				ret.append((comment.message,1))
 			}
 			ret
-		})*/
-		
+		})
+		*/
 		  
   	  	/*reduce step*/
 		val likes_reduce = likes_map.reduceByKey(_ + _).collect.sortBy(_._2).reverse
