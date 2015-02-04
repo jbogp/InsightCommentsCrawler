@@ -111,7 +111,7 @@ class BatchQueries extends Serializable{
 		/*register the values in Hbase*/
 		val timestamp = Calendar.getInstance().getTimeInMillis()
 		//hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => Bytes.toBytes(s),true)	
-		hbw.insert[Int]("users_aggregates", timestamp.toString, "infos", users.toArray, likes.toArray, s => Bytes.toBytes(s),true)
+		hbw.insert[Int]("users_aggregates", timestamp.toString, "infos", users.toArray, likes.toArray, s => s.toString.getBytes(),true)
 						
 		spark.stop
 		
