@@ -73,7 +73,7 @@ class BatchQueries extends Serializable{
 				/*hacking json parse*/
 				val likes = """"like_count" ?: ?(\d+),""".r
 				val like_count = comment match {
-				  	case count => count
+				  	case likes(count) => s"$count"
 				} 
 				
 				/*emitting the tuples*/
