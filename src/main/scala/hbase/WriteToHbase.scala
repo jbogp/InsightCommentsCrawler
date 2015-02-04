@@ -102,7 +102,7 @@ case class WriteToHbase() {
 		comments.foreach(comment =>{
 				val col = titleStr+comment.created_time
 				val jsonUser = write(new UserComment(url,comment.message,col,comment.like_count,comment.created_time))
-				insert[String]("users",comment.from,"infos",Array(url),Array(jsonUser),s => Bytes.toBytes(s))
+				insert[String]("users",comment.from,"infos",Array(col),Array(jsonUser),s => Bytes.toBytes(s))
 				println(comment.from)
 		})
 	}

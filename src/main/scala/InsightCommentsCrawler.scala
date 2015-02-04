@@ -133,12 +133,12 @@ object InsightCommentsCrawler {
 								/* Getting 12h top 10 topics */
 								val meta12h = hbr.readTimeFilterArticlesMeta("article_links", 3600, 0)
 								val topics12h = TopicsFinder.getKeywords(10,meta12h)
-								
+							
 								/* Getting all time topics */
 								val topicsAllTime = TopicsFinder.getKeywords(100)
 								
 								
-								/*writing time of last computation in mysql*/
+								/*writing time of last computation in mysql
 								val timestamp = Calendar.getInstance().getTimeInMillis()
 								MySQLConnector.connection
 									.createStatement()
@@ -189,7 +189,7 @@ object InsightCommentsCrawler {
 					  			
 					  			/*Read items published between 2 and 4 hours ago*/
 					  			CommentsFetcher.readItems(240, 60,topics1h,topics12h,topicsAllTime)
-
+								*/
 					  			/*Read items published between 4 and 10 hours ago*/
 					  			CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
 					  			
