@@ -8,7 +8,7 @@
         <h3>What's {{currentUser}} been up to?</h3>
           <div ng-repeat="commentUser in userComments" class="thumbnail">
             <div>
-              <img src="img/like.png" height="10" width="10"> {{commentUser.like_count}} published {{commentUser.created_at}} on <a href="{{comment.url}}">{{commentUser.url.substring(7,25)+"..."}}</a>
+              <img src="img/like.png" height="10" width="10"> {{commentUser.like_count}} published {{commentUser.created_at}} on <a ng-href="{{commentUser.url}}">{{commentUser.url.substring(7,25)+"..."}}</a>
             </div>
             <div>
               {{commentUser.message}}
@@ -19,31 +19,12 @@
 </div>
   <div class="row">
     <div class="col-md-12 thumbnail" style="background-image:url('img/back.png')">
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#"><i class="fa fa-comments"></i> Flocking Comments</a>
-          </div>
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Contact</a></li>
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-      </nav>
+    <h2><i class="fa fa-line-chart"></i> Trending topics in the news</h2>
       <div class="row">
         <div class="col-md-12">
         <h4><i class="fa fa-clock-o"></i> Last hour</h4>
           <div class="btn-group btn-group-xs" role="group">
-            <a href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topics1h">
+            <a ng-href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topics1h">
               #{{$index+1}} {{theTopic}}
             </a>
           </div>
@@ -51,7 +32,7 @@
         <div class="col-md-12">
         <h4><i class="fa fa-clock-o"></i> Last 12h</h4>
           <div class="btn-group btn-group-xs" role="group">
-            <a href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topics12h">
+            <a ng-href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topics12h">
               #{{$index+1}} {{theTopic}}
             </a>
           </div>
@@ -59,7 +40,7 @@
         <div class="col-md-12">
         <h4><i class="fa fa-clock-o"></i> All time</h4>
           <div class="btn-group btn-group-xs" role="group">
-            <a href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topicsalltime | limitTo:limitTopics">
+            <a ng-href="#/comments/{{theTopic}}" class="btn btn-default" ng-repeat="theTopic in topicsalltime | limitTo:limitTopics">
               #{{$index+1}} {{theTopic}}
             </a> 
             <button class="btn btn-primary" ng-if="limitTopics < 100" data-ng-click="incrementLimit()">more</button>
@@ -104,20 +85,24 @@
       <div ng-if="!loadedComments" style="text-align:center">
         <img src="img/loading.gif" height="400">  
       </div>
+      <!--No comments on this topic-->
+      <div ng-if="isEmpty" style="text-align:center">
+        <h3><i class="fa fa-frown-o"></i> No comments on this topic yet, give people time !</h3> 
+      </div>
       <!-- Comments as a flat organization -->
-      <div class="row" ng-if="!nest && loadedComments"  ng-repeat="comment in comments | filter:query | orderBy:orderProp">
+      <div class="row" ng-if="!nest && loadedComments && !isEmpty"  ng-repeat="comment in comments | filter:query | orderBy:orderProp">
           <div class="col-md-12 phones thumbnail">
             <div>
-              <img src="img/like.png" height="10" width="10"> {{comment.like_count}} published {{comment.created_time}} on <a href="{{comment.url}}">{{comment.url.substring(7,25)+"..."}}</a>
+              <img src="img/like.png" height="10" width="10"> {{comment.like_count}} published {{comment.created_time}} on <a ng-href="{{comment.url}}">{{comment.url.substring(7,25)+"..."}}</a>
             </div>
             <div>
-              <a href="#/user/{{comment.from}}">{{comment.from}}</a>: {{comment.message}}
+              <a href="javascript:;" ng-click="getUserComments(comment.from)">{{comment.from}}</a></b>: {{comment.message}}
             </div>
           </div>
       </div>
 
       <!-- Comments as a nested organization -->
-      <div class="row" ng-if="nest  && loadedComments"  ng-repeat="article in articles | orderBy:'-firstPost'">
+      <div class="row" ng-if="nest  && loadedComments && !isEmpty"  ng-repeat="article in articles | orderBy:'-firstPost'">
         <div class="col-md-12 comment_box thumbnail">
           <h4 class="pull-right">
             <a ng-show="nested_article[{{$index}}]" ng-click="toggle($index)" href="javascript:;">[&ndash;]</a>
@@ -126,7 +111,7 @@
             <a ng-show="!nested_article[{{$index}}]" ng-click="toggle($index)" href="javascript:;">[+]</a>
           </h4>
           <blockquote>
-           <i class="fa fa-newspaper-o"></i>  <a target="_blank" href="{{article.url}}">{{article.title}}</a> 
+           <i class="fa fa-newspaper-o"></i>  <a target="_blank" ng-href="{{article.url}}">{{article.title}}</a> ({{getDomain(article.url)}})
           </blockquote>
           <div ng-show="nested_article[{{$index}}]">
             <div class="row" ng-if="nest" ng-repeat="comment in article.comments | filter:query | orderBy:orderProp">

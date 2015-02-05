@@ -4,6 +4,12 @@
 
 var phonecatControllers = angular.module('phonecatControllers', []);
 
+
+phonecatControllers.controller('BlogCtrl', ['$scope',
+  function($scope) {
+
+  }]);
+
 phonecatControllers.controller('PhoneListCtrl', ['$scope', '$http', '$interval',
   function($scope, $http, $interval) {
   	$scope.refreshInterval = 30; // For every 10 sec
@@ -28,7 +34,6 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', '$http', '$interval',
 
 phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$http', '$interval',
   function($scope, $routeParams, $http, $interval) {
-
   	//GETTING THE TRENDS
   	function refreshTopics() {
   		console.log("refreshing");
@@ -41,6 +46,7 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 	    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/topics?req=topicsalltime').success(function(data) {
 	      $scope.topicsalltime = data;
 	    });
+	    refreshTopics();
 	}
 
 	$scope.limitTopics = 10;
@@ -53,19 +59,39 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 
   	$scope.refreshInterval = 5; // For every 5 sec
   	function refreshComments() {
+  		//Is a topic asked specifically ?
+  		if(!$routeParams.hasOwnProperty('topic')) {
+  			var topic = $scope.topicsalltime(0);
+  		}
+  		else {
+  			var topic = $routeParams.topic;	
+  		}
+
   		//Flat comments organization
   		if(!$scope.nest){
-		    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/comments?org=flat&req=' + $routeParams.topic).success(function(data) {
-		      $scope.comments = data;
-		      $scope.loadedComments=true;
+		    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/comments?org=flat&req=' + topic).success(function(data) {
+		      if(!data.hasOwnProperty('error')){
+			      $scope.comments = data;
+			      $scope.loadedComments=true;
+			  }
+			  else{
+			  	  $scope.isEmpty = true;
+			  	  $scope.loadedComments=true;
+			  }
 		    });
 		}
 		//Nested comments organization
 		else{
-		    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/comments?org=nest&req=' + $routeParams.topic).success(function(data) {
-		      $scope.articles = data;
-		      $scope.loadedComments=true;
-		      $scope.nested_article = Array.apply(null, new Array($scope.articles.length)).map(Boolean.prototype.valueOf,true);
+		    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/comments?org=nest&req=' + topic).success(function(data) {
+		      if(!data.hasOwnProperty('error')){
+			      $scope.articles = data;
+			      $scope.loadedComments=true;
+			      $scope.nested_article = Array.apply(null, new Array($scope.articles.length)).map(Boolean.prototype.valueOf,true);
+			  }
+			  else{
+			  	  $scope.isEmpty = true;
+			  	  $scope.loadedComments=true;
+			  }
 		    });
 		}
 
@@ -124,7 +150,8 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 
 
 	$scope.getUserComments = function(pseudo) {
-		$http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/user?req=' + pseudo).success(function(data) {
+		var pseudoClean = pseudo.replace(/[^a-zA-Z0-9]/g, "")
+		$http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/user?req=' + pseudoClean).success(function(data) {
 			$scope.showUser = true;
 		    $scope.userComments = data;
 		    $scope.currentUser = pseudo;
@@ -133,6 +160,10 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 
 	$scope.hideModal = function() {
 		$scope.showUser = false;
+	}
+
+	$scope.getDomain = function(url) {
+		return new URL(url).hostname
 	}
 
 	$scope.currentUser = "";
@@ -162,8 +193,9 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 	$scope.orderProp = '-like_count';
 	$scope.topic = $routeParams.topic;
 
-	refreshTopics();
+
 	/*Getting and refreshing topics every minutes*/
+	refreshTopics();
 	$interval(function() { 
 		refreshTopics();
 	}, 60 * 1000);
