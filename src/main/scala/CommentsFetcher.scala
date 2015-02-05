@@ -39,7 +39,7 @@ object CommentsFetcher {
 			  			  		new ArrayBuffer[Comment]
 			  			  	}
 	  			  		}
-	  			  		else if(item.url.contains("japantimes")){
+	  			  		else if(item.url.contains("japantimes") || item.url.contains("washingtontimes")){
 	  			  			val newUrl = item.url.split("\\?").apply(0)
 	  			  			val json = dReader.fetchJSONFromURL(Array(newUrl,item.engineId))
 	  			  			dReader.readJSON(json,newUrl,item.desc)
