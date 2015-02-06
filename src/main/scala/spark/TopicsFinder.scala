@@ -91,7 +91,8 @@ object TopicsFinder {
 		    .reverse
 		    //Removing empty string
 		    .drop(1)
-		    .map(_._1)
+		    .map(_._1.replaceAll("'.*", ""))
+		    
 		
 		spark.stop
 		
