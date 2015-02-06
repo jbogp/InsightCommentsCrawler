@@ -53,6 +53,10 @@ object CommentsFetcher {
 	  			  		val json = fbReader.fetchJSONFromURL(Array(item.url,null))
 	  			  		fbReader.readJSON(json,item.url,item.desc)
 	  			  	}
+	  			  	case "fbInternal" => {
+	  			  		val json = fbReader.fetchJSONFromFB(Array(item.engineId))
+	  			  		fbReader.readJSON(json,item.url,item.desc)
+	  			  	}
 	  			  	case _ => {
 	  			  		println("error")
 	  			  		new ArrayBuffer[Comment]

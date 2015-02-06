@@ -30,6 +30,11 @@ class FBAPI extends ExternalAPI {
 			val html = Source.fromURL("https://graph.facebook.com/v2.1/?fields=og_object{comments}&access_token=334762316566120|jbMVNQY0mIuS_Bw9aJzUIsfcOOc&id="+params(0))
 			html.mkString
 	}
+	
+	def fetchJSONFromFB(params:Array[String]):String = {
+			val html = Source.fromURL("https://graph.facebook.com/v2.2/"+params(0)+"/comments?access_token=334762316566120|jbMVNQY0mIuS_Bw9aJzUIsfcOOc&limit=250")
+			html.mkString
+	}
 
 	def readJSON(jsonString:String,url:String,title:String):ArrayBuffer[Comment] ={
 			/*Parsing*/

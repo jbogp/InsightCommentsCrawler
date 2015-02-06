@@ -54,7 +54,7 @@ object InsightCommentsCrawler {
 						/*Creating the RSS reader object*/
 						val subreader = new RssReader
 						
-						/*Kafka and Hbase connectors*/
+						/*Hbase connector*/
 						val hbaseconnect = new WriteToHbase
 						
 						

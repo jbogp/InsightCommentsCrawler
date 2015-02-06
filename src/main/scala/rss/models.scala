@@ -40,6 +40,10 @@ case class FeedInfo(info:String){
   val engineId = arrayInfo(3) 
 }
 
+case class FBInternalPost(id:String,name:String,link:String,description:String){
+  val postId = id.split("_").apply(1)
+}
+
 
 /*Case class of Atom Rss feed*/
 case class AtomRssFeed(title:String, link:String, desc:String, items:Seq[RssItem]) extends RssFeed

@@ -1,16 +1,21 @@
 package main.scala.rss
 
-import scala.xml._
+import java.io._
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.util.{Locale, Date}
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import scala.util.{Try, Success, Failure}
-import java.io._
-import scala.collection.mutable.ArrayBuffer
+import java.util.Date
+import java.util.Locale
 
+import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Failure
+import scala.util.Success
+import scala.io.Source
+import scala.util.Try
+import scala.xml._
+import net.liftweb.json.DefaultFormats
+import net.liftweb.json._
+import net.liftweb.json.Serialization.{read, write}
 
 /*Abstract class defining a general RSS reader*/
 abstract class Reader{	
@@ -123,34 +128,54 @@ class XmlReader(tag:String) extends Reader {
 }
 
 
+
+/*reading one subscription item and gets the links infos*/
 class RssReader{
 
 	val itemArray = new ArrayBuffer[RssItem]
+	implicit val formats = Serialization.formats(NoTypeHints)
 	
 	def read(feedInfo : FeedInfo) = {
 	  
-	  
-		Try(feedInfo.url.openConnection.getInputStream) match {
-		case Success(u) => {
-			val xml = XML.load(u)
-					val actor = {
-				if((xml \\ "channel").length == 0) {
-					new AtomReader
+		if(!(feedInfo.commentType == "fbInternal")){
+			Try(feedInfo.url.openConnection.getInputStream) match {
+			case Success(u) => {
+				val xml = XML.load(u)
+						val actor = {
+					if((xml \\ "channel").length == 0) {
+						new AtomReader
+					}
+					else{
+						new XmlReader(feedInfo.tag)
+					}
 				}
-				else{
-					new XmlReader(feedInfo.tag)
+				val res = actor.extract(xml)
+				for{feed <- res; item <- feed.items} {
+				  println(item.link)
+				  item.engine = feedInfo.commentType
+				  item.engineId = feedInfo.engineId
+				  itemArray.append(item)
 				}
 			}
-			val res = actor.extract(xml)
-			for{feed <- res; item <- feed.items} {
-			  println(item.link)
-			  item.engine = feedInfo.commentType
-			  item.engineId = feedInfo.engineId
-			  itemArray.append(item)
+			case Failure(_) =>{}
 			}
+	
 		}
-		case Failure(_) =>
-
+		//Getting facebook page post
+		else {
+			val json = parse(Source.fromURL(feedInfo.url).mkString)
+			val postsJson = (json \ "data").children
+			for(post <- postsJson){
+				try {
+					val fb = post.extract[FBInternalPost]
+					val item = new RssItem(fb.name,fb.link,fb.description,fb.postId)
+					item.engineId = fb.postId
+					itemArray.append()
+				}
+				catch{
+				  case e:Exception => //probably not an adequate post
+				}
+			}
 		}
 	}
 
