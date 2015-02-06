@@ -41,7 +41,7 @@ object TopicsFinder {
 			 if(corpus != null){
 		  		val all = corpus.map(article => article.title).reduceLeft(_ + " " +_)
 				/*Cleaning*/
-				val corpusStriped = all.replaceAll("[^a-zA-Z' ]", "").toLowerCase()
+				val corpusStriped = all.replaceAll("'s", "").replaceAll("[^a-zA-Z ]", "").toLowerCase()
 				println(corpusStriped)
 				spark.parallelize(corpusStriped :: Nil).flatMap(_.split(" "))
 			}
@@ -76,7 +76,7 @@ object TopicsFinder {
 		}
 		  
 		val wordCounts = titles
-		  .flatMap(_.replaceAll("[^a-zA-Z' ]", "").toLowerCase().split(" "))  
+		  .flatMap(_.replaceAll("'s", "").replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" "))  
 		  .map((_,1)).reduceByKey(_ + _)
 		
 		// filter out words with less than threshold occurrences
@@ -91,7 +91,7 @@ object TopicsFinder {
 		    .reverse
 		    //Removing empty string
 		    .drop(1)
-		    .map(_._1.replaceAll("'.*", ""))
+		    .map(_._1)
 		    
 		
 		spark.stop
