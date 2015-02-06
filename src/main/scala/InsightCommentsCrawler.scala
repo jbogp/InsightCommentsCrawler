@@ -59,12 +59,16 @@ object InsightCommentsCrawler {
 						
 						
 						while(true) {
-							/*Reading the subscription file and iterating on feeds*/
-							subreader.itemArray.clear
-							for {
-								feedInfo <- Utils.getUrls("subscriptions.xml")
-							} subreader.read(feedInfo)
-							
+							try{
+								/*Reading the subscription file and iterating on feeds*/
+								subreader.itemArray.clear
+								for {
+									feedInfo <- Utils.getUrls("subscriptions.xml")
+								} subreader.read(feedInfo)
+							}
+							catch{
+							  	case e:Exception => println("error fetching the feed") 
+							}
 							
 							subreader.itemArray.foreach( item => {
 								println(item.link)
