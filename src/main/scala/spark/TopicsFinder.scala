@@ -76,7 +76,7 @@ object TopicsFinder {
 		}
 		  
 		val wordCounts = titles
-		  .flatMap(_.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" "))  
+		  .flatMap(_.replaceAll("[^a-zA-Z' ]", "").toLowerCase().split(" "))  
 		  .map((_,1)).reduceByKey(_ + _)
 		
 		// filter out words with less than threshold occurrences
