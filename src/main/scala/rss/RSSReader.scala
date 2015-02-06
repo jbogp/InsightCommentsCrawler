@@ -170,10 +170,11 @@ class RssReader{
 					val fb = post.extract[FBInternalPost]
 					val item = new RssItem(fb.name,fb.link,fb.description,fb.postId)
 					item.engineId = fb.postId
-					itemArray.append()
+					itemArray.append(item)
+					println(item.link)
 				}
 				catch{
-				  case e:Exception => //probably not an adequate post
+				  case e:Exception => println("error")//probably not an adequate post
 				}
 			}
 		}

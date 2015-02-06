@@ -55,7 +55,7 @@ object InsightCommentsCrawler {
 						val subreader = new RssReader
 						
 						/*Hbase connector*/
-						val hbaseconnect = new WriteToHbase
+						//val hbaseconnect = new WriteToHbase
 						
 						
 						while(true) {
@@ -68,14 +68,14 @@ object InsightCommentsCrawler {
 							
 							subreader.itemArray.foreach( item => {
 								println(item.link)
-								var values = Array(item.link,item.engine,item.engineId,item.desc,item.title)
+							/*	var values = Array(item.link,item.engine,item.engineId,item.desc,item.title)
 								/*If successfully inserted in Hbase (new Item) send to Kafka*/ 
 								hbaseconnect.insertURL(values) match {
 									case true => {
 										println(item.link+item.engine+item.engineId)
 									}
 									case false => println("Skipping link, already registered")
-								}
+								}*/
 							})
 							Thread.sleep(300000);
 						}
