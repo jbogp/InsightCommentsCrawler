@@ -170,6 +170,7 @@ class RssReader{
 					val fb = post.extract[FBInternalPost]
 					val item = new RssItem(fb.name,fb.link,fb.description,fb.postId)
 					item.engineId = fb.postId
+					item.engine = feedInfo.commentType
 					itemArray.append(item)
 					println(item.link)
 				}
