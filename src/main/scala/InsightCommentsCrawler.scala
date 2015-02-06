@@ -76,6 +76,7 @@ object InsightCommentsCrawler {
 									}
 									case false => println("Skipping link, already registered")
 								}
+								Thread.sleep(1000);
 							})
 							Thread.sleep(300000);
 						}
