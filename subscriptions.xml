@@ -23,4 +23,11 @@ http://www.torontosun.com/home/rss.xml,disqus,link,torontosun
 http://o.canada.com/feed/,fb,link,na
 http://www.businessweek.com/topStories/rss/topStories.rss,disqus,link,bwbeta
 http://www.washingtontimes.com/rss/headlines/news/,disqus,link,washtimes
+#Wash post
 https://graph.facebook.com/v2.2/6250307292/posts?access_token=334762316566120|jbMVNQY0mIuS_Bw9aJzUIsfcOOc&limit=50,fbInternal,na,na
+#Fox news
+https://graph.facebook.com/v2.2/15704546335/posts?access_token=334762316566120|jbMVNQY0mIuS_Bw9aJzUIsfcOOc&limit=50,fbInternal,na,na
+#Ny times
+https://graph.facebook.com/v2.2/5281959998/posts?access_token=334762316566120|jbMVNQY0mIuS_Bw9aJzUIsfcOOc&limit=50,fbInternal,na,na
+#CNN
+https://graph.facebook.com/v2.2/5550296508/posts?access_token=334762316566120|jbMVNQY0mIuS_Bw9aJzUIsfcOOc&limit=50,fbInternal,na,na
