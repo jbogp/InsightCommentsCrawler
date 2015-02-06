@@ -41,7 +41,7 @@ object TopicsFinder {
 			 if(corpus != null){
 		  		val all = corpus.map(article => article.title).reduceLeft(_ + " " +_)
 				/*Cleaning*/
-				val corpusStriped = all.replaceAll("[^a-zA-Z ]", "").toLowerCase()
+				val corpusStriped = all.replaceAll("[^a-zA-Z' ]", "").toLowerCase()
 				println(corpusStriped)
 				spark.parallelize(corpusStriped :: Nil).flatMap(_.split(" "))
 			}
