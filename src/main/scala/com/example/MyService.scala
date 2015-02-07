@@ -75,6 +75,20 @@ Nothing to see here
 			}
 			}
 		}~
+		path("user_likes"){
+			respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")){
+			    onComplete(ReadFromHbase.get_users_aggregates()) {
+			    	      case Success(value) => respondWithMediaType(`application/json`) {
+								complete{
+									write(value)
+								}
+			    	      }
+			    	      case Failure(ex)    => respondWithMediaType(`application/json`){
+			    	        complete("""{"error":"couldn't fetch the users likes"}""")
+			    	      }
+			    }
+			}
+		}~
 		path("comments"){
 			parameters('req,'org) { (req,org) => respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")){
 			    onComplete(ReadFromHbase.readFutureTimeFilterComments("comments", req, 6000, 0)) {

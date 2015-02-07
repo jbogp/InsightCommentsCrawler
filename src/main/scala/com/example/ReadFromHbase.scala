@@ -29,6 +29,8 @@ case class Tweet(message:String,createdAt:Long,latitude:Double,longitude:Double,
 /*Some case classes*/
 case class UserComment(url:String,message:String,title:String,like_count:Int,created_at:String)
 
+case class UserLikes(pseudo:String,likes:Int)
+
 
 object ReadFromHbase {
   
@@ -185,7 +187,7 @@ object ReadFromHbase {
 	}
 	
 	/*getting the most liked users*/
-	def get_users_aggregates():ArrayBuffer[(String,Int)] = {
+	def get_users_aggregates(num:Int=100):Future[ArrayBuffer[UserLikes]] = Future{
 		/*Fetch the table*/
 		val httable = conn.getTable("users_aggregates")
 		
@@ -195,12 +197,14 @@ object ReadFromHbase {
 		val columns = firstRow.getFamilyMap("infos".getBytes()).keySet()
 
 		val iterator = columns.iterator()
-		val ret = new ArrayBuffer[(String,Int)]
-		while(iterator.hasNext()) {
+		val ret = new ArrayBuffer[UserLikes]
+		var count = 0
+		while(iterator.hasNext() && count<num) {
 			val nextColumn = iterator.next()
 			val num = new String(CellUtil.cloneValue(firstRow.getColumnLatestCell("infos".getBytes(), nextColumn))).toInt
 			val user = new String(nextColumn)
-			ret.append((user,num))		
+			ret.append(new UserLikes(user,num))
+			count = count+1
 		}
 		ret		
 		
