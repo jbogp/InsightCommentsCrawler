@@ -31,6 +31,8 @@ case class UserComment(url:String,message:String,title:String,like_count:Int,cre
 
 case class UserLikes(pseudo:String,likes:Int)
 
+case class SpamMess(message:String,num:Int)
+
 
 object ReadFromHbase {
   
@@ -207,7 +209,29 @@ object ReadFromHbase {
 			count = count+1
 		}
 		ret.sortBy(_.likes).takeRight(num).reverse	
+			  
+	}
+	
+	def get_spam(num:Int=100):Future[ArrayBuffer[SpamMess]] = Future{
+		/*Fetch the table*/
+		val httable = conn.getTable("spam")
 		
+		val theScan = new Scan()
+		/*getting the first row*/
+		val firstRow = httable.getScanner(theScan).next()
+		val columns = firstRow.getFamilyMap("infos".getBytes()).keySet()
+
+		val iterator = columns.iterator()
+		val ret = new ArrayBuffer[SpamMess]
+		var count = 0
+		while(iterator.hasNext()) {
+			val nextColumn = iterator.next()
+			val num = new String(CellUtil.cloneValue(firstRow.getColumnLatestCell("infos".getBytes(), nextColumn))).toInt
+			val mess = new String(nextColumn)
+			ret.append(new SpamMess(mess,num))
+			count = count+1
+		}
+		ret.sortBy(_.num).takeRight(num).reverse	
 			  
 	}
 
