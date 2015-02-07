@@ -27,7 +27,7 @@ object TopicsFinder {
 
 
 	
-	val dictionnary = Source.fromFile("common_words") mkString
+	val dictionnary = Source.fromFile("/home/ubuntu/scala/InsightCommentsCrawler/common_words") mkString
 							
   		
 	def getKeywords(num:Int,corpus:ArrayBuffer[ArticleMeta]=null):Array[String]= {
