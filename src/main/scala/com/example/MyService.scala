@@ -89,6 +89,20 @@ Nothing to see here
 			    }
 			}
 		}~
+		path("spam"){
+			respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")){
+			    onComplete(ReadFromHbase.get_spam()) {
+			    	      case Success(value) => respondWithMediaType(`application/json`) {
+								complete{
+									write(value)
+								}
+			    	      }
+			    	      case Failure(ex)    => respondWithMediaType(`application/json`){
+			    	        complete("""{"error":"couldn't fetch the spam messages"}""")
+			    	      }
+			    }
+			}
+		}~
 		path("comments"){
 			parameters('req,'org) { (req,org) => respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")){
 			    onComplete(ReadFromHbase.readFutureTimeFilterComments("comments", req, 6000, 0)) {
