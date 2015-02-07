@@ -1,3 +1,14 @@
+  <div class="row">
+    <div class="col-md-12">
+    <h3>What's this? Basically Google News, but for comments</h3>
+    <h4>Flocking comments aggregates all the comments posted on all the major north american and british news sources, infers the current topics and gives you the flow of comments and tweets accross the web for the news that you care about in a unified, intuitive page.</h4>
+
+    <p>
+    Give it a try ! Just click one of the topics below.
+    </p>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-md-2">
       <!--Sidebar content-->
 
@@ -6,10 +17,11 @@
     </div>
     <div class="col-md-offset-1 col-md-3">
       <!--Body content-->
-<h2>1h topics</h2>
+<h3>1h topics</h3>
+<p>The hot fresh news</p>
       <ul class="phones">
         <li ng-repeat="topic in topics1h | filter:query" class="thumbnail">
-          <a href="#/comments/{{topic}}">{{topic}}</a>
+          <a href="#/comments/{{topic}}">#{{$index+1}} {{topic}}</a>
         </li>
       </ul>
 
@@ -17,10 +29,11 @@
 
     <div class="col-md-3">
       <!--Body content-->
-<h2>12h topics</h2>
+<h3>12h topics</h3>
+<p>Important recent stories</p>
       <ul class="phones">
         <li ng-repeat="topic in topics12h | filter:query" class="thumbnail">
-          <a href="#/comments/{{topic}}">{{topic}}</a>
+          <a href="#/comments/{{topic}}">#{{$index+1}} {{topic}}</a>
         </li>
       </ul>
 
@@ -28,11 +41,13 @@
 
     <div class="col-md-3">
       <!--Body content-->
-<h2>All time topics</h2>
+<h3>All time topics</h3>
+<p>Well... since January 26th 2015</p>
       <ul class="phones">
         <li ng-repeat="topic in topicsalltime | filter:query" class="thumbnail">
-          <a href="#/comments/{{topic}}">{{topic}}</a>
+          <a href="#/comments/{{topic}}">#{{$index+1}} {{topic}}</a>
         </li>
       </ul>
 
     </div>
+  </div>
