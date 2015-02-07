@@ -231,7 +231,7 @@ object ReadFromHbase {
 			ret.append(new SpamMess(mess,num))
 			count = count+1
 		}
-		ret.sortBy(_.num).takeRight(num).reverse	
+		ret.sortBy(_.num).takeRight(num).reverse.drop(1)	
 			  
 	}
 
