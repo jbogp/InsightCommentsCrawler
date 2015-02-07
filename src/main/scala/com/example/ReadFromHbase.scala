@@ -1,3 +1,4 @@
+
 package com.example
 
 import org.apache.hadoop.hbase.client.HTable
@@ -181,6 +182,29 @@ object ReadFromHbase {
 		}
 		/*Calling the database*/
 		readTimestampGeneric[Tweet](table, handleRow,row, timestampBack)
+	}
+	
+	/*getting the most liked users*/
+	def get_users_aggregates():ArrayBuffer[(String,Int)] = {
+		/*Fetch the table*/
+		val httable = conn.getTable("users_aggregates")
+		
+		val theScan = new Scan()
+		/*getting the first row*/
+		val firstRow = httable.getScanner(theScan).next()
+		val columns = firstRow.getFamilyMap("infos".getBytes()).keySet()
+
+		val iterator = columns.iterator()
+		val ret = new ArrayBuffer[(String,Int)]
+		while(iterator.hasNext()) {
+			val nextColumn = iterator.next()
+			val num = new String(CellUtil.cloneValue(firstRow.getColumnLatestCell("infos".getBytes(), nextColumn))).toInt
+			val user = new String(nextColumn)
+			ret.append((user,num))		
+		}
+		ret		
+		
+			  
 	}
 
 }
