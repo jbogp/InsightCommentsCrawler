@@ -199,14 +199,14 @@ object ReadFromHbase {
 		val iterator = columns.iterator()
 		val ret = new ArrayBuffer[UserLikes]
 		var count = 0
-		while(iterator.hasNext() && count<num) {
+		while(iterator.hasNext()) {
 			val nextColumn = iterator.next()
 			val num = new String(CellUtil.cloneValue(firstRow.getColumnLatestCell("infos".getBytes(), nextColumn))).toInt
 			val user = new String(nextColumn)
 			ret.append(new UserLikes(user,num))
 			count = count+1
 		}
-		ret		
+		ret.sortBy(_.likes).takeRight(num).reverse	
 		
 			  
 	}
