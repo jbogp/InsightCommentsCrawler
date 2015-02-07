@@ -20,7 +20,7 @@ phonecatApp.config(['$routeProvider',
         templateUrl: 'partials/topic-list.html',
         controller: 'PhoneListCtrl'
       }).
-      when('/comments/:topic?', {
+      when('/comments/:topic', {
         templateUrl: 'partials/comments-list.html',
         controller: 'PhoneDetailCtrl'
       }).
@@ -29,6 +29,6 @@ phonecatApp.config(['$routeProvider',
         controller: 'BlogCtrl'
       }).
       otherwise({
-        redirectTo: '/comments'
+        redirectTo: '/topics/'
       });
   }]);

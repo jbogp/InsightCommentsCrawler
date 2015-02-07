@@ -46,7 +46,6 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 	    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/topics?req=topicsalltime').success(function(data) {
 	      $scope.topicsalltime = data;
 	    });
-	    refreshTopics();
 	}
 
 	$scope.limitTopics = 10;
@@ -193,7 +192,7 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 	$scope.orderProp = '-like_count';
 	$scope.topic = $routeParams.topic;
 
-
+	refreshComments();
 	/*Getting and refreshing topics every minutes*/
 	refreshTopics();
 	$interval(function() { 
