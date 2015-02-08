@@ -41,5 +41,17 @@ The classes are structured as follow
   - `sql`: Connector to mySQL used to store current values so they're easily queriable by the client API
   - `storm`: defines the topology created to filter and classify Tweets read from the Kafka queue, this class should be ran from the storm submitter.
 
+  ### Hbase schema
+  Hbase being the central datastore of this project, I'll give a few details concerning the schema used.
+
+  #### article_links
+  This table stores the article links as well as some meta information about each link (title, description)
+
+  |                      | link1Hash                           | link2Hash                           | link3Hash                           | ... |
+|----------------------|-------------------------------------|-------------------------------------|-------------------------------------|-----|
+| Headline             | Json object (url,title,description) | Json object (url,title,description) | Json object (url,title,description) |     |
+| (future) sports      | ...                                 | ...                                 |                                     |     |
+| (future) Politics... |                                     |                                     |                                     |     |
+
 
 
