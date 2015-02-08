@@ -66,7 +66,24 @@ Each Json object making up every cell is an Array structure as `[{"comments":"th
 | Topic1     | Json list containing all the comments for this URL |                                                    |                                                    | Json list containing all the comments for this URL |
 | Topic2     |                                                    |                                                    |                                                    |                                                    |
 | Topic3     |                                                    | Json list Containing all the comments for this URL |                                                    |                                                    |
-| Topic...   |                                                    |                                                    | Json list Containing all the comments for this URL | Json list Containing all the comments              |
+| Topic...   |                                                    |                                                    | Json list Containing all the comments for this URL | Json list Containing all the comments for this URL              |
+
+The table storing the comments per user is very similar except the rowkeys are the user names because again when querying for a particular user name, we only have to get one row, which is efficient.
+
+| row/column | URL1                                               | URL2                                               | URL3                                               | URL...                                             |
+|------------|----------------------------------------------------|----------------------------------------------------|----------------------------------------------------|----------------------------------------------------|
+| User 1     | Json list containing all the comments for this URL |                                                    |                                                    | Json list containing all the comments for this URL |
+| User 2     |                                                    |                                                    |                                                    |                                                    |
+| User 3     |                                                    | Json list Containing all the comments for this URL |                                                    |                                                    |
+| User...    |                                                    |                                                    | Json list Containing all the comments for this URL | Json list Containing all the comments for this URL |
 
 
+The tweets are stored in a table similar to the `comments` table, the id of the tweets fetched from the Streaming API are used as column name.
 
+The topics are stored in a table called topics, with 3 rows for the 3 different types of topics.
+
+| row/column    | timestamp1                                      | timestamp2                                      | timestamp3                                      | timestamp...                              |
+|---------------|-------------------------------------------------|-------------------------------------------------|-------------------------------------------------|-------------------------------------------|
+| topics1h      | Json list containing the top10 1h topics        | Json list containing the top10 1h topics        | Json list containing the top10 1h topics        | Json list containing the top10 1h topics  |
+| topics12h     | Json list containing the top10 12h topics       | Json list containing the top10 12h topics       | Json list containing the top10 12h topics       | Json list containing the top10 12h topics |
+| topicsalltime | Json list containing the top100 all time topics | Json list containing the top100 all time topics | Json list containing the top100 all time topics |                                           |
