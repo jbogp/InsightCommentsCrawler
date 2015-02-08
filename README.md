@@ -87,3 +87,7 @@ The topics are stored in a table called topics, with 3 rows for the 3 different 
 | topics1h      | Json list containing the top10 1h topics        | Json list containing the top10 1h topics        | Json list containing the top10 1h topics        | Json list containing the top10 1h topics  |
 | topics12h     | Json list containing the top10 12h topics       | Json list containing the top10 12h topics       | Json list containing the top10 12h topics       | Json list containing the top10 12h topics |
 | topicsalltime | Json list containing the top100 all time topics | Json list containing the top100 all time topics | Json list containing the top100 all time topics |                                           |
+
+The users statistics, like the total number of likes are also stored in a Hbase table in one row with the user in columns, which would allow to easily add later more aggregate statitics in different rows.
+
+The `Spam` detection statistics are stored un a similar fashion.
