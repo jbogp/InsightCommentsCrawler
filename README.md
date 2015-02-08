@@ -53,5 +53,20 @@ The classes are structured as follow
 | (future) sports      | ...                                 | ...                                 |                                     |     |
 | (future) Politics... |                                     |                                     |                                     |     |
 
+#### comments
+
+the comments are denormalized twice because I want to be able to query the comments by topics and by user. This is why I store them twice
+
+the first table comments contains the comments by topic, which make querying a topic memory efficient because rows are stored consistently within one region in Hbase.
+
+Each Json object making up every cell is an Array structure as `[{"comments":"the comment","from":"author","created_time":"comment_creation_time","likes_count":number_of_likes,"url":"url of origin"},{...},{...}]`
+
+| row/column | URL1                                               | URL2                                               | URL3                                               | URL...                                             |
+|------------|----------------------------------------------------|----------------------------------------------------|----------------------------------------------------|----------------------------------------------------|
+| Topic1     | Json list containing all the comments for this URL |                                                    |                                                    | Json list containing all the comments for this URL |
+| Topic2     |                                                    |                                                    |                                                    |                                                    |
+| Topic3     |                                                    | Json list Containing all the comments for this URL |                                                    |                                                    |
+| Topic...   |                                                    |                                                    | Json list Containing all the comments for this URL | Json list Containing all the comments              |
+
 
 
