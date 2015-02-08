@@ -24,19 +24,33 @@ I will describe here the contents of this `master` branch. It contains the main 
 The classes are structured as follow
 
 - src.main
+
  - `InsightCommentsCrawler`: Main class, separated in 3 sub programs that are ran by passing a different parameter: "RssCrawler", "InferTopics", "BatchLayer"
+
  - `CommentsFetcher`: Logic to fetch the comments from mulitple sources in a timely manner from the article links stored in Hbase, it utilizes heavily the classe in package `externalAPIs`
+
  - `Utils`: Object containing a few useful methods used throughout the program
+
  - package `rss`
+
    - `RSSReader`: Logic to fetch and process the RSS feeds from different news sites, it also handles querying the Facebook API to get posts from journals official pages
+
    - `models`: Models (case classes) used in the RSS feed parsing to read/extract Json objects
+
  - package `externalAPIs`: contains the logic to fetch extract and store the comments from Disqus/Facebook. It also contains the logic to fetch the Twitter Streaming API.
+
  - package `hbase`: Logic to read/writes values from the Hbase Schema implemented (see below)
+
  - package `kafka`: Connectors to read from and write to Kafka queues
+
  - package `spark`: Classes utilizing Spark
+
    - `BatchQueries`: runs and stores distributed statistics about the comments, namely the most liked users across all site and the potential spam messages
+
    - `TopicsFinder`: uses Spark to compute the most recuring words in a set of titles either passe in memory or fetching a whole table in Hbase via an RDD
+
  - package `sql`: Connector to mySQL used to store current values so they're easily queriable by the client API
+ 
  - package `storm`: defines the topology created to filter and classify Tweets read from the Kafka queue, this class should be ran from the storm submitter.
 
 
