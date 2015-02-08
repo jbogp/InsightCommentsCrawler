@@ -91,3 +91,28 @@ The topics are stored in a table called topics, with 3 rows for the 3 different 
 The users statistics, like the total number of likes are also stored in a Hbase table in one row with the user in columns, which would allow to easily add later more aggregate statitics in different rows.
 
 The `Spam` detection statistics are stored un a similar fashion.
+
+### How to install and run the pipeline.
+First of all, this is a 4 weeks project, not everything is perfect ! But if you want to deploy the pipeline on your own system, here's how you should do it.
+
+First install Zookeeper, Kafka, Storm, Spark, MySQL, Hbase and of course Scala (preferably with `sbt`). Create the Hbase schemas indicated above. Then you will need to create different `supervisor` config files to let your sytem run the different parts of the pipeline separately on your system. 
+
+Here's a sample from one of my EC2 node running the TopicsInfer part of the pipeline :
+```
+[program:TopicsInfer]
+command=java -jar path/to/the/compiled.jar "InferTopics" "kafka-broker-host:9092"
+user=nodeUser
+autostart=true
+autorestart=true
+startsecs=30
+startretries=1
+log_stdout=true
+log_stderr=true
+logfile=/var/log/topicsInfer.log
+logfile_maxbytes=20MB
+logfile_backups=10
+```
+
+So you need to fill the `subscription.xml` file in the root folder with the RSS feeds you want to query and how they should be queried (Facebook, Disqus, or Internal Facebook), the tags to look for in the XML and for disqus comments, the forumId used by the website (put `na` for facebook)
+
+Finally you need to start everything, launch the RSS crawler from the supervisor, then the TopicsInfer, then the BatchLayer. Once all is done, you can relax and start thinking about cloning the `InsightJsonAPI` located in the branch with the same name.
