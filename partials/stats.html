@@ -1,0 +1,50 @@
+   <!-- Overlay div for the user profile not shown by default -->
+ <div class='ng-modal' ng-show='showUser'>
+  <div class='ng-modal-overlay' ng-click='hideModal()'>
+  </div>
+  <div class='ng-modal-dialog' ng-style='dialogStyle'>
+    <div class='ng-modal-close' ng-click='hideModal()'>X</div>
+    <div class='ng-modal-dialog-content'>
+        <h3>What's {{currentUser}} been up to?</h3>
+          <div ng-repeat="commentUser in userComments" class="thumbnail">
+            <div>
+              <img src="img/like.png" height="10" width="10"> {{commentUser.like_count}} published {{commentUser.created_at}} on <a ng-href="{{commentUser.url}}">{{commentUser.url.substring(7,25)+"..."}}</a>
+            </div>
+            <div>
+              {{commentUser.message}}
+            </div>
+          </div>
+    </div>
+  </div>
+</div>
+  <div class="row">
+    <div class="col-md-12 thumbnail" style="background-image:url('img/back.png')">
+    <h1><i class="fa fa-pencil"></i> Stats</h1>
+    <h3>A few funny things I could do with this data</h3>
+    </div>
+  </div>
+<div class="row">
+	<div class="col-md-3">
+		<h3>Most liked users</h3>
+ 		<div class="row"  ng-repeat="like in likes">
+ 			<div class="col-md-3">
+ 				<a href="javascript:;" ng-click="getUserComments(like.pseudo)">{{like.pseudo}}</a>
+ 			</div>
+ 			<div class="col-md-1 pull-right">
+ 				{{like.likes}}
+ 			</div>
+ 		</div>
+ 	</div>
+ 	<div class="col-md-7 col-md-offset-1">
+		<h3>Potential Spam messages</h3>
+ 		<div class="row"  ng-repeat="spam in spams">
+ 			<div class="col-md-10">
+ 				{{spam.message}}</a>
+ 			</div>
+ 			<div class="col-md-1 pull-right">
+ 				{{spam.num}}
+ 			</div>
+ 		</div>
+ 
+ 	</div>
+ </div>

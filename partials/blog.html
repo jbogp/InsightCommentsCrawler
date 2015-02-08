@@ -1,39 +1,95 @@
-  <div class="row">
-    <div class="col-md-12 thumbnail" style="background-image:url('img/back.png')">
-    <h1><i class="fa fa-pencil"></i> Blog</h1>
-    <h3>'cause communication and stuff, ya know...</h3>
-    </div>
-  </div>
 <div class="row">
-<div class="col-md-10 col-md-offset-1">
+<div class="col-md-9">
  <marked>
 I'm addicted to comments
 ========================
-- First step is admitting you have a problem
-- Second step is building an entire data pipeline to get your daily fix
-___________
-
-My name is JB and I'm an addict. Ok, the joke is getting old and addiction is not a funny thing, but in a way I really am addicted. I should have a PhD in procrastination, I'm amazing at it and one of my goto time wasting occupation is Google News. That's great, I can quench my thirst of light brain activity for half an hour reading actual news, easy.
-
-But there's a trap, if you scroll down just a bit too far on a news article (or any Youtube video) you enter, more often than not, the strange world of comments. 
-
 I get the same feeling reading comments on the news as I do when I'm stuck in traffic in the middle of the afternoon on a week day :
-> Who are those people and how the hell did they end up here?
+> Who are those people and shouldn't they be working?
 
-Trolls, racists, consipirationists, Justin Bieber fans, and all sorts of people you rarely get to interact with are there arguing about stuff, blaming someone, anyone, everyone. And somehow even though I know very well the debate is 99.9% of the time worthless, I just love it. And when some news actually concerns me, say the Charlie Hebdo attacks (I'm French), I will just roam the web opening up multiple articles about the same thing just to get the comments and also open Twitter with a specific filter to get some real time stuff.
+Trolls, racists, consipirationists, Justin Bieber fans, and all sorts of people gather there and even though the "debate" is worthless 99% of the time, I just love it.
 
-Anyway, I'm an addict, but I'm also a computer scientist and I'm currently in the Silicone Valley in a data engineering program called Insight Data Science. And as this program includes building in 4 weeks a cool big data driven project, I decided that instead of getting rid of my addiction, I'd just make it way more efficient.
->Aggregating, classifying, sorting, displaying all the comments from a lot of news sources on the same page classified by topic, side to side with a live twitter feed.
+Anyway, I'm an addict, but I'm also a [Data engineering fellow at Insight Data Science](http://insightdataengineering.com/) in Palo Atlo. And as this program (*which is awesome*) includes building in 4 weeks a cool big data driven project, I decided that I'd streamline my addiction.
 
-This is how [Flocking comments](http://flockingcomments.com) came to life. Now you can simply go and check it out, or read further where I give an overview of the stack I used to get there, because I find it pretty cool.
+>Google News but for comments, side to side with a live Twitter feed.
 
-______________
+This is how "[Flocking comments](http://flockingcomments.com)" came to life. Now you can simply go and [check it out](http://flockingcomments.com), or read further for an overview of the stack I used to get there.
+</marked>
+</div>
+ <div class="col-md-3">
+	<marked>
+![Time spent on news sites](/img/graph.png)
+	</marked>
+</div>
+</div>
 
-## The data pipline
+<div class="row" style="margin-top:15px">
+<div class="col-md-6">
+
+<marked>
+![First part of the pipeline](/img/pipeline1.png)
+
+![Second part of the pipeline](/img/pipeline2.png)
+</marked>
+</div>
+
+<div class="col-md-6">
+
+<marked>
+
+
+## A dive into Data Engineering
+______________	
+
+4 weeks into Insight Data Engineering program, I've learnt so much cool stuff I though I'd share the stack I've used to make "flocking comments" happen. You can also find the Demo slides I'll be giving to a whole bunch of companies next week [here](#/demo/) and the code of my entire pipeline in Scala on [GitHub](https://github.com/jbogp/InsightCommentsCrawler).
 
 
 
+###News ingestion
+
+The first step is to keep track of all the recent articles in the news. I combined 2 strategies to achieve this
+
+- Crawling regularly (every 20 minutes) the RSS feeds of the journals using Facebook comments or Disqus comments on their page (vice, abcnews, Washington Times...)
+- Directly crawling the Facebook pages for new posts (Wahshington Post, Fox News, NY times, CNN...)
+
+This gives me every 20 minutes all the new articles published across a large part of the web.
+
+###Topic Inference
+
+From the titles and the descriptions of the articles previously crawled, Spark is used to perform a distributed Map Reduce operation that will extract the most common words in the last hour, 12 hours, and all time minus the top 1000 most used words in English.
+
+### Fetching the comments
+
+From the articles links, I fetch the comments using the Facebook Graph API or the Disqus API either directly from the journal's webpage or from the posts my by the journals on Facebook.
+
+
+
+### Fetching the tweets
+
+Everytime the current topics are infered, the application requests the stream of tweets for all of them. As there might be a lot (the Super Bowl was crazy), they are put in a Kafka queue waiting to be processed by Storm. Storm will filter out Retweets, replies and tweets containing links to focus on real comments, it will also classify the tweets in the appropriate category given the current tropics.
+
+### Storing in Hbase
+
+The comments and tweets are stored in Hbase and denormalized by so that it is efficient to query one particular topic as well as a particular user.
+
+### Crunching Numbers
+
+Once we have al this nicely organized data, of course we can start crunching numbers, as a couple first examples of what is possible, I've pulled the most liked users across all the comments on all the news sources, as wel as the most recuring comments which give us a nice way to detect spam message, [it's all there](#/stats/)
+
+### Client Facing API and WebApp
+
+The client facing Json API is written with Spray.io, and is used by the AngularJS application you are currently on to let you enjoy random people's random thoughts on just about anything !
+
+
+##Conclusions
+
+- Data engineering is awesome
+- Spark is awesome
+- Storm is awesome
+- Kafka is awesome
+- Hbase gets to be awesome when you understand it enough to configure it well
+- Topic inference is hard and mine sucks, but that's a 4 weeks old project so maybe later !
 
  </marked>
  </div>
+
  </div>

@@ -8,7 +8,7 @@
         <h3>What's {{currentUser}} been up to?</h3>
           <div ng-repeat="commentUser in userComments" class="thumbnail">
             <div>
-              <img src="img/like.png" height="10" width="10"> {{commentUser.like_count}} published {{commentUser.created_at}} on <a ng-href="{{commentUser.url}}">{{commentUser.url.substring(7,25)+"..."}}</a>
+              <img src="img/like.png" height="10" width="10"> {{commentUser.like_count}} published {{commentUser.created_at}} on <a ng-href="{{commentUser.url}}">{{cleanTitle(commentUser.title)}}</a> ({{getDomain(commentUser.url)}})
             </div>
             <div>
               {{commentUser.message}}
@@ -114,7 +114,7 @@
            <i class="fa fa-newspaper-o"></i>  <a target="_blank" ng-href="{{article.url}}">{{article.title}}</a> ({{getDomain(article.url)}})
           </blockquote>
           <div ng-show="nested_article[{{$index}}]">
-            <div class="row" ng-if="nest" ng-repeat="comment in article.comments | filter:query | orderBy:orderProp">
+            <div class="row" ng-if="nest" ng-repeat="comment in article.comments | filter:query | orderBy:orderProp | limitTo:nested_article_limit[$parent.$index]">
               <div class="col-md-12 comment" ng-class-even="'odd_row'">
                 <div>
 
@@ -122,6 +122,25 @@
                 <div>
                   (<i class="fa fa-thumbs-o-up"></i> {{comment.like_count}}) <b>
                   <a href="javascript:;" ng-click="getUserComments(comment.from)">{{comment.from}}</a></b>: {{comment.message}}
+                </div>
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="row" style="margin-top:15px">
+              <div class="col-md-12 text-center" >
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="javascript:;"  ng-if="nested_article_limit[$parent.$index] < article.comments.length" ng-click="incrementLimitComments($parent.$index)" class="btn btn-default">
+                  More
+                  </a>
+                  <a href="javascript:;"  ng-if="nested_article_limit[$parent.$index] > 0" ng-click="decrementLimitComments($parent.$index)"  class="btn btn-default">
+                  Less
+                  </a> 
+                  <a href="javascript:;"  ng-if="nested_article_limit[$parent.$index] > 0" ng-click="toggle($parent.$index)"  class="btn btn-default">
+                  Collapse
+                  </a> 
+                  <button ng-if="nested_article_limit[$parent.$index] < article.comments.length"  class="btn btn-default" disabled>
+                    ({{nested_article_limit[$parent.$index]}}/{{article.comments.length}})
+                  </button>
                 </div>
               </div>
             </div>

@@ -1,0 +1,69 @@
+/* app css stylesheet */
+
+body {
+	
+}
+
+
+.thumb {	
+}
+
+.comment {
+	border-bottom: 1px solid #ddd;
+}
+
+.comment_box{
+	margin-bottom: 20px;
+	padding: 15px
+}
+
+.odd_row {
+	background-color: #F2F2F2;
+}
+
+.angular-google-map-container { height: 200px; margin-bottom: 25px}
+
+.ng-modal-overlay {
+  /* A dark translucent div that covers the whole screen */
+  position:fixed;
+  z-index:9999;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:#000000;
+  opacity: 0.8;
+}
+.ng-modal-dialog {
+  /* A centered div above the overlay with a box shadow. */
+  z-index:10000;
+  position: fixed;
+  width: 70%; /* Default */
+
+  /* Center the dialog */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+
+  background-color: #fff;
+  box-shadow: 4px 4px 80px #000;
+}
+.ng-modal-dialog-content {
+  padding:10px;
+  text-align: left;
+  height:500px;
+  overflow: auto;
+}
+.ng-modal-close {
+  position: fixed;
+  top: 3px;
+  right: 5px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 120%;
+  display: inline-block;
+  font-weight: bold;
+  font-family: 'arial', 'sans-serif';
+}

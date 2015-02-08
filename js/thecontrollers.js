@@ -10,6 +10,36 @@ phonecatControllers.controller('BlogCtrl', ['$scope',
 
   }]);
 
+phonecatControllers.controller('StatsCtrl', ['$scope', '$http',
+  function($scope, $http) {
+  	function getStats() {
+	    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/user_likes').success(function(data) {
+	      $scope.likes = data;
+	    });
+	    $http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/spam').success(function(data) {
+	      $scope.spams = data;
+	    });
+	}
+	getStats(); 
+
+	$scope.getUserComments = function(pseudo) {
+		var pseudoClean = pseudo.replace(/[^a-zA-Z0-9]/g, "")
+		$http.get('http://ec2-54-67-43-16.us-west-1.compute.amazonaws.com:8083/user?req=' + pseudoClean).success(function(data) {
+			$scope.showUser = true;
+		    $scope.userComments = data;
+		    $scope.currentUser = pseudo;
+	    })		
+	}
+
+	$scope.hideModal = function() {
+		$scope.showUser = false;
+	}
+
+	$scope.currentUser = "";
+	$scope.showUser = false;
+	$scope.userComments = [];
+  }]);
+
 phonecatControllers.controller('PhoneListCtrl', ['$scope', '$http', '$interval',
   function($scope, $http, $interval) {
   	$scope.refreshInterval = 30; // For every 10 sec
@@ -86,6 +116,7 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 			      $scope.articles = data;
 			      $scope.loadedComments=true;
 			      $scope.nested_article = Array.apply(null, new Array($scope.articles.length)).map(Boolean.prototype.valueOf,true);
+			      $scope.nested_article_limit = Array.apply(null, new Array($scope.articles.length)).map(Number.prototype.valueOf,5);
 			  }
 			  else{
 			  	  $scope.isEmpty = true;
@@ -102,6 +133,13 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
 		return ('0' + (d2.getMonth()+1)).slice(-2) + '/'
              + ('0' + d2.getDate()).slice(-2) + '/'
              + d2.getFullYear();
+	}
+
+	$scope.cleanTitle = function(title){
+		console.log("here");
+		var reg = /^([\s\S]*)2015-[\s\S]*T[\s\S]*:[\s\S]*$/;
+		var dat = title.match(reg);
+		return(dat[1]);
 	}
 
 	function addMarkers(tweets){
@@ -183,6 +221,16 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', '$h
    		$scope.nested_article[article] = !$scope.nested_article[article];
    	}
 
+   	$scope.incrementLimitComments = function(idArticle) {
+    	$scope.nested_article_limit[idArticle] += 5;
+	};
+
+	$scope.decrementLimitComments = function(idArticle) {
+		if($scope.nested_article_limit[idArticle] >=5)
+    		$scope.nested_article_limit[idArticle] -= 5;
+    	else
+    		$scope.nested_article_limit[idArticle] = 0;
+	};
 
 
     $scope.sortByDate = function(comment) {
