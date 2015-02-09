@@ -24,104 +24,104 @@ import net.liftweb.json.JInt
 
 
 class BatchQueries extends Serializable{
+ 
+  val hbr = new ReadFromHbase
+  val hbw = new WriteToHbase
   
-  	val hbr = new ReadFromHbase
-	val hbw = new WriteToHbase
-	
-							
-  		
-	/*Map reduce procedure to aggregate the number of likes users get*/
-	def registerLikedUsers():Unit= {
-  	  
-  	  	val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
-		val spark = new SparkContext(conf)
-  	  	
+              
+    
+  /*Map reduce procedure to aggregate the number of likes users get*/
+  def registerLikedUsers():Unit= {
+   
+    val conf = new SparkConf().setAppName("Spark Topics").setMaster("local")
+    val spark = new SparkContext(conf)
+    
 
-  	
-  	  
+  
+   
 
-		  
-		/*Creating HBase configuration*/
-		val hbaseConfiguration = (hbaseConfigFileName: String, tableName: String) => {
-		  val hbaseConfiguration = HBaseConfiguration.create()
-		  hbaseConfiguration.addResource(hbaseConfigFileName)
-		  hbaseConfiguration.set(TableInputFormat.INPUT_TABLE, tableName)
-		  hbaseConfiguration
-		 }
-		
-		/*get the users table as a RDD*/
-		val rdd = new NewHadoopRDD(
-		  spark,
-		  classOf[TableInputFormat],
-		  classOf[ImmutableBytesWritable],
-		  classOf[Result],
-		  hbaseConfiguration("/opt/cloudera/parcels/CDH/lib/hbase/conf/", "users")
-		)
-			
-		/*Map every user to it's like*/
-		val likes_map = rdd.map(tuple => tuple._2)
-		/*transforming into an arraybuffer of lists of properties for every user*/
-		.flatMap(r => {
-			/*getting the family map for the current row*/
-			val col = r.getFamilyMap("infos".getBytes()).keySet()
-			val it = col.iterator()
-			val ret = new ArrayBuffer[(String,Int)]
-			while(it.hasNext()){
-				val currentCol = it.next()
-				val comment = new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol)))
-				
-				/*hacking json parse*/
-				val likes = """(?s).*like\_count\"\:(\d+)\,.*""".r
-				val like_count = comment match {
-				  	case likes(count) => s"$count"
-				} 
-				
-				/*emitting the tuples*/
-				ret.append((new String(r.getRow()),like_count.toInt))
-			}
-			ret
-		})
-		
-		
-		/*Map every comment to the number they've been posted to detect potential spam messages*/
-		val spam_detect = rdd.map(tuple => tuple._2)
-		/*transforming into an arraybuffer of lists of properties for every user*/
-		.flatMap[(String,Int)](r => {
-			/*getting the family map for the current row*/
-			val col = r.getFamilyMap("infos".getBytes()).keySet()
-			val it = col.iterator()
-			val ret = new ArrayBuffer[(String,Int)]
-			while(it.hasNext()){
-				val currentCol = it.next()
-				val comment = new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol)))
-				
-				/*hacking json parse*/
-				val likes = """(?s).*\"message\"\:\"(.*)\"\,\"title\"\:.*""".r
-				val message = comment match {
-				  	case likes(mess) => s"$mess"
-				} 
-				
-				/*emitting the tuples*/
-				ret.append((message,1))
-			}
-			ret
-		})
-		
-		  
-  	  	/*reduce step*/
-		val likes_reduce = likes_map.reduceByKey(_ + _).collect.sortBy(_._2).reverse
-		val (users, likes) = likes_reduce.unzip
-		val spam_reduce = spam_detect.reduceByKey(_+_).filter(_._2>1).sortByKey(false, 1).collect
-		val (columns_spam, values_spam) = spam_reduce.unzip 
-		
-		/*register the values in Hbase*/
-		val timestamp = Long.MaxValue-Calendar.getInstance().getTimeInMillis()
-		hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => s.toString.getBytes(),true)	
-		hbw.insert[Int]("users_aggregates", timestamp.toString, "infos", users.toArray, likes.toArray, s => s.toString.getBytes(),true)
-						
-		spark.stop
-		
-		
-  	}
+     
+    /*Creating HBase configuration*/
+    val hbaseConfiguration = (hbaseConfigFileName: String, tableName: String) => {
+     val hbaseConfiguration = HBaseConfiguration.create()
+     hbaseConfiguration.addResource(hbaseConfigFileName)
+     hbaseConfiguration.set(TableInputFormat.INPUT_TABLE, tableName)
+     hbaseConfiguration
+     }
+    
+    /*get the users table as a RDD*/
+    val rdd = new NewHadoopRDD(
+     spark,
+     classOf[TableInputFormat],
+     classOf[ImmutableBytesWritable],
+     classOf[Result],
+     hbaseConfiguration("/opt/cloudera/parcels/CDH/lib/hbase/conf/", "users")
+    )
+      
+    /*Map every user to it's like*/
+    val likes_map = rdd.map(tuple => tuple._2)
+    /*transforming into an arraybuffer of lists of properties for every user*/
+    .flatMap(r => {
+      /*getting the family map for the current row*/
+      val col = r.getFamilyMap("infos".getBytes()).keySet()
+      val it = col.iterator()
+      val ret = new ArrayBuffer[(String,Int)]
+      while(it.hasNext()){
+        val currentCol = it.next()
+        val comment = new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol)))
+        
+        /*hacking json parse*/
+        val likes = """(?s).*like\_count\"\:(\d+)\,.*""".r
+        val like_count = comment match {
+          case likes(count) => s"$count"
+        } 
+        
+        /*emitting the tuples*/
+        ret.append((new String(r.getRow()),like_count.toInt))
+      }
+      ret
+    })
+    
+    
+    /*Map every comment to the number they've been posted to detect potential spam messages*/
+    val spam_detect = rdd.map(tuple => tuple._2)
+    /*transforming into an arraybuffer of lists of properties for every user*/
+    .flatMap[(String,Int)](r => {
+      /*getting the family map for the current row*/
+      val col = r.getFamilyMap("infos".getBytes()).keySet()
+      val it = col.iterator()
+      val ret = new ArrayBuffer[(String,Int)]
+      while(it.hasNext()){
+        val currentCol = it.next()
+        val comment = new String(CellUtil.cloneValue(r.getColumnLatestCell("infos".getBytes(), currentCol)))
+        
+        /*hacking json parse*/
+        val likes = """(?s).*\"message\"\:\"(.*)\"\,\"title\"\:.*""".r
+        val message = comment match {
+          case likes(mess) => s"$mess"
+        } 
+        
+        /*emitting the tuples*/
+        ret.append((message,1))
+      }
+      ret
+    })
+    
+     
+    /*reduce step*/
+    val likes_reduce = likes_map.reduceByKey(_ + _).collect.sortBy(_._2).reverse
+    val (users, likes) = likes_reduce.unzip
+    val spam_reduce = spam_detect.reduceByKey(_+_).filter(_._2>1).sortByKey(false, 1).collect
+    val (columns_spam, values_spam) = spam_reduce.unzip 
+    
+    /*register the values in Hbase*/
+    val timestamp = Long.MaxValue-Calendar.getInstance().getTimeInMillis()
+    hbw.insert[Int]("spam", timestamp.toString, "infos", columns_spam.toArray, values_spam.toArray, s => s.toString.getBytes(),true)  
+    hbw.insert[Int]("users_aggregates", timestamp.toString, "infos", users.toArray, likes.toArray, s => s.toString.getBytes(),true)
+            
+    spark.stop
+    
+    
+  }
 
 }

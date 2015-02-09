@@ -26,90 +26,90 @@ import main.scala.sql.MySQLConnector
 
 class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 4,topologyName: String = "kafka-storm-starter") {
 
-  
-  
+ 
+ 
 def runTopology() {
-    val zkHosts = new ZkHosts(kafkaZkConnect)
-    val zkRoot = ""
-    // The spout appends this id to zkRoot when composing its ZooKeeper path.  You don't need a leading `/`.
-    val zkSpoutId = "kafka-storm-starter"
-    val kafkaConfig = new SpoutConfig(zkHosts, topic, zkRoot, zkSpoutId)
-    val kafkaSpout = new KafkaSpout(kafkaConfig)
-    val numSpoutExecutors = numTopicPartitions
-    val builder = new TopologyBuilder
-    val spoutId = "kafka-spout"
-    
+  val zkHosts = new ZkHosts(kafkaZkConnect)
+  val zkRoot = ""
+  // The spout appends this id to zkRoot when composing its ZooKeeper path. You don't need a leading `/`.
+  val zkSpoutId = "kafka-storm-starter"
+  val kafkaConfig = new SpoutConfig(zkHosts, topic, zkRoot, zkSpoutId)
+  val kafkaSpout = new KafkaSpout(kafkaConfig)
+  val numSpoutExecutors = numTopicPartitions
+  val builder = new TopologyBuilder
+  val spoutId = "kafka-spout"
+  
 
-    // Showcases how to customize the topology configuration
-    val topologyConfiguration = {
-      val c = new Config
-      c.put(Config.NIMBUS_HOST, "ec2-54-67-119-111.us-west-1.compute.amazonaws.com");
-      c.put(Config.NIMBUS_THRIFT_PORT,6627:Integer);
-      c.setDebug(true)
-      c.setNumWorkers(10)
-      c.setMaxSpoutPending(1000)
-      c.setMessageTimeoutSecs(120)
-      c.setMaxTaskParallelism(50)
-      c.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384: Integer)
-      c.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE, 16384: Integer)
-      c.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE, 8: Integer)
-      c.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, 32: Integer)
-      c.put(Config.TOPOLOGY_STATS_SAMPLE_RATE, 0.05: java.lang.Double)
-      c
-    }
-    
-    System.getProperties().list(System.out)
-    builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
-    builder.setBolt("filterTweets", new FilteringBolt(), 8).shuffleGrouping(spoutId)
-
-    // Now run the topology
-    StormSubmitter.submitTopology(topologyName, topologyConfiguration, builder.createTopology())
+  // Showcases how to customize the topology configuration
+  val topologyConfiguration = {
+   val c = new Config
+   c.put(Config.NIMBUS_HOST, "ec2-54-67-119-111.us-west-1.compute.amazonaws.com");
+   c.put(Config.NIMBUS_THRIFT_PORT,6627:Integer);
+   c.setDebug(true)
+   c.setNumWorkers(10)
+   c.setMaxSpoutPending(1000)
+   c.setMessageTimeoutSecs(120)
+   c.setMaxTaskParallelism(50)
+   c.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384: Integer)
+   c.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE, 16384: Integer)
+   c.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE, 8: Integer)
+   c.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, 32: Integer)
+   c.put(Config.TOPOLOGY_STATS_SAMPLE_RATE, 0.05: java.lang.Double)
+   c
   }
+  
+  System.getProperties().list(System.out)
+  builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
+  builder.setBolt("filterTweets", new FilteringBolt(), 8).shuffleGrouping(spoutId)
+
+  // Now run the topology
+  StormSubmitter.submitTopology(topologyName, topologyConfiguration, builder.createTopology())
+ }
 
 }
 
 
 
 class FilteringBolt extends BaseRichBolt {
-  var collector: OutputCollector = _
+ var collector: OutputCollector = _
 
-  override def prepare(config: JMap[_, _], context: TopologyContext, collector: OutputCollector) {
-    this.collector = collector
-  }
+ override def prepare(config: JMap[_, _], context: TopologyContext, collector: OutputCollector) {
+  this.collector = collector
+ }
 
-  override def execute(tuple: Tuple) {
-    //this.collector.emit(tuple, new Values(TweetsFilter.filter(tuple.getString(0))))
-    
-    TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
-    this.collector.ack(tuple)
-  }
+ override def execute(tuple: Tuple) {
+  //this.collector.emit(tuple, new Values(TweetsFilter.filter(tuple.getString(0))))
+  
+  TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
+  this.collector.ack(tuple)
+ }
 
-  override def declareOutputFields(declarer: OutputFieldsDeclarer) {
-    //declarer.declare(new Fields("word"))
-  }
+ override def declareOutputFields(declarer: OutputFieldsDeclarer) {
+  //declarer.declare(new Fields("word"))
+ }
 }
 
 
 object TweetsFilter {
-	implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
-	
-	def filter(s: String): Unit = {
-		/*Getting the topics*/
-		val tweet = net.liftweb.json.parse(s).extract[Tweet]
-		tweet.message match {
-				/*We don't want retweets, links or replies*/
-		    	case x if(!x.contains("RT") && !x.contains("http://") && !x.startsWith("@")) => {
-		    		/*Get the topics*/
-		    		val topics = MySQLConnector.getTopics("topics1h",10)++
-		    				MySQLConnector.getTopics("topics12h",10)++
-		    				MySQLConnector.getTopics("topicsalltime",100)
-		    				.distinct
-		    		val hbr = new WriteToHbase
-		    		hbr.insertTweets(tweet, topics.toArray)
-		    	}
-		    	case _ =>
-		  }
-	}
+ implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
+ 
+ def filter(s: String): Unit = {
+  /*Getting the topics*/
+  val tweet = net.liftweb.json.parse(s).extract[Tweet]
+  tweet.message match {
+    /*We don't want retweets, links or replies*/
+     case x if(!x.contains("RT") && !x.contains("http://") && !x.startsWith("@")) => {
+      /*Get the topics*/
+      val topics = MySQLConnector.getTopics("topics1h",10)++
+        MySQLConnector.getTopics("topics12h",10)++
+        MySQLConnector.getTopics("topicsalltime",100)
+        .distinct
+      val hbr = new WriteToHbase
+      hbr.insertTweets(tweet, topics.toArray)
+     }
+     case _ =>
+   }
+ }
 }
 
 
