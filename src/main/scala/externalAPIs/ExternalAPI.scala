@@ -15,18 +15,18 @@ import main.scala.rss.CommentsList
 
 trait ExternalAPI {
  
-  implicit val formats = Serialization.formats(NoTypeHints)
-  
-  def fetchJSONFromURL(params:Array[String]):String
-  
-  def readJSON(json:String,url:String,title:String):ArrayBuffer[Comment]
-  
-  /*Get JSON from the comments list*/
-  def getJSON(comments:ArrayBuffer[Comment]):String ={
-      val listComments = comments.toList
-      val commentsClass = new CommentsList(listComments)
-      val listJson = Extraction.decompose(commentsClass)
+ implicit val formats = Serialization.formats(NoTypeHints)
+ 
+ def fetchJSONFromURL(params:Array[String]):String
+ 
+ def readJSON(json:String,url:String,title:String):ArrayBuffer[Comment]
+ 
+ /*Get JSON from the comments list*/
+ def getJSON(comments:ArrayBuffer[Comment]):String ={
+   val listComments = comments.toList
+   val commentsClass = new CommentsList(listComments)
+   val listJson = Extraction.decompose(commentsClass)
 
-      write(listJson)
-  }
+   write(listJson)
+ }
 }
