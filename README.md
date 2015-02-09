@@ -46,6 +46,8 @@ The classes are structured as follow
 
   ![Pipeline part2](http://flockingcomments.com/img/pipeline2.png)
 
+  For more detailed explanation of the data flow, check the [blog post](http://flockingcomments.com/blog/)
+
   ### Hbase schema
   Hbase being the central datastore of this project, I'll give a few details concerning the schema used.
 
