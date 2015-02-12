@@ -154,6 +154,7 @@ class RssReader{
 	         println("internal "+item.link)
 	         item.engine = feedInfo.commentType
 	         item.engineId = feedInfo.engineId
+	         itemArray.append(item)
         }
       }
       case Failure(_) =>{}
