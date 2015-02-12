@@ -151,12 +151,9 @@ class RssReader{
         }
         val res = actor.extract(xml)
         for{feed <- res; item <- feed.items} {
-         if(!item.link.contains("facebook")){
 	         println("internal "+item.link)
 	         item.engine = feedInfo.commentType
 	         item.engineId = feedInfo.engineId
-	         //itemArray.append(item)
-         }
         }
       }
       case Failure(_) =>{}
@@ -170,11 +167,16 @@ class RssReader{
       for(post <- postsJson){
         try {
           val fb = post.extract[FBInternalPost]
-          val item = new RssItem(fb.name,fb.link,fb.description,fb.postId)
-          item.engineId = fb.postId
-          item.engine = feedInfo.commentType
-          itemArray.append(item)
-          println(item.link)
+          if(!fb.link.contains("facebook")){
+	          val item = new RssItem(fb.name,fb.link,fb.description,fb.postId)
+	          item.engineId = fb.postId
+	          item.engine = feedInfo.commentType
+	          itemArray.append(item)
+	          println("internal "+item.link)
+          }
+          else {
+            println("API to fix for fb posts")
+          }
         }
         catch{
          case e:Exception => println("error")//probably not an adequate post
