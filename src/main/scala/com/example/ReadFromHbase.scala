@@ -19,6 +19,7 @@ import ExecutionContext.Implicits.global
 import org.apache.hadoop.hbase.CellUtil
 import org.apache.hadoop.hbase.client.HConnectionManager
 import org.apache.hadoop.hbase.Cell
+import org.apache.hadoop.hbase.client.Delete
 
 case class Comment(created_time:String,from:String,like_count:Int,message:String,url:Option[String],title:Option[String])
 
@@ -45,6 +46,49 @@ object ReadFromHbase {
   implicit val formats = Serialization.formats(NoTypeHints)
   
   val conn = HConnectionManager.createConnection(config)
+  
+  
+  
+    /*Generic Hbase reader to fetch all the rows of a table beetween 2 times and create objects out of that*/
+  def cleanMess(table:String,minutesBackMax:Int,minutesBackMin:Int):Unit = {
+    /*Fetch the table*/
+   
+    val httable = conn.getTable(table)
+    val offsetMax:Long = 480*60000L
+    val offsetMin:Long = 0*60000L
+    
+    val theScan = new Scan()
+    
+
+    
+    /*Adding timestamp filter*/
+    val res = httable.getScanner(theScan)
+    
+    val iter = res.iterator()
+    
+    while(iter.hasNext()){
+      
+       val next = iter.next()
+	    
+	    val columns = next.getFamilyMap("infos".getBytes()).keySet()
+	
+	    val iterator = columns.iterator()
+	    val theDel = new Delete(next.getRow())       
+       
+	    while(iterator.hasNext()) {
+
+	      val nextColumn = iterator.next()
+	      theDel.deleteColumns("infos".getBytes(), nextColumn)
+	      println("deleted column "+new String(nextColumn)+" on row "+new String(next.getRow()))
+	      
+	      //ret.append(handleRow(res.getColumnLatestCell("infos".getBytes(), nextColumn)))   
+	    }
+       println("Actually delete the columns")
+       httable.delete(theDel)
+    }
+ 
+  }
+  
     
   
   /*Generic Hbase reader to fetch all the rows of a table beetween 2 times and create objects out of that*/
@@ -59,8 +103,6 @@ object ReadFromHbase {
 
     val theGet = new Get(row.getBytes())
       .setTimeRange(Calendar.getInstance().getTimeInMillis()-offsetMax, Calendar.getInstance().getTimeInMillis()-offsetMin)
-      
-      
     
     
     /*Adding timestamp filter*/

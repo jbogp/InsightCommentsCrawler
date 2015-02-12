@@ -51,7 +51,8 @@ trait MyService extends HttpService {
 
 
 	val myRoute =
-	  	path(""){
+	  	path("temp"){
+	  ReadFromHbase.cleanMess("comments", 2, 1)
 			complete {
 				<html>
 					<body>
