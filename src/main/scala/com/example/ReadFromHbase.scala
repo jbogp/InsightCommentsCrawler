@@ -77,22 +77,25 @@ object ReadFromHbase {
 	        /*Adding timestamp filter*/
 	    val res2 = httable.get(theGet)
 	    
-	    val columns = res2.getFamilyMap("infos".getBytes()).keySet()
+	    if(!res2.isEmpty()){
+		    
+		    val columns = res2.getFamilyMap("infos".getBytes()).keySet()
+		    
+		    val iterator = columns.iterator()
 	    
-	    val iterator = columns.iterator()
-    
-	    val theDel = new Delete(next.getRow())       
-       
-	    while(iterator.hasNext()) {
-
-	      val nextColumn = iterator.next()
-	      theDel.deleteColumns("infos".getBytes(), nextColumn)
-	      println("deleted column "+new String(nextColumn)+" on row "+new String(next.getRow()))
-	      
-	      //ret.append(handleRow(res.getColumnLatestCell("infos".getBytes(), nextColumn)))   
+		    val theDel = new Delete(next.getRow())       
+	       
+		    while(iterator.hasNext()) {
+	
+		      val nextColumn = iterator.next()
+		      theDel.deleteColumns("infos".getBytes(), nextColumn)
+		      println("deleted column "+new String(nextColumn)+" on row "+new String(next.getRow()))
+		      
+		      //ret.append(handleRow(res.getColumnLatestCell("infos".getBytes(), nextColumn)))   
+		    }
+	       println("Actually delete the columns")
+	       httable.delete(theDel)
 	    }
-       println("Actually delete the columns")
-       httable.delete(theDel)
     }
  
   }
