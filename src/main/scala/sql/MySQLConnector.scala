@@ -24,7 +24,13 @@ object MySQLConnector {
     }
     
     ret.toList.reverse
-      
+  }
+  
+  def setTweetsCount(counts:List[(String,Int)]) {
+    MySQLConnector.connection.createStatement()
+    .executeQuery(counts.reduceLeft((l,r)=>{
+      (l._1+"UPDATE counts_tweets SET count="+r._2+" WHERE topic='"+r._1+"'",1)
+    })._1)
   }
  
   private val getMysqlConfig: (String,String) = {
@@ -33,25 +39,12 @@ object MySQLConnector {
 
   // connect to the database named "insights" on the localhost
   val driver = "com.mysql.jdbc.Driver"
-  val url = "jdbc:mysql://ip-172-31-15-117.us-west-1.compute.internal/Insight"
+  val url = "jdbc:mysql://ip-172-31-13-232.us-west-1.compute.internal/Insight"
   val confmysql = getMysqlConfig
 
   // make the connection
   Class.forName(driver)
   val connection = DriverManager.getConnection(url, confmysql._1, confmysql._2)
   
-  def getLastTimestamp():Long ={
-   
-    /*Getting time of last computation in mysql*/
-    val timestampRes = this  
-    .connection
-    .createStatement()
-    .executeQuery("SELECT timestamp FROM topics_computations ORDER BY timestamp DESC LIMIT 1;")
-
-    /*moving cursor to first element*/
-    timestampRes.first()
-    /*Getting timestamp*/
-    timestampRes.getLong("timestamp")
-  }
 
 }

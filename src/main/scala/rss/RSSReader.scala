@@ -151,10 +151,12 @@ class RssReader{
         }
         val res = actor.extract(xml)
         for{feed <- res; item <- feed.items} {
-         println(item.link)
-         item.engine = feedInfo.commentType
-         item.engineId = feedInfo.engineId
-         itemArray.append(item)
+         if(!item.link.contains("l.facebook")){
+	         println("internal "+item.link)
+	         item.engine = feedInfo.commentType
+	         item.engineId = feedInfo.engineId
+	         itemArray.append(item)
+         }
         }
       }
       case Failure(_) =>{}

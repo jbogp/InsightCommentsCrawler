@@ -142,29 +142,6 @@ object InsightCommentsCrawler {
                 val topicsAllTime = TopicsFinder.getKeywords(100)
                 
                 
-                /*writing time of last computation in mysql*/
-                val timestamp = Calendar.getInstance().getTimeInMillis()
-                MySQLConnector.connection
-                  .createStatement()
-                  .executeUpdate("INSERT INTO topics_computations VALUES ('"+timestamp+"')")
-                /*writing the topics in Mysql*/
-                topics1h.foreach(topic => {MySQLConnector.connection
-                  .createStatement()
-                  .executeUpdate("INSERT INTO topics1h VALUES (NULL,'"+timestamp+"','"+topic+"')")
-                })
-
-                topics12h.foreach(topic => {MySQLConnector.connection
-                  .createStatement()
-                  .executeUpdate("INSERT INTO topics12h VALUES (NULL,'"+timestamp+"','"+topic+"')")
-                })
-                
-                topicsAllTime.foreach(topic => {MySQLConnector.connection
-                  .createStatement()
-                  .executeUpdate("INSERT INTO topicsalltime VALUES (NULL,'"+timestamp+"','"+topic+"')")
-                })
-
-                
-                
                 /*writing in Hbase*/
                 writeTopicsHbase("topics1h", topics1h)
                 writeTopicsHbase("topics12h", topics12h)
@@ -196,6 +173,24 @@ object InsightCommentsCrawler {
 
                 /*Read items published between 4 and 10 hours ago*/
                 CommentsFetcher.readItems(600, 240,topics1h,topics12h,topicsAllTime)
+                
+                /*writing time of last computation in mysql*/
+                val timestamp = Calendar.getInstance().getTimeInMillis()
+                /*writing the topics in Mysql*/
+                topics1h.foreach(topic => {MySQLConnector.connection
+                  .createStatement()
+                  .executeUpdate("INSERT INTO topics1h VALUES (NULL,'"+timestamp+"','"+topic+"')")
+                })
+
+                topics12h.foreach(topic => {MySQLConnector.connection
+                  .createStatement()
+                  .executeUpdate("INSERT INTO topics12h VALUES (NULL,'"+timestamp+"','"+topic+"')")
+                })
+                
+                topicsAllTime.foreach(topic => {MySQLConnector.connection
+                  .createStatement()
+                  .executeUpdate("INSERT INTO topicsalltime VALUES (NULL,'"+timestamp+"','"+topic+"')")
+                })
                 
                 /*Wait 20 minutes*/
                 Thread.sleep(1200000);

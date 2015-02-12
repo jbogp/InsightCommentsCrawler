@@ -1,3 +1,4 @@
+
 package main.scala.hbase
 
 
@@ -110,8 +111,9 @@ case class WriteToHbase() {
   
   /* 
    * Insert Tweets in Hbase
+   * returns the topics where the tweet was inserted
    */
-  def insertTweets(tweet:Tweet,topics:Array[String]) {
+  def insertTweets(tweet:Tweet,topics:Array[String]): List[String]= {
       val column = tweet.id.toString
       
       /*Writing on tweets tables*/
@@ -121,12 +123,17 @@ case class WriteToHbase() {
         .split(" ")
         .filter(_.length()<15)
         .drop(1)
+        
+      /* Creating the return value */
+      val ret = List[String]()
 
       val in = content.foreach(word =>{
         if((topics).contains(word)) {
           insert[String]("tweets",word,"infos",Array(column),Array(write(tweet)),s => Bytes.toBytes(s))
+          ret:::(List(word))
         }
       })
+      ret
   }
   
   

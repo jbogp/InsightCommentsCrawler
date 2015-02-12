@@ -15,6 +15,8 @@ import backtype.storm.topology.base.BaseRichBolt
 import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.tuple.{ Fields, Tuple, Values }
 import java.util.{ Map => JMap }
+import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
 import backtype.storm.testing.TestWordSpout
 import main.scala.hbase.WriteToHbase
 import main.scala.hbase.ReadFromHbase
@@ -61,6 +63,7 @@ def runTopology() {
   System.getProperties().list(System.out)
   builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
   builder.setBolt("filterTweets", new FilteringBolt(), 8).shuffleGrouping(spoutId)
+ //TODO builder.setBolt("tweets_added", new CountBolt(), 1).globalGrouping(spoutId)
 
   // Now run the topology
   StormSubmitter.submitTopology(topologyName, topologyConfiguration, builder.createTopology())
@@ -76,11 +79,45 @@ class FilteringBolt extends BaseRichBolt {
  override def prepare(config: JMap[_, _], context: TopologyContext, collector: OutputCollector) {
   this.collector = collector
  }
+ 
 
  override def execute(tuple: Tuple) {
-  //this.collector.emit(tuple, new Values(TweetsFilter.filter(tuple.getString(0))))
   
-  TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
+  val (selected,topics) = TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
+  if(selected) {
+   this.collector.emit(tuple, seqAsJavaList(topics).asInstanceOf[java.util.List[Object]])
+  }
+  this.collector.ack(tuple)
+ }
+
+ override def declareOutputFields(declarer: OutputFieldsDeclarer) {
+  declarer.declare(new Fields("added_tweets"))
+ }
+}
+
+/*Will do the counting over a set of properties for the tweets*/
+class CountBolt extends BaseRichBolt {
+  
+  
+ var collector: OutputCollector = _
+
+ override def prepare(config: JMap[_, _], context: TopologyContext, collector: OutputCollector) {
+  this.collector = collector
+ }
+
+ /*Setting the config to get tick tuples every 10 seconds*/
+ override def getComponentConfiguration():java.util.Map[String,Object]= {
+   val conf = mapAsJavaMap(new java.util.HashMap[String, Object].toMap)
+   val tickFreq:java.lang.Integer = 10
+   conf.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, tickFreq);
+   return conf
+ } 
+
+ override def execute(tuple: Tuple) {
+  
+  val tweets = tuple.getValueByField("bytes").asInstanceOf[List[String]]
+  /*Get the topics*/
+  //MySQLConnector.setTweetsCount((tweets,tweets.length))
   this.collector.ack(tuple)
  }
 
@@ -93,10 +130,10 @@ class FilteringBolt extends BaseRichBolt {
 object TweetsFilter {
  implicit val formats = net.liftweb.json.Serialization.formats(net.liftweb.json.NoTypeHints)
  
- def filter(s: String): Unit = {
+ def filter(s: String): (Boolean,List[String]) = {
   /*Getting the topics*/
   val tweet = net.liftweb.json.parse(s).extract[Tweet]
-  tweet.message match {
+  val topicAdded = tweet.message match {
     /*We don't want retweets, links or replies*/
      case x if(!x.contains("RT") && !x.contains("http://") && !x.startsWith("@")) => {
       /*Get the topics*/
@@ -107,8 +144,11 @@ object TweetsFilter {
       val hbr = new WriteToHbase
       hbr.insertTweets(tweet, topics.toArray)
      }
-     case _ =>
+     case _ => List[String]()
    }
+  
+  /*Returning the insert status*/
+  (topicAdded.isEmpty,topicAdded)
  }
 }
 
