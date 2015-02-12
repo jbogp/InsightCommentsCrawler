@@ -70,9 +70,17 @@ object ReadFromHbase {
       
        val next = iter.next()
 	    
-	    val columns = next.getFamilyMap("infos".getBytes()).keySet()
-	
+    val theGet = new Get(next.getRow())
+      .setTimeRange(Calendar.getInstance().getTimeInMillis()-offsetMax, Calendar.getInstance().getTimeInMillis()-offsetMin)
+    
+	    
+	        /*Adding timestamp filter*/
+	    val res2 = httable.get(theGet)
+	    
+	    val columns = res2.getFamilyMap("infos".getBytes()).keySet()
+	    
 	    val iterator = columns.iterator()
+    
 	    val theDel = new Delete(next.getRow())       
        
 	    while(iterator.hasNext()) {
