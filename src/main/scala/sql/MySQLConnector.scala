@@ -43,7 +43,7 @@ object MySQLConnector {
 
   // connect to the database named "insights" on the localhost
   val driver = "com.mysql.jdbc.Driver"
-  val url = "jdbc:mysql://ip-172-31-13-232.us-west-1.compute.internal/Insight"
+  val url = "jdbc:mysql://ip-172-31-15-117.us-west-1.compute.internal/Insight"
   val confmysql = getMysqlConfig
 
   // make the connection
