@@ -218,7 +218,11 @@ object InsightCommentsCrawler {
             
            
           }
-          
+          /*Running the storm topology for real time*/
+          case "SpeedLayer" => {
+           new KafkaStorm(args(1),"tweets").runTopology  
+          }
+		          
           case _ => {
            println("Sorry, did not understand this command")
            exit(0)
