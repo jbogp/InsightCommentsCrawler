@@ -111,7 +111,7 @@ class CountBolt extends BaseRichBolt {
 
  /*Setting the config to get tick tuples every 10 seconds*/
  override def getComponentConfiguration():java.util.Map[String,Object]= {
-   val conf = mapAsJavaMap(new java.util.HashMap[String, Object].toMap)
+   val conf = new java.util.HashMap[String, Object]
    val tickFreq:java.lang.Integer = 10
    conf.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, tickFreq);
    return conf
