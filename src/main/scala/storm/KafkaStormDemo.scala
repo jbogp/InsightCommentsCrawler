@@ -25,6 +25,8 @@ import main.scala.kafka.KafkaConsumer
 import main.scala.kafka.KafkaProducer
 import java.util.Calendar
 import main.scala.sql.MySQLConnector
+import backtype.storm.Constants
+import scala.collection.mutable.HashMap
 
 class KafkaStorm(kafkaZkConnect: String, topic: String, numTopicPartitions: Int = 4,topologyName: String = "kafka-storm-starter") {
 
@@ -100,6 +102,8 @@ class CountBolt extends BaseRichBolt {
   
   
  var collector: OutputCollector = _
+ 
+ val counts = new HashMap[String,Int] 
 
  override def prepare(config: JMap[_, _], context: TopologyContext, collector: OutputCollector) {
   this.collector = collector
@@ -113,16 +117,42 @@ class CountBolt extends BaseRichBolt {
    return conf
  } 
 
- override def execute(tuple: Tuple) {
+ override def execute(tuple: Tuple) { 
   
-  val tweets = tuple.getValueByField("bytes").asInstanceOf[List[String]]
+  
+  /*if tick tuple*/
+  if(isTickTuple(tuple)){
+      /*Get the topics*/
+      val topicsCurrent = MySQLConnector.getTopics("topics1h",10)++
+        MySQLConnector.getTopics("topics12h",10)++
+        MySQLConnector.getTopics("topicsalltime",100)
+        .distinct
+	  /*Save the last tick results in the SQL base*/
+	  MySQLConnector.setTweetsCount(counts)
+	  /*Clear the map*/
+	  counts.clear
+	  /*initialize counters*/
+	  topicsCurrent.foreach(f=>counts.add((f,0)))
+  }
+  
+  
   /*Get the topics*/
-  //MySQLConnector.setTweetsCount((tweets,tweets.length))
+  val topicsAdded = tuple.getValueByField("bytes").asInstanceOf[List[String]]
+  /*update the counts*/
+  topicsAdded.foreach(t => {
+	  counts.update(t, counts(t)+1)
+  })
+  
+  
   this.collector.ack(tuple)
  }
 
  override def declareOutputFields(declarer: OutputFieldsDeclarer) {
   //declarer.declare(new Fields("word"))
+ }
+ 
+ def isTickTuple(tuple:Tuple):Boolean= {
+    return tuple.getSourceComponent().equals(Constants.SYSTEM_COMPONENT_ID) && tuple.getSourceStreamId().equals(Constants.SYSTEM_TICK_STREAM_ID);
  }
 }
 

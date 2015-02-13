@@ -5,6 +5,7 @@ import java.sql.Connection
 import com.typesafe.config.ConfigFactory
 import scala.collection.mutable.ArrayBuffer
 import java.sql.ResultSet
+import scala.collection.mutable.HashMap
 
 object MySQLConnector {
  
@@ -26,13 +27,16 @@ object MySQLConnector {
     ret.toList.reverse
   }
   
-  def setTweetsCount(counts:List[(String,Int)]) {
-    MySQLConnector.connection.createStatement()
-    .executeQuery(counts.reduceLeft((l,r)=>{
-      (l._1+"UPDATE counts_tweets SET count="+r._2+" WHERE topic='"+r._1+"'",1)
-    })._1)
+  def setTweetsCount(counts:HashMap[String,Int]) {
+    val statement = MySQLConnector.connection.createStatement()
+    //Updating topics tweet counts
+    counts.foreach(f => {
+      statement.executeQuery("""INSERT INTO counts_tweets VALUE('"+f._1+"',"+f._2+")
+    		  ON DUPLICATE KEY UPDATE count="+f._2+";""")
+    })
   }
  
+  
   private val getMysqlConfig: (String,String) = {
       new Tuple2(conf.getString("mysql.username"),conf.getString("mysql.password"))
   }
