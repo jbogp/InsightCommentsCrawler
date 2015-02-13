@@ -137,11 +137,9 @@ class CountBolt extends BaseRichBolt {
   
   
   /*Get the topics*/
-  val topicsAdded = tuple.getValueByField("bytes").asInstanceOf[List[String]]
-  /*update the counts*/
-  topicsAdded.foreach(t => {
-	  counts.update(t, counts(t)+1)
-  })
+  val topicsAdded = new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]])
+  /*update the count*/
+  counts.update(topicsAdded, counts(topicsAdded)+1)
   
   
   this.collector.ack(tuple)
