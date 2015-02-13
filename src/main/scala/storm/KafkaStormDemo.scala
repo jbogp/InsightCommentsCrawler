@@ -65,7 +65,7 @@ def runTopology() {
   System.getProperties().list(System.out)
   builder.setSpout(spoutId, kafkaSpout, numSpoutExecutors)
   builder.setBolt("filterTweets", new FilteringBolt(), 8).shuffleGrouping(spoutId)
-  builder.setBolt("tweets_added", new CountBolt(), 1).globalGrouping(spoutId)
+  //builder.setBolt("tweets_added", new CountBolt(), 1).globalGrouping(spoutId)
 
   // Now run the topology
   StormSubmitter.submitTopology(topologyName, topologyConfiguration, builder.createTopology())
@@ -87,7 +87,7 @@ class FilteringBolt extends BaseRichBolt {
   
   val (selected,topics) = TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
   if(selected) {
-   this.collector.emit(tuple, seqAsJavaList(topics).asInstanceOf[java.util.List[Object]])
+   this.collector.emit(tuple, topics)
   }
   this.collector.ack(tuple)
  }

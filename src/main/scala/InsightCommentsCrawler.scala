@@ -220,6 +220,11 @@ object InsightCommentsCrawler {
           }
           /*Running the storm topology for real time*/
           case "SpeedLayer" => {
+        (MySQLConnector.getTopics("topics1h",10)++
+        MySQLConnector.getTopics("topics12h",10)++
+        MySQLConnector.getTopics("topicsalltime",100)
+        .distinct)
+        .foreach(f=>println(f))
            new KafkaStorm(args(1),"tweets").runTopology  
           }
 		          
