@@ -132,7 +132,7 @@ class CountBolt extends BaseRichBolt {
 	  /*Clear the map*/
 	  counts.clear
 	  /*initialize counters*/
-	  topicsCurrent.foreach(f=>counts.add((f,0)))
+	  topicsCurrent.foreach(f=>counts.put(f,0))
   }
   
   
