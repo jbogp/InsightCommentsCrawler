@@ -87,7 +87,7 @@ class FilteringBolt extends BaseRichBolt {
   
   val (selected,topics) = TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
   if(selected) {
-   this.collector.emit(topics)
+   this.collector.emit(tuple,topics)
   }
   this.collector.ack(tuple)
  }
@@ -134,14 +134,12 @@ class CountBolt extends BaseRichBolt {
 	  /*initialize counters*/
 	  topicsCurrent.foreach(f=>counts.put(f,0))
   }
-  else{
 	  
 	  
 	  /*Get the topics*/
-	  val topicsAdded = new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]])
+	  val topicsAdded = tuple.getValueByField("filterTweets").asInstanceOf[String]
 	  /*update the count*/
 	  counts.update(topicsAdded, counts(topicsAdded)+1)
-  }
   
   this.collector.ack(tuple)
  }
