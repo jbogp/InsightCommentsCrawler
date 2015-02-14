@@ -31,8 +31,12 @@ object MySQLConnector {
     val statement = MySQLConnector.connection.createStatement()
     //Updating topics tweet counts
     counts.foreach(f => {
-      statement.executeUpdate("""INSERT INTO counts_tweets VALUE('"""+f._1+"""',"""+f._2+""")
-    		  ON DUPLICATE KEY UPDATE count="""+f._2+"""";""")
+      try{
+        statement.executeUpdate("INSERT INTO counts_tweets VALUES('"+f._1+"',"+f._2+") ON DUPLICATE KEY UPDATE count="+f._2+";")
+      } 
+      catch{
+        case e:Exception=> println("INSERT INTO counts_tweets VALUES('"+f._1+"',"+f._2+") ON DUPLICATE KEY UPDATE count="+f._2+";")
+      }
     })
   }
  
