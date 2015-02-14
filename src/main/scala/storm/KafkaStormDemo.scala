@@ -137,7 +137,7 @@ class CountBolt extends BaseRichBolt {
 	  
 	  
 	  /*Get the topics*/
-	  val topicsAdded = tuple.size().toString()
+	  val topicsAdded = tuple.getSourceStreamId()
 	  /*update the count*/
 	  counts.update(topicsAdded, counts(topicsAdded)+1)
   
