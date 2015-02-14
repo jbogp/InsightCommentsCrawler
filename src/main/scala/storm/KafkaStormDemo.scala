@@ -112,7 +112,7 @@ class CountBolt extends BaseRichBolt {
  /*Setting the config to get tick tuples every 10 seconds*/
  override def getComponentConfiguration():java.util.Map[String,Object]= {
    val conf = new java.util.HashMap[String, Object]
-   val tickFreq:java.lang.Integer = 10
+   val tickFreq:java.lang.Integer = 20
    conf.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, tickFreq);
    return conf
  } 
@@ -134,14 +134,12 @@ class CountBolt extends BaseRichBolt {
 	  /*initialize counters*/
 	  topicsCurrent.foreach(f=>counts.put(f,0))
   }
-  else{
 	  
 	  
 	  /*Get the topics*/
 	  val topicsAdded = new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]])
 	  /*update the count*/
 	  counts.update(topicsAdded, counts(topicsAdded)+1)
-  }
   
   this.collector.ack(tuple)
  }
