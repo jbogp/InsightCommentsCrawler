@@ -86,9 +86,7 @@ class FilteringBolt extends BaseRichBolt {
  override def execute(tuple: Tuple) {
   
   val (selected,topics) = TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
-  if(selected) {
-   this.collector.emit(tuple,topics)
-  }
+  this.collector.emit(topics)
   this.collector.ack(tuple)
  }
 
