@@ -87,13 +87,13 @@ class FilteringBolt extends BaseRichBolt {
   
   val (selected,topics) = TweetsFilter.filter(new String(tuple.getValueByField("bytes").asInstanceOf[Array[Byte]]))
   if(selected) {
-   this.collector.emit("filterTweets",topics)
+   //this.collector.emit("filterTweets",topics)
   }
   this.collector.ack(tuple)
  }
 
  override def declareOutputFields(declarer: OutputFieldsDeclarer) {
-  declarer.declare(new Fields("filterTweets"))
+  //declarer.declare(new Fields("filterTweets"))
  }
 }
 
