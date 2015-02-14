@@ -137,7 +137,7 @@ class CountBolt extends BaseRichBolt {
 	  
 	  
 	  /*Get the topics*/
-	  val topicsAdded = tuple.getValue(0).asInstanceOf[String]
+	  val topicsAdded = tuple.getString(0)
 	  /*update the count*/
 	  counts.update(topicsAdded, counts(topicsAdded)+1)
   
